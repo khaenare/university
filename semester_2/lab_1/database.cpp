@@ -15,19 +15,23 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <ctime>
-
 using namespace std;
 
+struct Date{
+    int hour;
+    int minute;
+    int day;
+    int month;
+    int year;
+};
 struct Monster {
     string name;
     int health;
     int attack;
     double specialAttackChance;
     string specialAttackType;
-    time_t appearanceTime;
+    Date spawn;
 };
-
 
 void addMonster(vector<Monster>& database);
 void storeAsText(const vector<Monster>& database);
@@ -36,6 +40,7 @@ void retrieveFromText(vector<Monster>& database);
 void retrieveFromBinary(vector<Monster>& database);
 void displayAll(const vector<Monster>& database);
 void search(const vector<Monster>& database);
+
 
 int main() {
     vector<Monster> database;
@@ -99,7 +104,16 @@ void addMonster(vector<Monster>& database) {
     cin >> newMonster.specialAttackChance;
     cout << "Enter type of special attack: ";
     cin >> newMonster.specialAttackType;
-    newMonster.appearanceTime = time(nullptr);
+    cout << "Enter hour: ";
+    cin >> newMonster.spawn.hour;
+    cout << "Enter minute: ";
+    cin >> newMonster.spawn.minute;
+    cout << "Enter day: ";
+    cin >> newMonster.spawn.day;
+    cout << "Enter month: ";
+    cin >> newMonster.spawn.month;
+    cout << "Enter year: ";
+    cin >> newMonster.spawn.year;
     database.push_back(newMonster);
     cout << "Monster added successfully.\n";
 }
@@ -117,7 +131,11 @@ void storeAsText(const vector<Monster>& database) {
                 << monster.attack << " "
                 << monster.specialAttackChance << " "
                 << monster.specialAttackType << " "
-                << monster.appearanceTime << endl;
+                << monster.spawn.hour << " "
+                << monster.spawn.minute << " "
+                << monster.spawn.day << " "
+                << monster.spawn.month << " "
+                << monster.spawn.year << endl;
     }
     cout << "Data stored as text successfully.\n";
     outFile.close();
@@ -142,7 +160,11 @@ void storeAsBinary(const vector<Monster>& database) {
         size_t typeSize = monster.specialAttackType.size();
         outFile.write(reinterpret_cast<const char*>(&typeSize), sizeof(size_t));
         outFile.write(monster.specialAttackType.c_str(), typeSize);
-        outFile.write(reinterpret_cast<const char*>(&monster.appearanceTime), sizeof(time_t));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.hour), sizeof(int));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.minute), sizeof(int));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.day), sizeof(int));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.minute), sizeof(int));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.year), sizeof(int));
     }
     cout << "Data stored as binary successfully.\n";
     outFile.close();
@@ -157,7 +179,7 @@ void retrieveFromText(vector<Monster>& database) {
 
     Monster monster;
     while (inFile >> monster.name >> monster.health >> monster.attack >> monster.specialAttackChance
-                  >> monster.specialAttackType >> monster.appearanceTime) {
+                  >> monster.specialAttackType >> monster.spawn.hour >> monster.spawn.minute >> monster.spawn.day >> monster.spawn.month >> monster.spawn.year ) {
         database.push_back(monster);
     }
     cout << "Data retrieved from text successfully.\n";
@@ -186,7 +208,11 @@ void retrieveFromBinary(vector<Monster>& database) {
         inFile.read(reinterpret_cast<char*>(&typeSize), sizeof(size_t));
         monster.specialAttackType.resize(typeSize);
         inFile.read(&monster.specialAttackType[0], typeSize);
-        inFile.read(reinterpret_cast<char*>(&monster.appearanceTime), sizeof(time_t));
+        inFile.read(reinterpret_cast<char*>(&monster.spawn.hour), sizeof(int));
+        inFile.read(reinterpret_cast<char*>(&monster.spawn.minute), sizeof(int));
+        inFile.read(reinterpret_cast<char*>(&monster.spawn.day), sizeof(int));
+        inFile.read(reinterpret_cast<char*>(&monster.spawn.month), sizeof(int));
+        inFile.read(reinterpret_cast<char*>(&monster.spawn.year), sizeof(int));
     }
     cout << "Data retrieved from binary successfully.\n";
     inFile.close();
@@ -200,12 +226,14 @@ void displayAll(const vector<Monster>& database) {
 
     cout << "Monsters in the database:\n";
     for (const auto& monster : database) {
-        cout << "Name: " << monster.name << "\n"
-        "Health: " << monster.health << "\n"
-        "Attack: " << monster.attack << "\n"
-        "Special Attack Chance: " << monster.specialAttackChance << "\n"
-        "Special Attack Type: " << monster.specialAttackType << "\n"
-        "Appearance Time: " << ctime(&monster.appearanceTime) << "\n\n";
+        cout <<
+        "Name: "                            << monster.name << "\n"
+        "Health: "                          << monster.health << "\n"
+        "Attack: "                          << monster.attack << "\n"
+        "Special Attack Chance: "           << monster.specialAttackChance << "\n"
+        "Special Attack Type: "             << monster.specialAttackType << "\n"
+        "Appearance Time: "                 << monster.spawn.hour << ":" << monster.spawn.minute << " "
+                                            << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
     }
 }
 
@@ -216,12 +244,14 @@ void search(const vector<Monster>& database) {
 
     for (const auto& monster : database) {
         if (monster.name.find(searchText) != string::npos) {
-            cout << "\n" << "Name: " << monster.name << "\n"
-            "Health: " << monster.health << "\n"
-            "Attack: " << monster.attack << "\n"
-            "Special Attack Chance: " << monster.specialAttackChance << "\n"
-            "Special Attack Type: " << monster.specialAttackType << "\n"
-            "Appearance Time: " << ctime(&monster.appearanceTime) << "\n\n";
+            cout << "\n" <<
+            "Name: "                        << monster.name << "\n"
+            "Health: "                      << monster.health << "\n"
+            "Attack: "                      << monster.attack << "\n"
+            "Special Attack Chance: "       << monster.specialAttackChance << "\n"
+            "Special Attack Type: "         << monster.specialAttackType << "\n"
+            "Appearance Time: "             << monster.spawn.hour << ":" << monster.spawn.minute << " "
+                                            << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
         }else cout << "Monsters don`t found ";
     }
 }
