@@ -47,14 +47,14 @@ int main() {
     int choice;
 
     do {
-        cout << "\n1. Add Monster\n"
-                "2. Store Data (Text)\n"
-                "3. Store Data (Binary)\n"
-                "4. Retrieve Data (Text)\n"
-                "5. Retrieve Data (Binary)\n"
-                "6. Display All\n"
-                "7. Search\n"
-                "8. Exit\n"
+        cout << "\n1. Add Monster\n"                    // Додавання монстра в векторний  массив монстра
+                "2. Store Data (Text)\n"                // Копіювання всіх монстрів з векторного массива в Txt файл для подальшого збереження
+                "3. Store Data (Binary)\n"              // Копіювання всіх монстрів з векторного массива в Bin файл для подальшого збереження
+                "4. Retrieve Data (Text)\n"             // Копіювання всіх монстрів з Txt файлу в векторний массив
+                "5. Retrieve Data (Binary)\n"           // Копіювання всіх монстрів з Bin файлу в векторний массив
+                "6. Display All\n"                      // Виведення всіх монстрів
+                "7. Search\n"                           // Режим пошуку
+                "8. Exit\n"                             // Вихід з програми
                 "Enter your choice: ";
         cin >> choice;
 
