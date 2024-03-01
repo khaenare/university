@@ -39,12 +39,13 @@ void storeAsBinary(const vector<Monster>& database);
 void retrieveFromText(vector<Monster>& database);
 void retrieveFromBinary(vector<Monster>& database);
 void displayAll(const vector<Monster>& database);
-void search(const vector<Monster>& database);
+void searchByName(const vector<Monster>& database);
+void searchByHealthAndAttack(const vector<Monster>& database, int minHealth, int maxAttack);
 
 
 int main() {
     vector<Monster> database;
-    int choice;
+    int choice, choice2, maxatk, minhp;;
 
     do {
         cout << "\n1. Add Monster\n"                    // Додавання монстра в векторний  массив монстра
@@ -78,7 +79,30 @@ int main() {
                 displayAll(database);
                 break;
             case 7:
-                search(database);
+                cout << "Chose type of search:"
+                        "1. By name"
+                        "2. By hp and atc"
+                        "3. By time"
+                        "\n";
+                cin >> choice2;
+                switch (choice2) {
+                    case 1:
+                        searchByName(database);
+                        break;
+                    case 2:
+                        cout << "Enter Max Attack and Min Health""\n";
+                        cin >> minhp;
+                        cin >> maxatk;
+                        searchByHealthAndAttack(database, minhp, maxatk);
+                        break;
+                    case 3:
+                        storeAsBinary(database);
+                        break;
+                    default:
+                        cout << "Invalid choice. Please try again.\n";
+                        break;
+                }
+
                 break;
             case 8:
                 cout << "Exiting program.\n";
@@ -96,14 +120,32 @@ void addMonster(vector<Monster>& database) {
     Monster newMonster;
     cout << "Enter monster name: ";
     cin >> newMonster.name;
-    cout << "Enter number of health units: ";
-    cin >> newMonster.health;
+
+    cout << "Enter number of health: ";
+    while (!(cin >> newMonster.health) || newMonster.health < 0 || newMonster.health > 50000) {
+        cout << "Invalid input. Please enter a number between 0 and 50000: ";
+        cin.clear(); // Очищаем флаг ошибки
+    }
+
     cout << "Enter number of attack units: ";
-    cin >> newMonster.attack;
+    while (!(cin >> newMonster.attack) || newMonster.attack < 0 || newMonster.attack > 2000) {
+        cout << "Invalid input. Please enter a number between 0 and 2000: ";
+        cin.clear();
+    }
+
     cout << "Enter chance to perform a special attack (0 to 1): ";
-    cin >> newMonster.specialAttackChance;
-    cout << "Enter type of special attack: ";
+    while (!(cin >> newMonster.specialAttackChance) || newMonster.specialAttackChance < 0 || newMonster.specialAttackChance > 1) {
+        cout << "Invalid input. Please enter a number between 0 and 1: ";
+        cin.clear();
+    }
+
+    cout << "Enter type of special attack (IncAtk, RepAtk, Heal, Stan): ";
     cin >> newMonster.specialAttackType;
+    while (newMonster.specialAttackType != "IncAtk" && newMonster.specialAttackType != "RepAtk" && newMonster.specialAttackType != "Heal" && newMonster.specialAttackType != "Stan") {
+        cout << "Invalid input. Please enter one of the following: IncAtk, RepAtk, Heal, Stan: ";
+        cin >> newMonster.specialAttackType;
+    }
+
     cout << "Enter hour: ";
     cin >> newMonster.spawn.hour;
     cout << "Enter minute: ";
@@ -114,9 +156,11 @@ void addMonster(vector<Monster>& database) {
     cin >> newMonster.spawn.month;
     cout << "Enter year: ";
     cin >> newMonster.spawn.year;
+
     database.push_back(newMonster);
     cout << "Monster added successfully.\n";
 }
+
 
 void storeAsText(const vector<Monster>& database) {
     ofstream outFile("monsters.txt");
@@ -163,7 +207,7 @@ void storeAsBinary(const vector<Monster>& database) {
         outFile.write(reinterpret_cast<const char*>(&monster.spawn.hour), sizeof(int));
         outFile.write(reinterpret_cast<const char*>(&monster.spawn.minute), sizeof(int));
         outFile.write(reinterpret_cast<const char*>(&monster.spawn.day), sizeof(int));
-        outFile.write(reinterpret_cast<const char*>(&monster.spawn.minute), sizeof(int));
+        outFile.write(reinterpret_cast<const char*>(&monster.spawn.month), sizeof(int));
         outFile.write(reinterpret_cast<const char*>(&monster.spawn.year), sizeof(int));
     }
     cout << "Data stored as binary successfully.\n";
@@ -237,9 +281,9 @@ void displayAll(const vector<Monster>& database) {
     }
 }
 
-void search(const vector<Monster>& database) {
+void searchByName(const vector<Monster>& database) {
     string searchText;
-    cout << "Enter text to search in monster names: ";
+    cout << "Enter text to searchByName in monster names: ";
     cin >> searchText;
 
     for (const auto& monster : database) {
@@ -253,5 +297,19 @@ void search(const vector<Monster>& database) {
             "Appearance Time: "             << monster.spawn.hour << ":" << monster.spawn.minute << " "
                                             << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
         }else cout << "Monsters don`t found ";
+    }
+}
+void searchByHealthAndAttack(const vector<Monster>& database, int minHealth, int maxAttack) {
+    for (const auto &monster: database) {
+        if (monster.health >= minHealth && monster.attack <= maxAttack) {
+            cout << "\n" <<
+                 "Name: "                       << monster.name << "\n"
+                 "Health: "                     << monster.health << "\n"
+                 "Attack: "                     << monster.attack << "\n"
+                 "Special Attack Chance: "      << monster.specialAttackChance << "\n"
+                 "Special Attack Type: "        << monster.specialAttackType << "\n"
+                 "Appearance Time: "            << monster.spawn.hour << ":" << monster.spawn.minute << " "
+                                                << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
+        } else cout << "Monsters don`t found " << "\n";
     }
 }
