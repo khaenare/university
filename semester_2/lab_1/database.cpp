@@ -15,6 +15,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <chrono>
+#include <random>
 using namespace std;
 
 struct Date{
@@ -31,23 +33,53 @@ struct Monster {
     double specialAttackChance;
     string specialAttackType;
     Date spawn;
+
 };
+struct Monster generateRandomMonster() {
+    return Monster{"Monster", rand() % 50001, rand() % 2001,
+                   static_cast<double>(rand()) / RAND_MAX, "IncAtk", {0, 0, 1, 1, 2020}};
+}
 
 void addMonster(vector<Monster>& database);
-void storeAsText(const vector<Monster>& database);
-void storeAsBinary(const vector<Monster>& database);
-void retrieveFromText(vector<Monster>& database);
-void retrieveFromBinary(vector<Monster>& database);
+void addMonsterBench(vector<Monster>& buffer, Monster Monster);
+void storeAsText(const vector<Monster>& database, const string& filePath);
+void storeAsBinary(const vector<Monster>& database, const string& filePath);
+void retrieveFromText(vector<Monster>& database, const string& filePath);
+void retrieveFromBinary(vector<Monster> &database, const string& filePath);
 void clearFileData();
 void displayAll(const vector<Monster>& database);
 void searchByName(const vector<Monster>& database);
 void searchByHealthAndAttack(const vector<Monster>& database);
 void searchBySpecialAttackTypeAndTime(const vector<Monster>& database);
+void basicMode(vector<Monster>& database);
+void benchmarkMode();
 
 
 int main() {
     vector<Monster> database;
-    int choice, choice2;
+    int mode;
+    cout << "Please, select a number of mode:\n1. Basic Mode\n2. Demonstration mode \n3. Benchmark mode:\nEnter a number of database: ";
+    cin >> mode;
+
+    switch (mode) {
+        case 1:
+            basicMode(database);
+            break;
+        case 2:
+            //demonstrationMode();
+            break;
+        case 3:
+            benchmarkMode();
+            break;
+        default:
+            cerr << "Error! You enter incoretct mode\n";
+            break;
+    }
+    return 0;
+}
+
+void basicMode(vector<Monster>& database){
+    int choice1, choice2;
 
     do {
         cout << "\n1. Add Monster\n"                    // Додавання монстра в векторний  массив монстра
@@ -60,23 +92,23 @@ int main() {
                 "8. Search\n"                           // Режим пошуку
                 "9. Exit\n"                            // Вихід з програми
                 "Enter your choice: ";
-        cin >> choice;
+        cin >> choice1;
 
-        switch (choice) {
+        switch (choice1) {
             case 1:
                 addMonster(database);
                 break;
             case 2:
-                storeAsText(database);
+                storeAsText(database, "monsters.txt");
                 break;
             case 3:
-                storeAsBinary(database);
+                storeAsBinary(database, "monsters.bin");
                 break;
             case 4:
-                retrieveFromText(database);
+                retrieveFromText(database, "monsters.txt");
                 break;
             case 5:
-                retrieveFromBinary(database);
+                retrieveFromBinary(database, "monsters.bin");
                 break;
             case 6:
                 clearFileData();
@@ -113,10 +145,59 @@ int main() {
                 cout << "Invalid choice. Please try again.\n";
                 break;
         }
-    } while (choice != 8);
-
-    return 0;
+    } while (choice1 != 9);
 }
+
+void benchmarkMode() {
+    cout << "\n=== Benchmark mode ===\n";
+
+    string txtFilename = "monstersbench.txt";
+    string binFilename = "monstersbench.bin";
+
+    int num;
+    cout << "Enter a number of elements for database: ";
+    cin >> num;
+    if (num < 1) {
+        cout << "Number of elements must be greater than 0.\n";
+        return;
+    }
+
+    for (int mode = 2; mode >= 0; mode--) {
+        vector<Monster> buffer;
+        string operationMode;
+        if (mode == 2) operationMode = "TXT DATABASE";
+        else if (mode == 1) operationMode = "BIN DATABASE";
+        else operationMode = "VECTOR DATABASE";
+
+        cout << "\n=== START BENCHMARK FOR " << operationMode << " ===\n";
+
+        // Бенчмарк для додавання монстрів
+        auto startTime = chrono::high_resolution_clock::now();
+        for (int i = 0; i < num; i++) {
+            // Припустимо, що є функція для генерації випадкового монстра
+            Monster newMonster = generateRandomMonster();
+            addMonsterBench(buffer, newMonster);
+        }
+        auto endTime = chrono::high_resolution_clock::now();
+
+        // Бенчмарк для збереження та відновлення даних
+        if (mode != 0) {
+            if (mode == 2) {
+                storeAsText(buffer, txtFilename);
+                buffer.clear();
+                retrieveFromText(buffer, txtFilename);
+            } else {
+                storeAsBinary(buffer, binFilename);
+                buffer.clear();
+                retrieveFromBinary(buffer, binFilename);
+            }
+        }
+
+        auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
+        cout << "Total time for " << operationMode << ": " << duration << " ms\n";
+    }
+}
+
 
 void addMonster(vector<Monster>& database) {
     Monster newMonster;
@@ -163,9 +244,12 @@ void addMonster(vector<Monster>& database) {
     cout << "Monster added successfully.\n";
 }
 
+void addMonsterBench(vector<Monster>& buffer, Monster generatedMonster){
+    buffer.push_back(generatedMonster);
+}
 
-void storeAsText(const vector<Monster>& database) {
-    ofstream outFile("monsters.txt");
+void storeAsText(const vector<Monster>& database, const string& filePath) {
+    ofstream outFile(filePath);
     if (!outFile.is_open()) {
         cout << "Error opening file for writing.\n";
         return;
@@ -187,8 +271,8 @@ void storeAsText(const vector<Monster>& database) {
     outFile.close();
 }
 
-void storeAsBinary(const vector<Monster>& database) {
-    ofstream outFile("monsters.bin", ios::binary);
+void storeAsBinary(const vector<Monster>& database, const string& filePath) {
+    ofstream outFile(filePath, ios::binary);
     if (!outFile.is_open()) {
         cout << "Error opening file for writing.\n";
         return;
@@ -216,8 +300,8 @@ void storeAsBinary(const vector<Monster>& database) {
     outFile.close();
 }
 
-void retrieveFromText(vector<Monster>& database) {
-    ifstream inFile("monsters.txt");
+void retrieveFromText(vector<Monster>& database, const string& filePath) {
+    ifstream inFile(filePath);
     if (!inFile.is_open()) {
         cout << "Error opening file for reading.\n";
         return;
@@ -232,8 +316,8 @@ void retrieveFromText(vector<Monster>& database) {
     inFile.close();
 }
 
-void retrieveFromBinary(vector<Monster>& database) {                                //P.S: ненавиджу бінарні файли...
-    ifstream inFile("monsters.bin", ios::binary);
+void retrieveFromBinary(vector<Monster> &database, const string& filePath) {                                //P.S: ненавиджу бінарні файли...
+    ifstream inFile(filePath, ios::binary);
     if (!inFile.is_open()) {
         cout << "Error opening file for reading.\n";
         return;
