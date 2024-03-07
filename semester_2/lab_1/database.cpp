@@ -40,12 +40,13 @@ void retrieveFromText(vector<Monster>& database);
 void retrieveFromBinary(vector<Monster>& database);
 void displayAll(const vector<Monster>& database);
 void searchByName(const vector<Monster>& database);
-void searchByHealthAndAttack(const vector<Monster>& database, int minHealth, int maxAttack);
+void searchByHealthAndAttack(const vector<Monster>& database);
+void searchBySpecialAttackTypeAndTime(const vector<Monster>& database);
 
 
 int main() {
     vector<Monster> database;
-    int choice, choice2, maxatk, minhp;;
+    int choice, choice2;
 
     do {
         cout << "\n1. Add Monster\n"                    // Додавання монстра в векторний  массив монстра
@@ -90,13 +91,10 @@ int main() {
                         searchByName(database);
                         break;
                     case 2:
-                        cout << "Enter Max Attack and Min Health""\n";
-                        cin >> minhp;
-                        cin >> maxatk;
-                        searchByHealthAndAttack(database, minhp, maxatk);
+                        searchByHealthAndAttack(database);
                         break;
                     case 3:
-                        storeAsBinary(database);
+                        searchBySpecialAttackTypeAndTime(database);
                         break;
                     default:
                         cout << "Invalid choice. Please try again.\n";
@@ -299,7 +297,11 @@ void searchByName(const vector<Monster>& database) {
         }else cout << "Monsters don`t found ";
     }
 }
-void searchByHealthAndAttack(const vector<Monster>& database, int minHealth, int maxAttack) {
+
+void searchByHealthAndAttack(const vector<Monster>& database) {
+    int maxAttack, minHealth;
+    cout << "Enter Max Attack and Min Health""\n";
+    cin >> maxAttack >> minHealth;
     for (const auto &monster: database) {
         if (monster.health >= minHealth && monster.attack <= maxAttack) {
             cout << "\n" <<
@@ -311,5 +313,37 @@ void searchByHealthAndAttack(const vector<Monster>& database, int minHealth, int
                  "Appearance Time: "            << monster.spawn.hour << ":" << monster.spawn.minute << " "
                                                 << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
         } else cout << "Monsters don`t found " << "\n";
+    }
+}
+void searchBySpecialAttackTypeAndTime(const vector<Monster>& database) {
+    bool found = false;
+
+    string specialAttackType;
+    Date untilDate;
+    cout << "Enter type of special attack (IncAtk, RepAtk, Heal, Stan): ";
+    cin >> specialAttackType;
+    cout << "Enter latest date (hour, minute,day, month, year): ";
+    cin >> untilDate.hour >> untilDate.minute >> untilDate.day >> untilDate.month >> untilDate.year;
+
+    for (const auto& monster : database) {
+        if (monster.specialAttackType == specialAttackType &&
+            (monster.spawn.year < untilDate.year ||
+             (monster.spawn.year == untilDate.year && monster.spawn.month < untilDate.month) ||
+             (monster.spawn.year == untilDate.year && monster.spawn.month == untilDate.month && monster.spawn.day <= untilDate.day) ||
+             (monster.spawn.year == untilDate.year && monster.spawn.month == untilDate.month && monster.spawn.day == untilDate.day && monster.spawn.hour <= untilDate.hour) ||
+             (monster.spawn.year == untilDate.year && monster.spawn.month == untilDate.month && monster.spawn.day == untilDate.day && monster.spawn.hour == untilDate.hour && monster.spawn.minute <= untilDate.minute))) {
+            cout << "\n" <<
+                 "Name: "                       << monster.name << "\n"
+                 "Health: "                     << monster.health << "\n"
+                 "Attack: "                     << monster.attack << "\n"
+                 "Special Attack Chance: "      << monster.specialAttackChance << "\n"
+                 "Special Attack Type: "        << monster.specialAttackType << "\n"
+                 "Appearance Time: "            << monster.spawn.hour << ":" << monster.spawn.minute << " "
+                                                << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
+            found = true;
+        }
+    }
+    if (!found) {
+        cout << "No monsters found matching the criteria.\n";
     }
 }
