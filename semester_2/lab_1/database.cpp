@@ -17,6 +17,7 @@
 #include <string>
 #include <chrono>
 #include <random>
+#include <sstream>
 using namespace std;
 
 struct Date{
@@ -35,9 +36,35 @@ struct Monster {
     Date spawn;
 
 };
+
 struct Monster generateRandomMonster() {
-    return Monster{"Monster", rand() % 50001, rand() % 2001,
-                   static_cast<double>(rand()) / RAND_MAX, "IncAtk", {0, 0, 1, 1, 2020}};
+    random_device rd;
+    mt19937 gen(rd());
+
+    string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    uniform_int_distribution<> charDist(0, chars.size() - 1);
+    string name;
+    uniform_int_distribution<> lengthDist(5, 10); // Імена довжиною від 5 до 10 символів
+    int length = lengthDist(gen);
+    for (int i = 0; i < length; ++i) {
+        name += chars[charDist(gen)];
+    }
+
+    uniform_int_distribution<> healthDist(1, 50000);
+    uniform_int_distribution<> attackDist(1, 2000);
+    uniform_real_distribution<> specialAttackChanceDist(0.0, 1.0);
+    vector<string> specialAttacks = {"IncAtk", "RepAtk", "Heal", "Stan"};
+    uniform_int_distribution<> attackTypeDist(0, 3);
+    string specialAttackType = specialAttacks[attackTypeDist(gen)];
+
+    uniform_int_distribution<> hourDist(0, 23);
+    uniform_int_distribution<> minuteDist(0, 59);
+    uniform_int_distribution<> dayDist(1, 30);
+    uniform_int_distribution<> monthDist(1, 12);
+    uniform_int_distribution<> yearDist(0001, 2024);
+
+    return Monster{name,healthDist(gen),attackDist(gen),specialAttackChanceDist(gen),specialAttackType,
+                   Date{hourDist(gen), minuteDist(gen), dayDist(gen), monthDist(gen), yearDist(gen)}};
 }
 
 void addMonster(vector<Monster>& database);
@@ -48,10 +75,11 @@ void retrieveFromText(vector<Monster>& database, const string& filePath);
 void retrieveFromBinary(vector<Monster> &database, const string& filePath);
 void clearFileData();
 void displayAll(const vector<Monster>& database);
-void searchByName(const vector<Monster>& database);
-void searchByHealthAndAttack(const vector<Monster>& database);
-void searchBySpecialAttackTypeAndTime(const vector<Monster>& database);
+void searchByName(const vector<Monster>& database, string searchText);
+void searchByHealthAndAttack(const vector<Monster>& database, int maxAttack, int minHealth);
+void searchBySpecialAttackTypeAndTime(const vector<Monster>& database, string specialAttackType, Date untilDate);
 void basicMode(vector<Monster>& database);
+void demonstrationMode();
 void benchmarkMode();
 
 
@@ -66,7 +94,7 @@ int main() {
             basicMode(database);
             break;
         case 2:
-            //demonstrationMode();
+            demonstrationMode();
             break;
         case 3:
             benchmarkMode();
@@ -79,7 +107,9 @@ int main() {
 }
 
 void basicMode(vector<Monster>& database){
-    int choice1, choice2;
+    int choice1, choice2, maxAttack, minHealth;
+    string specialAttackType, searchText;
+    Date untilDate;
 
     do {
         cout << "\n1. Add Monster\n"                    // Додавання монстра в векторний  массив монстра
@@ -124,13 +154,21 @@ void basicMode(vector<Monster>& database){
                 cin >> choice2;
                 switch (choice2) {
                     case 1:
-                        searchByName(database);
+                        cout << "Enter text to searchByName in monster names: ";
+                        cin >> searchText;
+                        searchByName(database, searchText);
                         break;
                     case 2:
-                        searchByHealthAndAttack(database);
+                        cout << "Enter Max Attack and Min Health\n";
+                        cin >> maxAttack >> minHealth;
+                        searchByHealthAndAttack(database, maxAttack, minHealth);
                         break;
                     case 3:
-                        searchBySpecialAttackTypeAndTime(database);
+                        cout << "Enter type of special attack (IncAtk, RepAtk, Heal, Stan): ";
+                        cin >> specialAttackType;
+                        cout << "Enter latest date (hour, minute,day, month, year): \n";
+                        cin >> untilDate.hour >> untilDate.minute >> untilDate.day >> untilDate.month >> untilDate.year;
+                        searchBySpecialAttackTypeAndTime(database, specialAttackType, untilDate);
                         break;
                     default:
                         cout << "Invalid choice. Please try again.\n";
@@ -148,8 +186,50 @@ void basicMode(vector<Monster>& database){
     } while (choice1 != 9);
 }
 
+void demonstrationMode() {
+    vector<Monster> demoDatabase;
+
+    cout << "\n Demonstration Mode \n";
+
+    // Додавання фіксованих монстрів до бази даних
+    cout << "\nAdding monsters to the database...\n";
+    demoDatabase.push_back(Monster{"Ghoul", 2500, 500, 0.5, "IncAtk", {12, 30, 15, 5, 2023}});
+    demoDatabase.push_back(Monster{"Troll", 3000, 450, 0.4, "Heal", {8, 45, 20, 4, 2023}});
+    demoDatabase.push_back(Monster{"Zombie", 2000, 400, 0.3, "Stan", {18, 15, 25, 6, 2023}});
+    displayAll(demoDatabase);
+
+    // Зберігання монстрів у текстовий файл
+    cout << "\nStoring monsters in a text file...\n";
+    storeAsText(demoDatabase, "demoMonsters.txt");
+
+    // Очищення бази даних
+    cout << "\nClearing the database...\n";
+    demoDatabase.clear();
+    displayAll(demoDatabase);
+
+    // Відновлення монстрів з текстового файлу
+    cout << "\nRetrieving monsters from the text file...\n";
+    retrieveFromText(demoDatabase, "demoMonsters.txt");
+    displayAll(demoDatabase);
+
+    // Пошук монстрів за іменем
+    cout << "\nSearching for monsters containing 'Zom' in their names...\n";
+    searchByName(demoDatabase, "Zom");
+
+    // Пошук монстрів за здоров'ям та атакою
+    cout << "\nSearching for monsters with health >= 2000 and attack <= 450...\n";
+    searchByHealthAndAttack(demoDatabase, 450, 2000);
+
+    // Пошук монстрів за типом спеціальної атаки та часом появи
+    cout << "\nSearching for monsters with 'Heal' special attack type appeared before June 30, 2023...\n";
+    Date demo = {1,1,30,6,2023};
+    searchBySpecialAttackTypeAndTime(demoDatabase, "Heal", demo);
+
+    cout << "\n=== Demonstration Mode Finished ===\n";
+}
+
 void benchmarkMode() {
-    cout << "\n=== Benchmark mode ===\n";
+    cout << "\nBenchmark mode\n\n";
 
     string txtFilename = "monstersbench.txt";
     string binFilename = "monstersbench.bin";
@@ -169,17 +249,14 @@ void benchmarkMode() {
         else if (mode == 1) operationMode = "BIN DATABASE";
         else operationMode = "VECTOR DATABASE";
 
-        cout << "\n=== START BENCHMARK FOR " << operationMode << " ===\n";
+        cout << "\n\nSTART BENCHMARK FOR " << operationMode << "\n\n";
 
         // Бенчмарк для додавання монстрів
-        auto startTime = chrono::high_resolution_clock::now();
         for (int i = 0; i < num; i++) {
-            // Припустимо, що є функція для генерації випадкового монстра
             Monster newMonster = generateRandomMonster();
             addMonsterBench(buffer, newMonster);
         }
-        auto endTime = chrono::high_resolution_clock::now();
-
+        auto startTime = chrono::high_resolution_clock::now();
         // Бенчмарк для збереження та відновлення даних
         if (mode != 0) {
             if (mode == 2) {
@@ -192,11 +269,12 @@ void benchmarkMode() {
                 retrieveFromBinary(buffer, binFilename);
             }
         }
-
+        auto endTime = chrono::high_resolution_clock::now();
         auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - startTime).count();
         cout << "Total time for " << operationMode << ": " << duration << " ms\n";
     }
 }
+
 
 
 void addMonster(vector<Monster>& database) {
@@ -393,13 +471,12 @@ void displayAll(const vector<Monster>& database) {
     }
 }
 
-void searchByName(const vector<Monster>& database) {
-    string searchText;
-    cout << "Enter text to searchByName in monster names: ";
-    cin >> searchText;
+void searchByName(const vector<Monster>& database, string searchText) {
+    bool found = false;
 
     for (const auto& monster : database) {
         if (monster.name.find(searchText) != string::npos) {
+            found = true;
             cout << "\n" <<
             "Name: "                        << monster.name << "\n"
             "Health: "                      << monster.health << "\n"
@@ -408,16 +485,18 @@ void searchByName(const vector<Monster>& database) {
             "Special Attack Type: "         << monster.specialAttackType << "\n"
             "Appearance Time: "             << monster.spawn.hour << ":" << monster.spawn.minute << " "
                                             << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
-        }else cout << "Monsters don`t found ";
+        }
+    }if (!found) {
+        cout << "No monsters found matching the criteria.\n";
     }
 }
 
-void searchByHealthAndAttack(const vector<Monster>& database) {
-    int maxAttack, minHealth;
-    cout << "Enter Max Attack and Min Health\n";
-    cin >> maxAttack >> minHealth;
+void searchByHealthAndAttack(const vector<Monster>& database, int maxAttack, int minHealth) {
+    bool found = false;
+
     for (const auto &monster: database) {
         if (monster.health >= minHealth && monster.attack <= maxAttack) {
+            found = true;
             cout << "\n" <<
                  "Name: "                       << monster.name << "\n"
                  "Health: "                     << monster.health << "\n"
@@ -426,19 +505,14 @@ void searchByHealthAndAttack(const vector<Monster>& database) {
                  "Special Attack Type: "        << monster.specialAttackType << "\n"
                  "Appearance Time: "            << monster.spawn.hour << ":" << monster.spawn.minute << " "
                                                 << monster.spawn.day << "." << monster.spawn.month << "." << monster.spawn.year << "\n\n";
-        } else cout << "Monsters don`t found " << "\n";
+        }
+    } if (!found) {
+        cout << "No monsters found matching the criteria.\n";
     }
 }
 
-void searchBySpecialAttackTypeAndTime(const vector<Monster>& database) {
+void searchBySpecialAttackTypeAndTime(const vector<Monster>& database, string specialAttackType, Date untilDate) {
     bool found = false;
-
-    string specialAttackType;
-    Date untilDate;
-    cout << "Enter type of special attack (IncAtk, RepAtk, Heal, Stan): ";
-    cin >> specialAttackType;
-    cout << "Enter latest date (hour, minute,day, month, year): \n";
-    cin >> untilDate.hour >> untilDate.minute >> untilDate.day >> untilDate.month >> untilDate.year;
 
     for (const auto& monster : database) {
         if (monster.specialAttackType == specialAttackType &&
