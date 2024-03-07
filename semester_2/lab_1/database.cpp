@@ -38,6 +38,7 @@ void storeAsText(const vector<Monster>& database);
 void storeAsBinary(const vector<Monster>& database);
 void retrieveFromText(vector<Monster>& database);
 void retrieveFromBinary(vector<Monster>& database);
+void clearFileData();
 void displayAll(const vector<Monster>& database);
 void searchByName(const vector<Monster>& database);
 void searchByHealthAndAttack(const vector<Monster>& database);
@@ -54,9 +55,10 @@ int main() {
                 "3. Store Data (Binary)\n"              // Копіювання всіх монстрів з векторного массива в Bin файл для подальшого збереження
                 "4. Retrieve Data (Text)\n"             // Копіювання всіх монстрів з Txt файлу в векторний массив
                 "5. Retrieve Data (Binary)\n"           // Копіювання всіх монстрів з Bin файлу в векторний массив
-                "6. Display All\n"                      // Виведення всіх монстрів
-                "7. Search\n"                           // Режим пошуку
-                "8. Exit\n"                             // Вихід з програми
+                "6. Clean Data\n"                       // "костиль" для видалення та очистки всіх данних з Txt файлу
+                "7. Display All\n"                      // Виведення всіх монстрів
+                "8. Search\n"                           // Режим пошуку
+                "9. Exit\n"                            // Вихід з програми
                 "Enter your choice: ";
         cin >> choice;
 
@@ -77,14 +79,16 @@ int main() {
                 retrieveFromBinary(database);
                 break;
             case 6:
-                displayAll(database);
+                clearFileData();
                 break;
             case 7:
-                cout << "Chose type of search:"
-                        "1. By name"
-                        "2. By hp and atc"
-                        "3. By time"
-                        "\n";
+                displayAll(database);
+                break;
+            case 8:
+                cout << "Chose type of search: \n"
+                        "1. By name \n"
+                        "2. By hp and atc \n"
+                        "3. By time and attack type\n";
                 cin >> choice2;
                 switch (choice2) {
                     case 1:
@@ -102,7 +106,7 @@ int main() {
                 }
 
                 break;
-            case 8:
+            case 9:
                 cout << "Exiting program.\n";
                 break;
             default:
@@ -122,7 +126,7 @@ void addMonster(vector<Monster>& database) {
     cout << "Enter number of health: ";
     while (!(cin >> newMonster.health) || newMonster.health < 0 || newMonster.health > 50000) {
         cout << "Invalid input. Please enter a number between 0 and 50000: ";
-        cin.clear(); // Очищаем флаг ошибки
+        cin.clear();
     }
 
     cout << "Enter number of attack units: ";
@@ -144,15 +148,15 @@ void addMonster(vector<Monster>& database) {
         cin >> newMonster.specialAttackType;
     }
 
-    cout << "Enter hour: ";
+    cout << "Enter hour of spawn: ";
     cin >> newMonster.spawn.hour;
-    cout << "Enter minute: ";
+    cout << "Enter minute of spawn: ";
     cin >> newMonster.spawn.minute;
-    cout << "Enter day: ";
+    cout << "Enter day of spawn: ";
     cin >> newMonster.spawn.day;
-    cout << "Enter month: ";
+    cout << "Enter month of spawn: ";
     cin >> newMonster.spawn.month;
-    cout << "Enter year: ";
+    cout << "Enter year of spawn: ";
     cin >> newMonster.spawn.year;
 
     database.push_back(newMonster);
@@ -228,7 +232,7 @@ void retrieveFromText(vector<Monster>& database) {
     inFile.close();
 }
 
-void retrieveFromBinary(vector<Monster>& database) {
+void retrieveFromBinary(vector<Monster>& database) {                                //P.S: ненавиджу бінарні файли...
     ifstream inFile("monsters.bin", ios::binary);
     if (!inFile.is_open()) {
         cout << "Error opening file for reading.\n";
@@ -258,6 +262,32 @@ void retrieveFromBinary(vector<Monster>& database) {
     }
     cout << "Data retrieved from binary successfully.\n";
     inFile.close();
+}
+
+void clearFileData() {
+    int fileChoice;
+    cout << "Choose the file to clear:\n"
+         << "1. Text file\n"
+         << "2. Binary file\n";
+    cin >> fileChoice;
+
+    string fileName;
+    ios_base::openmode mode = ios::out;
+
+    switch (fileChoice) {
+        case 1:
+            fileName = "monsters.txt";
+            break;
+        case 2:
+            fileName = "monsters.bin";
+            mode |= ios::binary; // додаємо mode для бінарного файлу
+            break;
+        default:
+            cout << "Invalid choice. Exiting function.\n";
+            return;
+    }
+    ofstream file(fileName, mode | ios::trunc);
+    file.close();
 }
 
 void displayAll(const vector<Monster>& database) {
@@ -300,7 +330,7 @@ void searchByName(const vector<Monster>& database) {
 
 void searchByHealthAndAttack(const vector<Monster>& database) {
     int maxAttack, minHealth;
-    cout << "Enter Max Attack and Min Health""\n";
+    cout << "Enter Max Attack and Min Health\n";
     cin >> maxAttack >> minHealth;
     for (const auto &monster: database) {
         if (monster.health >= minHealth && monster.attack <= maxAttack) {
@@ -315,6 +345,7 @@ void searchByHealthAndAttack(const vector<Monster>& database) {
         } else cout << "Monsters don`t found " << "\n";
     }
 }
+
 void searchBySpecialAttackTypeAndTime(const vector<Monster>& database) {
     bool found = false;
 
@@ -322,7 +353,7 @@ void searchBySpecialAttackTypeAndTime(const vector<Monster>& database) {
     Date untilDate;
     cout << "Enter type of special attack (IncAtk, RepAtk, Heal, Stan): ";
     cin >> specialAttackType;
-    cout << "Enter latest date (hour, minute,day, month, year): ";
+    cout << "Enter latest date (hour, minute,day, month, year): \n";
     cin >> untilDate.hour >> untilDate.minute >> untilDate.day >> untilDate.month >> untilDate.year;
 
     for (const auto& monster : database) {
