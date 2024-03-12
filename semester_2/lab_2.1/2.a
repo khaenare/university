@@ -3,12 +3,15 @@
 #include <vector>
 #include <list>
 #include <chrono>
+#include <sstream>
 using namespace std;
 using namespace std::chrono;
 const int MAX_SIZE = 15000;
 const int NUM_ITERATIONS = 15000; // Кількість ітерацій для кожного тесту
 
 
+
+bool isValidIP(const string& IP);
 void printMenu();
 void Append(int structureChoice, string fixedList[], int& fixedListSize, vector<string>& dynamicList, list<string>& linkedList, string IP);
 void Insert(int structureChoice, string fixedList[], int& fixedListSize, vector<string>& dynamicList, list<string>& linkedList, string IP, int index);
@@ -24,6 +27,7 @@ void demonstrationMode();
 
 
 int main() {
+
     int mode;
     cout << "Select mode:\n1. Basic Mode\n2. Demonstration mode \n3. Benchmark mode:\nEnter a number of mode: ";
     cin >> mode;
@@ -47,6 +51,7 @@ int main() {
 
 
 void basicMode(){
+
     string fixedList[MAX_SIZE];
     int fixedListSize = 0;
     vector<string> dynamicList;
@@ -54,6 +59,7 @@ void basicMode(){
 
     int structureChoice, choice, index;
     string IP;
+    bool k;
     cout << "Select structure:\n1. Fixed-size array\n2. Dynamic array\n3. Double linked list\nYour choice: ";
     cin >> structureChoice;
 
@@ -64,12 +70,21 @@ void basicMode(){
         switch (choice) {
             case 1:
                 cout << "Enter IPv4 to append: ";
-                cin >> IP;
+                do{
+                    cin >> IP;
+                    k = isValidIP(IP);
+                    if(!k) cout << "Invalid IPv4 input. Please try again.\n";
+                } while (!k);
                 Append(structureChoice, fixedList, fixedListSize, dynamicList, linkedList, IP);
                 break;
             case 2:
                 cout << "Enter index and IPv4 to insert: ";
-                cin >> index >> IP;
+                cin >> index;
+                do{
+                    cin >> IP;
+                    k = isValidIP(IP);
+                    if(!k) cout << "Invalid IPv4 input. Please try again.\n";
+                } while (!k);
                 Insert(structureChoice, fixedList, fixedListSize, dynamicList, linkedList, IP, index);
                 break;
             case 3:
@@ -84,7 +99,12 @@ void basicMode(){
                 break;
             case 5:
                 cout << "Enter index and new IPv4 to set: ";
-                cin >> index >> IP;
+                cin >> index;
+                do{
+                    cin >> IP;
+                    k = isValidIP(IP);
+                    if(!k) cout << "Invalid IPv4 input. Please try again.\n";
+                } while (!k);
                 Set(structureChoice, fixedList, fixedListSize, dynamicList, linkedList, IP, index);
                 break;
             case 6:
@@ -214,6 +234,7 @@ void benchmarkMode() {
 }
 
 void demonstrationMode() {
+
     cout << "Demonstration mode:\n\n";
 
     string fixedList[MAX_SIZE];
@@ -261,6 +282,19 @@ void demonstrationMode() {
 
 
 
+
+bool isValidIP(const string& IP) {
+    stringstream ss(IP);
+    string segment;
+    int num, segmentCount = 0;
+
+    while (getline(ss, segment, '.')) {
+        if (++segmentCount > 4) return false; // Більше ніж 4 сегменти
+        if (!(stringstream(segment) >> num)) return false; // Не числове значення
+        if (num <= 0 || num >= 255) return false; // Не в діапазоні [0, 255]
+    }
+    return segmentCount == 4; // Повинно бути рівно 4 сегменти
+}
 
 void printMenu() {
     cout << "\nChoose operation:\n"
