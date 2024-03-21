@@ -1,0 +1,119 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    string value;
+    Node* next;
+    Node(string value, Node* next = nullptr) : value(value), next(next) {}
+};
+
+struct LinkedList {
+    Node* start;
+    Node* end;
+    LinkedList() : start(nullptr), end(nullptr) {}
+
+    ~LinkedList() {
+        while (start) {
+            Node* temp = start;
+            start = start->next;
+            delete temp;
+        }
+    }
+
+    void append(string value) {
+        Node* newNode = new Node(value);
+        if (end) {
+            end->next = newNode;
+        } else {
+            start = newNode;
+        }
+        end = newNode;
+    }
+    void print() const {
+        Node* current = start;
+        while (current) {
+            cout << current->value << ", ";
+            current = current->next;
+        }
+        cout << endl;
+    }
+};
+
+LinkedList zip(const LinkedList& list1, const LinkedList& list2) {
+    LinkedList result;
+    Node* current1 = list1.start;
+    Node* current2 = list2.start;
+
+    while (current1 && current2) {
+        result.append(current1->value);
+        result.append(current2->value);
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+    return result;
+}
+
+void printPairs(const LinkedList& list);
+void fillList(LinkedList& list);
+void basicMode();
+
+int main() {
+    int mode;
+    cout << "Select mode:\n1. Basic Mode\n2. Demonstration mode \n3. Benchmark mode:\nEnter a number of mode: ";
+    cin >> mode;
+
+    switch (mode) {
+        case 1:
+            basicMode();
+            break;
+        case 2:
+            //demonstrationMode();
+            break;
+        case 3:
+            //benchmarkMode();
+            break;
+        default:
+            cerr << "Error! You enter incorrect mode\n";
+            break;
+    }
+    return 0;
+}
+
+void basicMode() {
+    LinkedList list1, list2;
+    cout << "Fill the first list (to exit enter 'exit'): " << endl;
+    fillList(list1);
+    cout << "Filled list 1: ";
+    list1.print();
+
+    cout << "Fill the second list (to exit enter 'exit'): " << endl;
+    fillList(list2);
+    cout << "Filled list 2: ";
+    list2.print();
+
+    LinkedList zippedList = zip(list1, list2);
+    cout << "Zipped List (pairs of elements): ";
+    printPairs(zippedList);
+}
+
+void fillList(LinkedList& list) {
+    while (true) {
+        string el;
+        cin >> el;
+        if (el == "exit") {
+            break;
+        } else {
+            list.append(el);
+        }
+    }
+}
+
+void printPairs(const LinkedList& list) {
+    Node* current = list.start;
+    while (current && current->next) {
+        cout << "(" << current->value << ", " << current->next->value << ") ";
+        current = current->next->next;
+    }
+    cout << endl;
+}
