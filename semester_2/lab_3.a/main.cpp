@@ -3,7 +3,11 @@
 #include <cmath>
 #include <algorithm>
 #include <random>
+#include <chrono>
+
 using namespace std;
+using namespace std::chrono;
+
 
 struct Point3D {
     double x, y, z;
@@ -51,7 +55,7 @@ int main() {
             demonstrationMode();
             break;
         case 2:
-            //benchmarkMode();
+            benchmarkMode();
             break;
         default:
             cerr << "Error! You enter incorrect mode\n";
@@ -113,7 +117,54 @@ void demonstrationMode() {
     printPoints(pointsStandartSort);
     cout << "\n";
 }
-void benchmarkMode(){}
+void benchmarkMode(){
+    size_t n = 200;
+    cout << "Benchmark mode started for 200 elements.\n\n";
+
+
+    // InsertionSort
+    vector<Point3D> pointsInsertion = generateRandomPoints(n);
+    auto start = high_resolution_clock::now();
+    InsertionSort(pointsInsertion);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "InsertionSort: " << duration.count() << " microseconds\n\n";
+
+
+    // QuickSort
+    vector<Point3D> pointsQuickSort = generateRandomPoints(n);
+    start = high_resolution_clock::now();
+    QuickSort(pointsQuickSort, 0, pointsQuickSort.size() - 1);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "QuickSort: " << duration.count() << " microseconds\n\n";
+
+
+    // MergeSort
+    vector<Point3D> pointsMergeSort = generateRandomPoints(n);
+    start = high_resolution_clock::now();
+    MergeSort(pointsMergeSort);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "MergeSort: " << duration.count() << " microseconds\n\n";
+
+    // CombinedSort
+    vector<Point3D> pointsCombinedSort = generateRandomPoints(n);
+    start = high_resolution_clock::now();
+    CombinatedSort(pointsCombinedSort);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "CombinedSort: " << duration.count() << " microseconds\n\n";
+
+
+    // StandartSort
+    vector<Point3D> pointsStandartSort = generateRandomPoints(n);
+    start = high_resolution_clock::now();
+    sort(pointsStandartSort.begin(), pointsStandartSort.end());
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "StandartSort: " << duration.count() << " microseconds\n\n";
+}
 
 void InsertionSort(vector<Point3D>& points) {
     int n = points.size();
