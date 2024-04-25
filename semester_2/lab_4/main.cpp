@@ -10,6 +10,9 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
+#include <cmath>
+#include <map>
 using namespace std;
 
 //Блок 0
@@ -41,6 +44,9 @@ struct BinaryTreeNode {
 };                                                          //№18
 void insert(BinaryTreeNode*& node, int value);                                        //№18
 void printBinaryTree(BinaryTreeNode* node, string prefix = "");                       //№18
+//Блок 5
+void preorderTraversal(BinaryTreeNode* node, vector<int>& result);                    //№21
+
 
 
 
@@ -48,34 +54,57 @@ void printBinaryTree(BinaryTreeNode* node, string prefix = "");                 
 
 
 int main() {
-    TreeNode* root = new TreeNode(1);
-    
+    /*TreeNode* root = new TreeNode(1);
+
     addChild(root, 2);
     addChild(root, 3);
-    
+
     addChild(root->children[0], 4);
     addChild(root->children[0], 5);
     addChild(root->children[1], 6);
-    
-    printTree(root);
-    
-    
-    
 
-    BinaryTreeNode* rooot = nullptr;
-    
-    insert(rooot, 10);
-    insert(rooot, 5);
-    insert(rooot, 15);
-    insert(rooot, 3);
-    insert(rooot, 7);
+    printTree(root);*/
+
+
+
+
+    /*BinaryTreeNode* rooot = nullptr;
+
+    insert(rooot, 1230);
+    insert(rooot, 7432);
+    insert(rooot, 3344);
+    insert(rooot, 315);
+    insert(rooot, 53);
+    insert(rooot, 138);
     insert(rooot, 12);
-    insert(rooot, 18);
-    
-    printBinaryTree(rooot);
+
+    printBinaryTree(rooot);*/
+
+
+
+
+    /*BinaryTreeNode* root = nullptr;
+    root = new BinaryTreeNode(1);
+    root->left = new BinaryTreeNode(2);
+    root->right = new BinaryTreeNode(3);
+    root->left->left = new BinaryTreeNode(4);
+    root->left->right = new BinaryTreeNode(5);
+    root->right->right = new BinaryTreeNode(6);
+
+    vector<int> result;
+    preorderTraversal(root, result);
+
+    cout << "Preorder traversal: ";
+    for (int value : result) {
+        cout << value << " ";
+    }
+    cout << endl;*/
 
     return 0;
 }
+
+
+
 
 
 
@@ -142,7 +171,7 @@ TreeNode* removeNodeByPath(TreeNode* root, const vector<int>& path) {
     TreeNode* parent = root;
     for (int i = 0; i < path.size() - 1; ++i) {
         if (path[i] < 0 || path[i] >= parent->children.size()) {
-            return nullptr; 
+            return nullptr;
         }
         parent = parent->children[path[i]];
     }
@@ -193,4 +222,11 @@ void printBinaryTree(BinaryTreeNode* node, string prefix) {
     cout << prefix << node->data << "\n";
     if (node->left) printBinaryTree(node->left, prefix + "Left: ");
     if (node->right) printBinaryTree(node->right, prefix + "Right: ");
+}
+void preorderTraversal(BinaryTreeNode* node, vector<int>& result) {
+    if (!node) return;
+
+    result.push_back(node->data);
+    preorderTraversal(node->left, result);
+    preorderTraversal(node->right, result);
 }
