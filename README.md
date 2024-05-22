@@ -1,1 +1,1 @@
-all uni inso will be placed here
+all uni info will be placed here
