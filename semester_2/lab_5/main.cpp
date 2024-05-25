@@ -17,8 +17,11 @@
 #include <limits>
 #include <set>
 #include <cstdlib>
+#include <chrono>
+
 
 using namespace std;
+using namespace std::chrono;
 
 const int INF = numeric_limits<int>::max();
 
@@ -87,11 +90,30 @@ void BFSForMSTMatrix(const GraphMatrix& graph, int startVertex);
 void BFSForMSTBitVector(const GraphBitVector& graph, int startVertex);
 
 void interactiveMode();
+void demoMode();
+void benchmarkMode();
 
 
 int main() {
     srand(time(0));
-    interactiveMode();
+    int mode;
+    cout << "Select mode:\n1. Interactive mode \n2. Demonstration mode\n3. Benchmark mode:\nEnter a number of mode: ";
+    cin >> mode;
+
+    switch (mode) {
+        case 1:
+            interactiveMode();
+            break;
+        case 2:
+            demoMode();
+            break;
+        case 3:
+            benchmarkMode();
+            break;
+        default:
+            cerr << "Error! You enter incorrect mode\n";
+            break;
+    }
     return 0;
 }
 
@@ -353,6 +375,204 @@ void interactiveMode() {
     delete matrixGraph;
     delete bitVectorGraph;
 }
+void demoMode() {
+    // Блок 0: Создание графов и добавление ребер
+    cout << "\n=== Demo Mode ===\n";
+
+    GraphMatrix matrixGraph(5);
+    addEdgeMatrix(matrixGraph, 0, 1, 2, false);
+    addEdgeMatrix(matrixGraph, 0, 4, 8, false);
+    addEdgeMatrix(matrixGraph, 1, 2, 3, false);
+    addEdgeMatrix(matrixGraph, 1, 3, 7, false);
+    addEdgeMatrix(matrixGraph, 2, 3, 1, false);
+    addEdgeMatrix(matrixGraph, 3, 4, 2, false);
+
+    cout << "Graph (Matrix Representation):\n";
+    printGraphMatrix(matrixGraph);
+
+    GraphBitVector bitVectorGraph(5);
+    addEdgeBitVector(bitVectorGraph, 0, 1, false);
+    addEdgeBitVector(bitVectorGraph, 0, 4, false);
+    addEdgeBitVector(bitVectorGraph, 1, 2, false);
+    addEdgeBitVector(bitVectorGraph, 1, 3, false);
+    addEdgeBitVector(bitVectorGraph, 2, 3, false);
+    addEdgeBitVector(bitVectorGraph, 3, 4, false);
+
+    cout << "Graph (Bit Vector Representation):\n";
+    printGraphBitVector(bitVectorGraph);
+
+    // Блок 1: Проверка связности графа
+    cout << "Check connectivity (Matrix): " << (isConnectedMatrix(matrixGraph) ? "Connected" : "Not Connected") << endl;
+    cout << "Check connectivity (Bit Vector): " << (isConnectedBitVector(bitVectorGraph) ? "Connected" : "Not Connected") << endl;
+
+    // Блок 2: Обход графа в глубину и ширину
+    cout << "DFS (Matrix): ";
+    DFSMatrix(matrixGraph, 0);
+
+    cout << "DFS (Bit Vector): ";
+    DFSBitVector(bitVectorGraph, 0);
+
+    cout << "BFS (Matrix): ";
+    BFSMatrix(matrixGraph, 0);
+
+    cout << "BFS (Bit Vector): ";
+    BFSBitVector(bitVectorGraph, 0);
+
+    // Блок 3: Алгоритм Дейкстры
+    cout << "Dijkstra (Matrix): ";
+    dijkstraMatrix(matrixGraph, 0);
+
+    cout << "Dijkstra (Bit Vector): ";
+    dijkstraBitVector(bitVectorGraph, 0);
+
+    // Блок 4: Топологическая сортировка
+    cout << "Topological Sort (Matrix): ";
+    topologicalSortMatrix(matrixGraph);
+
+    cout << "Topological Sort (Bit Vector): ";
+    topologicalSortBitVector(bitVectorGraph);
+
+    // Блок 5: Минимальное остовное дерево (на основе BFS)
+    cout << "MST using BFS (Matrix): ";
+    BFSForMSTMatrix(matrixGraph, 0);
+
+    cout << "MST using BFS (Bit Vector): ";
+    BFSForMSTBitVector(bitVectorGraph, 0);
+
+    // Блок 6: Алгоритм Краскала
+    Graph kruskalGraph = createGraph(5, 6);
+    addEdgeKruskal(kruskalGraph, 0, 1, 2);
+    addEdgeKruskal(kruskalGraph, 0, 4, 8);
+    addEdgeKruskal(kruskalGraph, 1, 2, 3);
+    addEdgeKruskal(kruskalGraph, 1, 3, 7);
+    addEdgeKruskal(kruskalGraph, 2, 3, 1);
+    addEdgeKruskal(kruskalGraph, 3, 4, 2);
+
+    cout << "Kruskal's MST: ";
+    KruskalMST(kruskalGraph);
+
+    cout << "\n=== End of Demo Mode ===\n";
+}
+void benchmarkMode() {
+    const int numVertices = 32;  // Установим лимит в 32 вершины для битового вектора
+    const int numEdges = 50;
+    cout << "Benchmark mode started for graph with " << numVertices << " vertices and " << numEdges << " edges.\n\n";
+
+    // Подготовка графов
+    GraphMatrix matrixGraph(numVertices);
+    GraphBitVector bitVectorGraph(numVertices);
+    generateRandomGraphMatrix(matrixGraph, numEdges, false);
+    generateRandomGraphBitVector(bitVectorGraph, numEdges, false);
+    Graph kruskalGraph = createGraph(numVertices, numEdges);
+    for (int i = 0; i < numEdges; ++i) {
+        addEdgeKruskal(kruskalGraph, rand() % numVertices, rand() % numVertices, rand() % 10 + 1);
+    }
+
+    // Время выполнения и использование памяти для каждого алгоритма и представления графа
+    auto start = high_resolution_clock::now();
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+
+    // Block 1: Проверка связности графа
+    cout << "Block 1: Connectivity Check\n";
+
+    start = high_resolution_clock::now();
+    isConnectedMatrix(matrixGraph);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix Connectivity: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    isConnectedBitVector(bitVectorGraph);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector Connectivity: " << duration.count() << " microseconds\n\n";
+
+    // Block 2: Обход графа в глубину и ширину
+    cout << "Block 2: Graph Traversal\n";
+
+    start = high_resolution_clock::now();
+    DFSMatrix(matrixGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix DFS: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    DFSBitVector(bitVectorGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector DFS: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    BFSMatrix(matrixGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix BFS: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    BFSBitVector(bitVectorGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector BFS: " << duration.count() << " microseconds\n\n";
+
+    // Block 3: Алгоритм Дейкстры
+    cout << "Block 3: Dijkstra's Algorithm\n";
+
+    start = high_resolution_clock::now();
+    dijkstraMatrix(matrixGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix Dijkstra: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    dijkstraBitVector(bitVectorGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector Dijkstra: " << duration.count() << " microseconds\n\n";
+
+    // Block 4: Топологическая сортировка
+    cout << "Block 4: Topological Sort\n";
+
+    start = high_resolution_clock::now();
+    topologicalSortMatrix(matrixGraph);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix Topological Sort: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    topologicalSortBitVector(bitVectorGraph);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector Topological Sort: " << duration.count() << " microseconds\n\n";
+
+    // Block 5: Минимальное остовное дерево (на основе BFS)
+    cout << "Block 5: Minimum Spanning Tree (BFS)\n";
+
+    start = high_resolution_clock::now();
+    BFSForMSTMatrix(matrixGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Matrix MST using BFS: " << duration.count() << " microseconds\n\n";
+
+    start = high_resolution_clock::now();
+    BFSForMSTBitVector(bitVectorGraph, 0);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Bit Vector MST using BFS: " << duration.count() << " microseconds\n\n";
+
+    // Block 6: Алгоритм Краскала
+    cout << "Block 6: Kruskal's Algorithm\n";
+
+    start = high_resolution_clock::now();
+    KruskalMST(kruskalGraph);
+    stop = high_resolution_clock::now();
+    duration = duration_cast<microseconds>(stop - start);
+    cout << "Kruskal's MST: " << duration.count() << " microseconds\n\n";
+
+    cout << "Benchmark mode completed.\n";
+}
+
+
 
 
 void addEdgeMatrix(GraphMatrix& graph, int src, int dest, int weight, bool directed) {
