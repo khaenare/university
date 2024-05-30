@@ -45,7 +45,8 @@ struct TwoThreeNode {
     int numKeys;
 };
 
-// Функции для списка на основе узла связного списка
+// Функции для связного списка
+Node* createLinkedList();
 void addElement(Node*& head, const string& value);
 void removeElement(Node*& head, const string& value);
 Node* findElement(Node* head, const string& value);
@@ -90,7 +91,6 @@ TwoThreeNode* createTwoThreeTree();
 TwoThreeNode* findLeaf(TwoThreeNode* node, const string& value);
 TwoThreeNode* splitNode(TwoThreeNode* parent, TwoThreeNode* node, const string& value);
 TwoThreeNode* addElement(TwoThreeNode* root, const string& value);
-TwoThreeNode* removeElement(TwoThreeNode* root, const string& value);
 bool findElement(TwoThreeNode* root, const string& value);
 void findElementsInRange(TwoThreeNode* root, const string& start, const string& end);
 void printList(TwoThreeNode* root);
@@ -99,16 +99,38 @@ void fillTreeWithRandomElements(TwoThreeNode*& root, int count);
 
 
 void interactiveMode();
+void demoMode();
 
 
 
 int main() {
-    interactiveMode();
+    int mode;
+    cout << "Select mode:\n1. Interactive mode \n2. Demonstration mode\n3. Benchmark mode:\nEnter a number of mode: ";
+    cin >> mode;
+
+    switch (mode) {
+        case 1:
+            interactiveMode();
+            break;
+        case 2:
+            demoMode();
+            break;
+        case 3:
+            //benchmarkMode();
+            break;
+        default:
+            cerr << "Error! You enter incorrect mode\n";
+            break;
+    }
     return 0;
 }
 
 
-// Функции для списка на основе узла связного списка
+// Функции для связного списка
+Node* createLinkedList() {
+    return nullptr;
+}
+
 void addElement(Node*& head, const string& value) {
     Node* newNode = new Node{value, nullptr};
     if (!head || head->data > value) {
@@ -585,10 +607,6 @@ TwoThreeNode* addElement(TwoThreeNode* root, const string& value) {
     return splitNode(nullptr, leaf, value);
 }
 
-TwoThreeNode* removeElement(TwoThreeNode* root, const string& value) {
-    return root;
-}
-
 bool findElement(TwoThreeNode* root, const string& value) {
     if (!root) return false;
     if (root->data1 == value || (root->numKeys == 2 && root->data2 == value)) return true;
@@ -694,7 +712,7 @@ void interactiveMode() {
                     } else if (structureChoice == 4) {
                         avlTree = removeElement(avlTree, value);
                     } else if (structureChoice == 5) {
-                        twoThreeTree = removeElement(twoThreeTree, value);
+                        cout << "Not implemented :(";
                     }
                     break;
                 case 3:
@@ -785,4 +803,80 @@ void interactiveMode() {
             }
         } while (operationChoice != 0);
     } while (structureChoice != 0);
+}
+
+void demoMode() {
+    // Демонстрация для связного списка
+    cout << "Demonstration of how a linked list works:\n";
+    Node* linkedList = createLinkedList();
+    cout << "Adding elements: \n";
+    addElement(linkedList, "B");
+    addElement(linkedList, "A");
+    addElement(linkedList, "AB");
+    addElement(linkedList, "AA");
+    printList(linkedList);
+    cout << "Removal of AA: \n";
+    removeElement(linkedList, "AA");
+    printList(linkedList);
+    cout << "Search from A to B: \n";
+    findElementsInRange(linkedList, "A", "B");
+
+    // Демонстрация для списка на основе массива
+    cout << "\nDemonstration of array-based list operation:\n";
+    ArrayList arrayList = createArrayList();
+    cout << "Adding elements: \n";
+    addElement(arrayList, "B");
+    addElement(arrayList, "A");
+    addElement(arrayList, "AB");
+    addElement(arrayList, "AA");
+    printList(arrayList);
+    cout << "Removal of AA: \n";
+    removeElement(arrayList, "AA");
+    printList(arrayList);
+    cout << "Search from A to B: \n";
+    findElementsInRange(arrayList, "A", "B");
+
+    // Демонстрация для бинарного дерева поиска
+    cout << "\nDemonstration of binary search tree operation:\n";
+    TreeNode* bst = createBinarySearchTree();
+    cout << "Adding elements: \n";
+    bst = addElement(bst, "B");
+    bst = addElement(bst, "A");
+    bst = addElement(bst, "AB");
+    bst = addElement(bst, "AA");
+    printList(bst); cout << endl;
+    cout << "Removal of AA: \n";
+    bst = removeElement(bst, "AA");
+    printList(bst); cout << endl;
+    cout << "Search from A to B: \n";
+    findElementsInRange(bst, "A", "B");
+    cout << endl;
+
+    // Демонстрация для АВЛ-дерева
+    cout << "\nDemonstration of AVL-tree operation:\n";
+    AVLNode* avlTree = createAVLTree();
+    cout << "Adding elements: \n";
+    avlTree = addElement(avlTree, "B");
+    avlTree = addElement(avlTree, "A");
+    avlTree = addElement(avlTree, "AB");
+    avlTree = addElement(avlTree, "AA");
+    printList(avlTree); cout << endl;
+    cout << "Removal of AA: \n";
+    avlTree = removeElement(avlTree, "AA");
+    printList(avlTree); cout << endl;
+    cout << "Search from A to B: \n";
+    findElementsInRange(avlTree, "A", "B");
+    cout << endl;
+
+    // Демонстрация для 2-3 дерева
+    cout << "\nDemonstration of the work of 2-3 trees:\n";
+    TwoThreeNode* twoThreeTree = createTwoThreeTree();
+    cout << "Adding elements: \n";
+    twoThreeTree = addElement(twoThreeTree, "B");
+    twoThreeTree = addElement(twoThreeTree, "A");
+    twoThreeTree = addElement(twoThreeTree, "AB");
+    twoThreeTree = addElement(twoThreeTree, "AA");
+    printList(twoThreeTree); cout << endl;
+    cout << "Search from A to B: \n";
+    findElementsInRange(twoThreeTree, "A", "B");
 }
