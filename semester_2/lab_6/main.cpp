@@ -1,12 +1,16 @@
 //Текстові рядки, лексикографічний порядок, за зростанням (“A”<”AA”<”AB”<”B”)
 
+#include <chrono>
 #include <iostream>
 #include <string>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <windows.h>
+#include <psapi.h>
 
 using namespace std;
+using namespace std::chrono;
 
 // Структура для узла связного списка
 struct Node {
@@ -96,10 +100,41 @@ void findElementsInRange(TwoThreeNode* root, const string& start, const string& 
 void printList(TwoThreeNode* root);
 void fillTreeWithRandomElements(TwoThreeNode*& root, int count);
 
+//херня для бенчмарка
+size_t getMemoryUsage() {
+    PROCESS_MEMORY_COUNTERS memInfo;
+    GetProcessMemoryInfo(GetCurrentProcess(), &memInfo, sizeof(memInfo));
+    return memInfo.PeakWorkingSetSize;
+}
+template<typename Func, typename... Args>
+long long measureTime(Func func, Args&&... args) {
+    auto start = high_resolution_clock::now();
+    func(forward<Args>(args)...);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    return duration.count();
+}
+void testLinkedList(Node*& head) {
+    fillListWithRandomElements(head, 1000);
+}
+void testArrayList(ArrayList& list) {
+    fillListWithRandomElements(list, 1000);
+}
+void testBST(TreeNode*& root) {
+    fillTreeWithRandomElements(root, 1000);
+}
+void testAVLTree(AVLNode*& root) {
+    fillTreeWithRandomElements(root, 1000);
+}
+void testTwoThreeTree(TwoThreeNode*& root) {
+    fillTreeWithRandomElements(root, 1000);
+}
+
 
 
 void interactiveMode();
 void demoMode();
+void benchmarkMode();
 
 
 
@@ -116,7 +151,7 @@ int main() {
             demoMode();
             break;
         case 3:
-            //benchmarkMode();
+            benchmarkMode();
             break;
         default:
             cerr << "Error! You enter incorrect mode\n";
@@ -879,4 +914,42 @@ void demoMode() {
     printList(twoThreeTree); cout << endl;
     cout << "Search from A to B: \n";
     findElementsInRange(twoThreeTree, "A", "B");
+}
+
+void benchmarkMode() {
+    Node* linkedList = createLinkedList();
+    ArrayList arrayList = createArrayList();
+    TreeNode* bst = createBinarySearchTree();
+    AVLNode* avlTree = createAVLTree();
+    TwoThreeNode* twoThreeTree = createTwoThreeTree();
+
+    cout << "Benchmark for Linked List:\n";
+    auto timeLL = measureTime(testLinkedList, linkedList);
+    auto memoryLL = getMemoryUsage();
+    cout << "Time: " << timeLL << " microseconds\n";
+    cout << "Memory: " << memoryLL << " bytes\n\n";
+
+    cout << "Benchmark for Array List:\n";
+    auto timeAL = measureTime(testArrayList, arrayList);
+    auto memoryAL = getMemoryUsage();
+    cout << "Time: " << timeAL << " microseconds\n";
+    cout << "Memory: " << memoryAL << " bytes\n\n";
+
+    cout << "Benchmark for Binary Search Tree:\n";
+    auto timeBST = measureTime(testBST, bst);
+    auto memoryBST = getMemoryUsage();
+    cout << "Time: " << timeBST << " microseconds\n";
+    cout << "Memory: " << memoryBST << " bytes\n\n";
+
+    cout << "Benchmark for AVL Tree:\n";
+    auto timeAVL = measureTime(testAVLTree, avlTree);
+    auto memoryAVL = getMemoryUsage();
+    cout << "Time: " << timeAVL << " microseconds\n";
+    cout << "Memory: " << memoryAVL << " bytes\n\n";
+
+    cout << "Benchmark for 2-3 Tree:\n";
+    auto timeTT = measureTime(testTwoThreeTree, twoThreeTree);
+    auto memoryTT = getMemoryUsage();
+    cout << "Time: " << timeTT << " microseconds\n";
+    cout << "Memory: " << memoryTT << " bytes\n\n";
 }
