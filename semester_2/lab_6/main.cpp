@@ -1,3 +1,5 @@
+//Текстові рядки, лексикографічний порядок, за зростанням (“A”<”AA”<”AB”<”B”)
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
