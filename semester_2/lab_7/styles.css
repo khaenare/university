@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Adjusted to move the interface to the top */
+    align-items: flex-start;
     height: 100vh;
     background-color: #f0f0f0;
     margin: 0;
@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: scale(1.1); /* Scale down slightly */
+    transform: scale(1.1);
 }
 
 .header {
@@ -22,30 +22,30 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    padding: 8px; /* Reduced padding */
+    padding: 8px;
     background-color: #333;
     color: #fff;
-    margin-bottom: 20px; /* Reduced margin */
+    margin-bottom: 20px;
 }
 
 .controls {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 8px; /* Reduced margin */
+    margin-bottom: 8px;
 }
 
 #sudoku-grid {
     display: grid;
-    grid-template-columns: repeat(9, 45px); /* Reduced size */
-    grid-template-rows: repeat(9, 45px); /* Reduced size */
+    grid-template-columns: repeat(9, 45px);
+    grid-template-rows: repeat(9, 45px);
     gap: 0;
-    margin-top: 20px; /* Reduced margin */
+    margin-top: 20px;
 }
 
 #sudoku-grid div {
-    width: 45px; /* Reduced size */
-    height: 45px; /* Reduced size */
+    width: 45px;
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,14 +67,13 @@ body {
 }
 
 #sudoku-grid div.selected.highlight {
-    background-color: #81e3ff; /* Increased saturation for intersection */
+    background-color: #81e3ff;
 }
 
 #sudoku-grid div.error {
     background-color: #ffaaaa;
 }
 
-/* Add thick borders around 3x3 squares */
 #sudoku-grid div:nth-child(3n+1) {
     border-left: 3px solid #000;
 }
@@ -102,25 +101,29 @@ body {
 }
 
 button, select {
-    padding: 10px; /* Reduced padding */
-    margin: 5px; /* Reduced margin */
+    padding: 10px;
+    margin: 5px;
     cursor: pointer;
 }
 
 .number-pad {
     display: flex;
-    margin-top: 15px; /* Reduced margin */
+    margin-top: 15px;
 }
 
 .number-button {
-    width: 45px; /* Reduced size */
-    height: 45px; /* Reduced size */
-    margin: 0 4px; /* Reduced margin */
-    font-size: 20px; /* Reduced font size */
+    width: 45px;
+    height: 45px;
+    margin: 0 4px;
+    font-size: 20px;
     cursor: pointer;
 }
 
 .number-button.disabled {
     background-color: #d3d3d3;
     cursor: not-allowed;
+}
+
+.hidden {
+    display: none;
 }
