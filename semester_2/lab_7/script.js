@@ -4,13 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const difficultySelector = document.getElementById('difficulty');
     const timeDisplay = document.getElementById('time');
     const bestTimeDisplay = document.getElementById('best-time');
+    const errorCountDisplay = document.getElementById('error-count');
+    const numberPad = document.querySelector('.number-pad');
     const numberButtons = document.querySelectorAll('.number-button');
 
     let timer;
     let startTime;
     let selectedCell = null;
     let solution = [];
-    let numberCount = Array(10).fill(0); // Array to keep track of number counts
+    let numberCount = Array(10).fill(0); 
+    let errorCount = 0; 
+    let maxErrors = 3;
 
     function startTimer() {
         startTime = new Date();
@@ -45,13 +49,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function newGame() {
         stopTimer();
         grid.innerHTML = '';
+        numberPad.classList.add('hidden'); 
         const difficulty = difficultySelector.value;
         const { puzzle, solved } = generateSudoku(difficulty);
         solution = solved;
         numberCount = Array(10).fill(0);
+        errorCount = 0; 
+        maxErrors = getMaxErrors(difficulty); 
+        errorCountDisplay.textContent = `0 / ${maxErrors}`; 
         renderGrid(puzzle);
+        numberPad.classList.remove('hidden'); 
         startTimer();
         loadBestTime(difficulty);
+    }
+
+    function getMaxErrors(difficulty) {
+        switch (difficulty) {
+            case 'easy':
+                return 7;
+            case 'medium':
+                return 5;
+            case 'hard':
+                return 3;
+            default:
+                return 3;
+        }
     }
 
     function renderGrid(puzzle) {
@@ -104,15 +126,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fillCell(number) {
         if (selectedCell && selectedCell.contentEditable === "true" && !selectedCell.classList.contains('fixed')) {
-            selectedCell.textContent = number;
-            checkError(selectedCell);
-            numberCount[number]++;
-            updateNumberButtons();
-            checkCompletion();
+            const row = selectedCell.dataset.row;
+            const col = selectedCell.dataset.col;
+            const isCorrect = solution[row][col] === parseInt(number, 10);
+
+            if (isCorrect) {
+                selectedCell.textContent = number;
+                numberCount[number]++;
+                checkError(selectedCell, isCorrect);
+                updateNumberButtons();
+                checkCompletion();
+            } else {
+                selectedCell.textContent = number;
+                checkError(selectedCell, isCorrect);
+            }
         }
     }
 
-    function checkError(cell) {
+    function checkError(cell, isCorrect) {
         const row = cell.dataset.row;
         const col = cell.dataset.col;
         const value = parseInt(cell.textContent, 10);
@@ -136,7 +167,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isError) {
             cell.classList.add('error');
-        } else {
+            errorCount++;
+            errorCountDisplay.textContent = `${errorCount} / ${maxErrors}`;
+            if (errorCount >= maxErrors) {
+                stopTimer();
+                alert('Ви програли! Досягнуто максимальну кількість помилок, починаємо нову гру:(');
+                setTimeout(newGame, 1000);
+            }
+        } else if (isCorrect) {
             cell.classList.remove('error');
         }
     }
@@ -156,8 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    newGameButton.addEventListener('click', newGame);
-    difficultySelector.addEventListener('change', newGame);
+    newGameButton.addEventListener('click', () => {
+        newGame();
+    });
+
+    difficultySelector.addEventListener('change', () => {
+        newGame();
+    });
 
     numberButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -167,4 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+    
+    newGame();
 });
