@@ -11,7 +11,8 @@ function createFullBoard() {
 }
 
 function removeNumbers(board, difficulty) {
-    const level = { easy: 36, medium: 46, hard: 56 }[difficulty];
+    const levels = { easy: 36, medium: 46, hard: 56 };
+    const level = levels[difficulty] || levels['easy'];
     let puzzle = board.map(row => [...row]);
 
     let attempts = level;
@@ -20,8 +21,15 @@ function removeNumbers(board, difficulty) {
         const col = Math.floor(Math.random() * 9);
 
         if (puzzle[row][col] !== 0) {
+            const backup = puzzle[row][col];
             puzzle[row][col] = 0;
-            attempts--;
+
+            const copy = puzzle.map(row => [...row]);
+            if (!hasUniqueSolution(copy)) {
+                puzzle[row][col] = backup;
+            } else {
+                attempts--;
+            }
         }
     }
     return puzzle;
@@ -32,8 +40,9 @@ function solveSudoku(board) {
     if (!emptyPos) return true;
 
     const [row, col] = emptyPos;
+    const numbers = shuffle(Array.from({ length: 9 }, (_, i) => i + 1));
 
-    for (let num = 1; num <= 9; num++) {
+    for (let num of numbers) {
         if (isValid(board, num, row, col)) {
             board[row][col] = num;
 
@@ -68,4 +77,39 @@ function isValid(board, num, row, col) {
         }
     }
     return true;
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function hasUniqueSolution(board) {
+    let solutions = 0;
+    function countSolutions(board) {
+        const emptyPos = findEmptyPosition(board);
+        if (!emptyPos) {
+            solutions++;
+            return;
+        }
+
+        const [row, col] = emptyPos;
+        const numbers = shuffle(Array.from({ length: 9 }, (_, i) => i + 1));
+
+        for (let num of numbers) {
+            if (isValid(board, num, row, col)) {
+                board[row][col] = num;
+
+                countSolutions(board);
+                if (solutions > 1) return;
+
+                board[row][col] = 0;
+            }
+        }
+    }
+    countSolutions(board);
+    return solutions === 1;
 }
