@@ -20,9 +20,10 @@
         <h1>Судоку</h1>
         <div class="timer">Час: <span id="time">00:00</span></div>
         <div class="score">Найкращий час: <span id="best-time">Дані завантажуються...</span></div>
+        <div class="errors">Помилки: <span id="error-count">Дані завантажуються...</span></div>
     </div>
     <div id="sudoku-grid"></div>
-    <div class="number-pad">
+    <div class="number-pad hidden">
         <button class="number-button" data-number="1">1</button>
         <button class="number-button" data-number="2">2</button>
         <button class="number-button" data-number="3">3</button>
@@ -35,7 +36,6 @@
     </div>
 </div>
 <script src="sudoku-generator.js"></script>
-<script src="records.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
