@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
+#include <cmath>
 using namespace std;
 
 // Структура для представлення матриці
@@ -23,6 +24,41 @@ typedef struct MTX {
         delete[] elements;
     }
 } MTX;
+
+// Функція для визначення найближчого степеня 2, який більший або дорівнює даному числу
+int nextPowerOf2(int n) {
+    if (n <= 0) return 1;
+    int power = 1;
+    while (power < n) power *= 2;
+    return power;
+}
+
+// Функція для доповнення матриці до найближчого розміру, який є степенем 2
+MTX padMatrix(MTX& original) {
+    int newSize = nextPowerOf2(original.size);
+    if (newSize == original.size) {
+        return original; // Якщо розмір вже є степенем 2, повертаємо оригінальну матрицю
+    }
+
+    MTX padded(newSize);
+    for (int i = 0; i < original.size; ++i) {
+        for (int j = 0; j < original.size; ++j) {
+            padded.elements[i][j] = original.elements[i][j]; // Копіюємо елементи
+        }
+    }
+    return padded;
+}
+
+// Функція для видалення нульових доповнень після обчислення оберненої матриці
+MTX trimMatrix(MTX& padded, int originalSize) {
+    MTX trimmed(originalSize);
+    for (int i = 0; i < originalSize; ++i) {
+        for (int j = 0; j < originalSize; ++j) {
+            trimmed.elements[i][j] = padded.elements[i][j]; // Копіюємо лише необхідну частину
+        }
+    }
+    return trimmed;
+}
 
 // Функція для додавання двох матриць
 MTX addMatrices(MTX A, MTX B) {
@@ -196,11 +232,11 @@ MTX computeInverseLU(MTX inputMatrix) {
 
 int main() {
     int size;
-    cout << "Enter the size of the matrix (must be a power of 2): ";
+    cout << "Enter the size of the matrix: ";
     cin >> size;
 
-    if ((size & (size - 1)) != 0 || size <= 0) {
-        cout << "Matrix size must be a power of 2." << endl;
+    if (size <= 0) {
+        cout << "Matrix size must be a positive integer." << endl;
         return 1;
     }
 
@@ -212,12 +248,15 @@ int main() {
         }
     }
 
+    MTX paddedMatrix = padMatrix(inputMatrix);
+
     try {
-        MTX inverseMatrix = computeInverseLU(inputMatrix);
+        MTX inverseMatrix = computeInverseLU(paddedMatrix);
+        MTX trimmedInverse = trimMatrix(inverseMatrix, size);
         cout << "\nThe inverse of the matrix is:\n";
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
-                cout << fixed << setprecision(6) << inverseMatrix.elements[i][j] << " ";
+                cout << fixed << setprecision(6) << trimmedInverse.elements[i][j] << " ";
             }
             cout << endl;
         }
