@@ -7,16 +7,16 @@ using namespace std;
 const double EPSILON = 1e-9; // Поріг для перевірки малих значень
 
 // Структура для представлення матриці
+template <typename T>
 struct Matrix {
     int size; // Розмір матриці
-    double** elements; // Двовимірний масив для зберігання елементів матриці
+    T** elements; // Двовимірний масив для зберігання елементів матриці
 
     // Конструктор для створення матриці
-    Matrix(int size) {
-        this->size = size;
-        elements = new double*[size];
+    Matrix(int size) : size(size) {
+        elements = new T*[size];
         for (int i = 0; i < size; i++)
-            elements[i] = new double[size]();
+            elements[i] = new T[size]();
     }
 
     // Деструктор для звільнення пам'яті
@@ -36,9 +36,10 @@ int nextPowerOf2(int n) {
 }
 
 // Функція для доповнення матриці до найближчого розміру, який є степенем 2
-Matrix padMatrix(Matrix& original) {
+template <typename T>
+Matrix<T> padMatrix(Matrix<T>& original) {
     int newSize = nextPowerOf2(original.size);
-    Matrix padded(newSize);
+    Matrix<T> padded(newSize);
     for (int i = 0; i < original.size; ++i) {
         for (int j = 0; j < original.size; ++j) {
             padded.elements[i][j] = original.elements[i][j]; // Копіюємо елементи
@@ -48,8 +49,9 @@ Matrix padMatrix(Matrix& original) {
 }
 
 // Функція для видалення нульових доповнень після обчислення оберненої матриці
-Matrix trimMatrix(Matrix& padded, int originalSize) {
-    Matrix trimmed(originalSize);
+template <typename T>
+Matrix<T> trimMatrix(Matrix<T>& padded, int originalSize) {
+    Matrix<T> trimmed(originalSize);
     for (int i = 0; i < originalSize; ++i) {
         for (int j = 0; j < originalSize; ++j) {
             trimmed.elements[i][j] = padded.elements[i][j]; // Копіюємо лише необхідну частину
@@ -58,42 +60,9 @@ Matrix trimMatrix(Matrix& padded, int originalSize) {
     return trimmed;
 }
 
-// Функція для додавання двох матриць
-Matrix addMatrices(Matrix A, Matrix B) {
-    Matrix C(A.size);
-    for (int i = 0; i < A.size; i++) {
-        for (int j = 0; j < A.size; j++) {
-            C.elements[i][j] = A.elements[i][j] + B.elements[i][j];
-        }
-    }
-    return C;
-}
-
-// Функція для віднімання двох матриць
-Matrix subtractMatrices(Matrix A, Matrix B) {
-    Matrix C(A.size);
-    for (int i = 0; i < A.size; i++) {
-        for (int j = 0; j < A.size; j++) {
-            C.elements[i][j] = A.elements[i][j] - B.elements[i][j];
-        }
-    }
-    return C;
-}
-
-// Функція для розбиття матриці на підматриці
-Matrix splitMatrix(Matrix A, int startRow, int startCol) {
-    int halfSize = A.size / 2;
-    Matrix subMatrix(halfSize);
-    for (int i = 0; i < halfSize; i++) {
-        for (int j = 0; j < halfSize; j++) {
-            subMatrix.elements[i][j] = A.elements[startRow + i][startCol + j];
-        }
-    }
-    return subMatrix;
-}
-
-// Функція для заповнення підматриці в матрицю
-Matrix fillSubMatrix(Matrix C, Matrix subMatrix, int startRow, int startCol) {
+// Заповнення підматриці у більшу матрицю
+template <typename T>
+Matrix<T> fillSubMatrix(Matrix<T> C, Matrix<T> subMatrix, int startRow, int startCol) {
     for (int i = 0; i < subMatrix.size; i++) {
         for (int j = 0; j < subMatrix.size; j++) {
             C.elements[i + startRow][j + startCol] = subMatrix.elements[i][j];
@@ -103,8 +72,9 @@ Matrix fillSubMatrix(Matrix C, Matrix subMatrix, int startRow, int startCol) {
 }
 
 // Просте множення матриць
-Matrix simpleMultiply(Matrix A, Matrix B) {
-    Matrix C(A.size);
+template <typename T>
+Matrix<T> simpleMultiply(Matrix<T> A, Matrix<T> B) {
+    Matrix<T> C(A.size);
     for (int i = 0; i < A.size; ++i) {
         for (int j = 0; j < A.size; ++j) {
             for (int k = 0; k < A.size; ++k) {
@@ -116,40 +86,37 @@ Matrix simpleMultiply(Matrix A, Matrix B) {
 }
 
 // Алгоритм Штрассена для множення матриць
-Matrix strassenMultiply(Matrix A, Matrix B) {
+template <typename T>
+Matrix<T> strassenMultiply(Matrix<T> A, Matrix<T> B) {
     if (A.size == 2) {
-        return simpleMultiply(A, B); // Базовий випадок для малих матриць
+        return simpleMultiply(A, B);
     }
 
     int halfSize = A.size / 2;
 
-    // Розбиття матриць на підматриці
-    Matrix A11 = splitMatrix(A, 0, 0);
-    Matrix A12 = splitMatrix(A, 0, halfSize);
-    Matrix A21 = splitMatrix(A, halfSize, 0);
-    Matrix A22 = splitMatrix(A, halfSize, halfSize);
-    Matrix B11 = splitMatrix(B, 0, 0);
-    Matrix B12 = splitMatrix(B, 0, halfSize);
-    Matrix B21 = splitMatrix(B, halfSize, 0);
-    Matrix B22 = splitMatrix(B, halfSize, halfSize);
+    Matrix<T> A11 = splitMatrix(A, 0, 0);
+    Matrix<T> A12 = splitMatrix(A, 0, halfSize);
+    Matrix<T> A21 = splitMatrix(A, halfSize, 0);
+    Matrix<T> A22 = splitMatrix(A, halfSize, halfSize);
+    Matrix<T> B11 = splitMatrix(B, 0, 0);
+    Matrix<T> B12 = splitMatrix(B, 0, halfSize);
+    Matrix<T> B21 = splitMatrix(B, halfSize, 0);
+    Matrix<T> B22 = splitMatrix(B, halfSize, halfSize);
 
-    // Обчислення проміжних матриць
-    Matrix M1 = strassenMultiply(addMatrices(A11, A22), addMatrices(B11, B22));
-    Matrix M2 = strassenMultiply(addMatrices(A21, A22), B11);
-    Matrix M3 = strassenMultiply(A11, subtractMatrices(B12, B22));
-    Matrix M4 = strassenMultiply(A22, subtractMatrices(B21, B11));
-    Matrix M5 = strassenMultiply(addMatrices(A11, A12), B22);
-    Matrix M6 = strassenMultiply(subtractMatrices(A21, A11), addMatrices(B11, B12));
-    Matrix M7 = strassenMultiply(subtractMatrices(A12, A22), addMatrices(B21, B22));
+    Matrix<T> M1 = strassenMultiply(addMatrices(A11, A22), addMatrices(B11, B22));
+    Matrix<T> M2 = strassenMultiply(addMatrices(A21, A22), B11);
+    Matrix<T> M3 = strassenMultiply(A11, subtractMatrices(B12, B22));
+    Matrix<T> M4 = strassenMultiply(A22, subtractMatrices(B21, B11));
+    Matrix<T> M5 = strassenMultiply(addMatrices(A11, A12), B22);
+    Matrix<T> M6 = strassenMultiply(subtractMatrices(A21, A11), addMatrices(B11, B12));
+    Matrix<T> M7 = strassenMultiply(subtractMatrices(A12, A22), addMatrices(B21, B22));
 
-    // Комбінування результатів
-    Matrix C(A.size);
-    Matrix C11 = subtractMatrices(addMatrices(addMatrices(M1, M4), M7), M5);
-    Matrix C12 = addMatrices(M3, M5);
-    Matrix C21 = addMatrices(M2, M4);
-    Matrix C22 = subtractMatrices(addMatrices(addMatrices(M1, M3), M6), M2);
+    Matrix<T> C(A.size);
+    Matrix<T> C11 = subtractMatrices(addMatrices(addMatrices(M1, M4), M7), M5);
+    Matrix<T> C12 = addMatrices(M3, M5);
+    Matrix<T> C21 = addMatrices(M2, M4);
+    Matrix<T> C22 = subtractMatrices(addMatrices(addMatrices(M1, M3), M6), M2);
 
-    // Заповнення підматриць у результат
     C = fillSubMatrix(C, C11, 0, 0);
     C = fillSubMatrix(C, C12, 0, halfSize);
     C = fillSubMatrix(C, C21, halfSize, 0);
@@ -159,11 +126,12 @@ Matrix strassenMultiply(Matrix A, Matrix B) {
 }
 
 // Функція для знаходження оберненої матриці за допомогою LU-розкладу
-Matrix computeInverseLU(Matrix inputMatrix, int originalSize) {
+template <typename T>
+Matrix<T> computeInverseLU(Matrix<T> inputMatrix, int originalSize) {
     int size = inputMatrix.size;
-    Matrix lower(size);
-    Matrix upper(size);
-    Matrix inverse(size);
+    Matrix<T> lower(size);
+    Matrix<T> upper(size);
+    Matrix<T> inverse(size);
 
     // Ініціалізація матриць L та U
     for (int i = 0; i < size; ++i) {
@@ -176,7 +144,7 @@ Matrix computeInverseLU(Matrix inputMatrix, int originalSize) {
 
     // LU-розклад
     for (int i = 0; i < originalSize; ++i) {
-        // Верхня трикутна матриця U
+        // Визначення верхньої трикутної матриці U
         for (int j = i; j < originalSize; ++j) {
             upper.elements[i][j] = inputMatrix.elements[i][j];
             for (int k = 0; k < i; ++k) {
@@ -189,7 +157,7 @@ Matrix computeInverseLU(Matrix inputMatrix, int originalSize) {
             throw runtime_error("Matrix is nearly singular and cannot be inverted.");
         }
 
-        // Нижня трикутна матриця L
+        // Визначення нижньої трикутної матриці L
         for (int j = i + 1; j < originalSize; ++j) {
             lower.elements[j][i] = inputMatrix.elements[j][i];
             for (int k = 0; k < i; ++k) {
@@ -201,11 +169,11 @@ Matrix computeInverseLU(Matrix inputMatrix, int originalSize) {
 
     // Знаходження оберненої матриці за допомогою прямої та зворотної підстановки
     for (int i = 0; i < originalSize; ++i) {
-        Matrix identity(size);
+        Matrix<T> identity(size);
         identity.elements[i][i] = 1;
 
         // Прямий хід для знаходження вектора y (Ly = e)
-        Matrix y(size);
+        Matrix<T> y(size);
         for (int j = 0; j < originalSize; ++j) {
             y.elements[j][0] = identity.elements[j][i];
             for (int k = 0; k < j; ++k) {
@@ -214,7 +182,7 @@ Matrix computeInverseLU(Matrix inputMatrix, int originalSize) {
         }
 
         // Зворотний хід для знаходження вектора x (Ux = y)
-        Matrix x(size);
+        Matrix<T> x(size);
         for (int j = originalSize - 1; j >= 0; --j) {
             x.elements[j][0] = y.elements[j][0];
             for (int k = j + 1; k < originalSize; ++k) {
@@ -242,7 +210,7 @@ int main() {
         return 1;
     }
 
-    Matrix inputMatrix(size);
+    Matrix<double> inputMatrix(size);
     cout << "Enter elements of the matrix:\n";
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
@@ -250,11 +218,11 @@ int main() {
         }
     }
 
-    Matrix paddedMatrix = padMatrix(inputMatrix);
+    Matrix<double> paddedMatrix = padMatrix(inputMatrix);
 
     try {
-        Matrix inverseMatrix = computeInverseLU(paddedMatrix, size);
-        Matrix trimmedInverse = trimMatrix(inverseMatrix, size);
+        Matrix<double> inverseMatrix = computeInverseLU(paddedMatrix, size);
+        Matrix<double> trimmedInverse = trimMatrix(inverseMatrix, size);
         cout << "\nThe inverse of the matrix is:\n";
         for (int i = 0; i < size; ++i) {
             for (int j = 0; j < size; ++j) {
@@ -268,3 +236,4 @@ int main() {
 
     return 0;
 }
+
