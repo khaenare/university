@@ -4,19 +4,19 @@ using namespace std;
 
 template<typename T>
 T** createMatrix(int size) {
-    T** mat = new T*[size];
+    T** matrix = new T*[size]; 
     for (int index = 0; index < size; ++index) {
-        mat[index] = new T[size];
+        matrix[index] = new T[size]; 
     }
-    return mat;
+    return matrix;
 }
 
 template<typename T>
-void deleteMatrix(T** mat, int size) {
+void deleteMatrix(T** matrix, int size) { 
     for (int index = 0; index < size; ++index) {
-        delete[] mat[index];
+        delete[] matrix[index]; 
     }
-    delete[] mat;
+    delete[] matrix; 
 }
 
 template<typename T>
@@ -25,7 +25,7 @@ T** computeInverseLU(T** inputMat, int size) {
     T** upper = createMatrix<T>(size);
     T** resultInv = createMatrix<T>(size);
 
-    // // Ініціалізація матриці
+    // Ініціалізація матриці
     for (int row = 0; row < size; ++row) {
         for (int col = 0; col < size; ++col) {
             lower[row][col] = 0;
