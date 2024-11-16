@@ -3,106 +3,105 @@
 using namespace std;
 
 template<typename T>
-T** createMatrix(int n) {
-    T** matrix = new T*[n];
-    for (int i = 0; i < n; ++i) {
-        matrix[i] = new T[n];
+T** createMatrix(int size) {
+    T** mat = new T*[size];
+    for (int index = 0; index < size; ++index) {
+        mat[index] = new T[size];
     }
-    return matrix;
+    return mat;
 }
 
 template<typename T>
-void deleteMatrix(T** matrix, int n) {
-    for (int i = 0; i < n; ++i) {
-        delete[] matrix[i];
+void deleteMatrix(T** mat, int size) {
+    for (int index = 0; index < size; ++index) {
+        delete[] mat[index];
     }
-    delete[] matrix;
+    delete[] mat;
 }
 
 template<typename T>
-T** inverseLU(T** A, int n) {
-    T** L = createMatrix<T>(n);
-    T** U = createMatrix<T>(n);
-    T** inv = createMatrix<T>(n);
+T** computeInverseLU(T** inputMat, int size) {
+    T** lower = createMatrix<T>(size);
+    T** upper = createMatrix<T>(size);
+    T** resultInv = createMatrix<T>(size);
 
-    // Ініціалізація матриці
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            L[i][j] = 0;
-            U[i][j] = 0;
-            inv[i][j] = 0;
+    // // Ініціалізація матриці
+    for (int row = 0; row < size; ++row) {
+        for (int col = 0; col < size; ++col) {
+            lower[row][col] = 0;
+            upper[row][col] = 0;
+            resultInv[row][col] = 0;
         }
     }
 
     // LU розклад
-    for (int i = 0; i < n; ++i) {
-        for (int j = i; j < n; ++j) {
-            U[i][j] = A[i][j];
-            for (int k = 0; k < i; ++k) U[i][j] -= L[i][k] * U[k][j];
+    for (int diag = 0; diag < size; ++diag) {
+        for (int col = diag; col < size; ++col) {
+            upper[diag][col] = inputMat[diag][col];
+            for (int inner = 0; inner < diag; ++inner) upper[diag][col] -= lower[diag][inner] * upper[inner][col];
         }
-        for (int j = i; j < n; ++j) {
-            if (i == j) L[i][i] = 1;
+        for (int row = diag; row < size; ++row) {
+            if (diag == row) lower[diag][diag] = 1;
             else {
-                L[j][i] = A[j][i];
-                for (int k = 0; k < i; ++k) L[j][i] -= L[j][k] * U[k][i];
-                L[j][i] /= U[i][i];
+                lower[row][diag] = inputMat[row][diag];
+                for (int inner = 0; inner < diag; ++inner) lower[row][diag] -= lower[row][inner] * upper[inner][diag];
+                lower[row][diag] /= upper[diag][diag];
             }
         }
     }
 
     // Обернене обчислення з використанням прямої та зворотної підстановки
-    T** I = createMatrix<T>(n);
-    for (int i = 0; i < n; ++i) I[i][i] = 1;
+    T** identity = createMatrix<T>(size);
+    for (int i = 0; i < size; ++i) identity[i][i] = 1;
 
-    for (int i = 0; i < n; ++i) {
-        T* y = new T[n];
-        for (int j = 0; j < n; ++j) {
-            y[j] = I[j][i];
-            for (int k = 0; k < j; ++k) y[j] -= L[j][k] * y[k];
+    for (int col = 0; col < size; ++col) {
+        T* tempVec = new T[size];
+        for (int row = 0; row < size; ++row) {
+            tempVec[row] = identity[row][col];
+            for (int inner = 0; inner < row; ++inner) tempVec[row] -= lower[row][inner] * tempVec[inner];
         }
-        for (int j = n - 1; j >= 0; --j) {
-            inv[j][i] = y[j];
-            for (int k = j + 1; k < n; ++k) inv[j][i] -= U[j][k] * inv[k][i];
-            inv[j][i] /= U[j][j];
+        for (int row = size - 1; row >= 0; --row) {
+            resultInv[row][col] = tempVec[row];
+            for (int inner = row + 1; inner < size; ++inner) resultInv[row][col] -= upper[row][inner] * resultInv[inner][col];
+            resultInv[row][col] /= upper[row][row];
         }
-        delete[] y;
+        delete[] tempVec;
     }
 
-    deleteMatrix(L, n);
-    deleteMatrix(U, n);
-    deleteMatrix(I, n);
+    deleteMatrix(lower, size);
+    deleteMatrix(upper, size);
+    deleteMatrix(identity, size);
 
-    return inv;
+    return resultInv;
 }
 
 int main() {
-    int n;
-    cout << "Enter the size of the matrix (n x n): ";
-    cin >> n;
+    int matrixSize;
+    cout << "Enter the dimension of the matrix (n x n): ";
+    cin >> matrixSize;
 
-    
-    double** A = createMatrix<double>(n);
+    double** matrix = createMatrix<double>(matrixSize);
 
-    cout << "Enter elements of the matrix A (n x n): \n";
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cin >> A[i][j];
+    cout << "Enter elements of the matrix (size " << matrixSize << " x " << matrixSize << "):\n";
+    for (int row = 0; row < matrixSize; ++row) {
+        for (int col = 0; col < matrixSize; ++col) {
+            cin >> matrix[row][col];
         }
     }
 
-    double** invA = inverseLU(A, n);
+    double** inverseMatrix = computeInverseLU(matrix, matrixSize);
 
-    cout << "\nThe inverse of matrix A is: \n";
-    cout << fixed << setprecision(6); 
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cout << invA[i][j] << " "; 
+    cout << "\nThe inverse of the matrix is:\n";
+    cout << fixed << setprecision(6);
+    for (int row = 0; row < matrixSize; ++row) {
+        for (int col = 0; col < matrixSize; ++col) {
+            cout << inverseMatrix[row][col] << " ";
         }
         cout << endl;
     }
 
-    deleteMatrix(A, n);
-    deleteMatrix(invA, n);
+    deleteMatrix(matrix, matrixSize);
+    deleteMatrix(inverseMatrix, matrixSize);
 
     return 0;
 }
