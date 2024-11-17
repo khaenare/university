@@ -1,13 +1,12 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <limits>
 
 using namespace std;
 
 // Функція для отримання символьної матриці від користувача
-vector<vector<string>> getTextMatrix(int size) {
-    vector<vector<string>> matrix(size, vector<string>(size));
+vector<vector<char>> getTextMatrix(int size) {
+    vector<vector<char>> matrix(size, vector<char>(size));
     cout << "Enter characters for the text matrix (" << size << "x" << size << "):" << endl;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -18,8 +17,8 @@ vector<vector<string>> getTextMatrix(int size) {
 }
 
 // Функція для отримання зразка від користувача
-vector<vector<string>> getPatternMatrix(int size) {
-    vector<vector<string>> pattern(size, vector<string>(size));
+vector<vector<char>> getPatternMatrix(int size) {
+    vector<vector<char>> pattern(size, vector<char>(size));
     cout << "Enter characters for the pattern matrix (" << size << "x" << size << "):" << endl;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
@@ -30,20 +29,18 @@ vector<vector<string>> getPatternMatrix(int size) {
 }
 
 // Хеш-функція для обчислення хешу рядка
-unsigned long long computeRowHash(const vector<string>& row, int size) {
+unsigned long long computeRowHash(const vector<char>& row, int size) {
     unsigned long long hashValue = 0;
     int base = 256; // база для символів ASCII
     int prime = 101; // просте число для обмеження колізій
     for (int i = 0; i < size; i++) {
-        for (char c : row[i]) {
-            hashValue = (hashValue * base + c) % prime;
-        }
+        hashValue = (hashValue * base + row[i]) % prime;
     }
     return hashValue;
 }
 
 // Узагальнений метод Рабіна-Карпа
-pair<int, int> rabinKarp(const vector<vector<string>>& text, const vector<vector<string>>& pattern) {
+pair<int, int> rabinKarp(const vector<vector<char>>& text, const vector<vector<char>>& pattern) {
     int n = text.size();
     int m = pattern.size();
     unsigned long long patternHash = 0;
@@ -61,7 +58,7 @@ pair<int, int> rabinKarp(const vector<vector<string>>& text, const vector<vector
             unsigned long long textHash = 0;
             // Обчислення хешу для підматриці розміром m x m
             for (int k = 0; k < m; k++) {
-                vector<string> currentRow(text[i + k].begin() + j, text[i + k].begin() + j + m);
+                vector<char> currentRow(text[i + k].begin() + j, text[i + k].begin() + j + m);
                 textHash += computeRowHash(currentRow, m);
             }
 
@@ -91,25 +88,11 @@ int main() {
     int n, m;
     cout << "Enter the size of the text matrix (n x n): ";
     cin >> n;
-    while (cin.fail() || n <= 0) {
-        cin.clear(); // Скидання стану cin
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищення вхідного буфера
-        cout << "Invalid input. Please enter a positive integer for the size of the text matrix: ";
-        cin >> n;
-    }
-
-    vector<vector<string>> textMatrix = getTextMatrix(n);
+    vector<vector<char>> textMatrix = getTextMatrix(n);
 
     cout << "Enter the size of the pattern matrix (m x m): ";
     cin >> m;
-    while (cin.fail() || m <= 0 || m > n) {
-        cin.clear(); // Скидання стану cin
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищення вхідного буфера
-        cout << "Invalid input. Please enter a positive integer for the size of the pattern matrix (less than or equal to n): ";
-        cin >> m;
-    }
-
-    vector<vector<string>> patternMatrix = getPatternMatrix(m);
+    vector<vector<char>> patternMatrix = getPatternMatrix(m);
 
     pair<int, int> result = rabinKarp(textMatrix, patternMatrix);
 
@@ -121,3 +104,4 @@ int main() {
 
     return 0;
 }
+
