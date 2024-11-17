@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 
 using namespace std;
 
@@ -88,10 +89,23 @@ int main() {
     int n, m;
     cout << "Enter the size of the text matrix (n x n): ";
     cin >> n;
-    vector<vector<char>> textMatrix = getTextMatrix(n);
+    while (cin.fail() || n <= 0) {
+        cin.clear(); // Скидання стану cin
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищення вхідного буфера
+        cout << "Invalid input. Please enter a positive integer for the size of the text matrix: ";
+        cin >> n;
+    }
 
     cout << "Enter the size of the pattern matrix (m x m): ";
     cin >> m;
+    while (cin.fail() || m <= 0 || m > n) {
+        cin.clear(); // Скидання стану cin
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Очищення вхідного буфера
+        cout << "Invalid input. Please enter a positive integer for the size of the pattern matrix (must be <= n): ";
+        cin >> m;
+    }
+
+    vector<vector<char>> textMatrix = getTextMatrix(n);
     vector<vector<char>> patternMatrix = getPatternMatrix(m);
 
     pair<int, int> result = rabinKarp(textMatrix, patternMatrix);
@@ -104,4 +118,3 @@ int main() {
 
     return 0;
 }
-
