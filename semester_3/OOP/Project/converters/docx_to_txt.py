@@ -8,7 +8,7 @@ import os
 
 def convert_docx_to_txt(input_file):
     """
-    Конвертирует файл DOCX в TXT, с улучшенным отображением таблиц.
+    Конвертирует файл DOCX в TXT, с улучшенным отображением таблиц и поддержкой списков.
     """
     output_file = os.path.splitext(input_file)[0] + ".txt"
 
@@ -19,7 +19,11 @@ def convert_docx_to_txt(input_file):
             if isinstance(block, Paragraph):
                 text = block.text.strip()
                 if text:
-                    txt_file.write(text + "\n")
+                    # Проверка на пункт списка
+                    if is_list_item(block):
+                        txt_file.write(f"- {text}\n")  # Добавляем дефис перед пунктом списка
+                    else:
+                        txt_file.write(text + "\n")
             elif isinstance(block, Table):
                 txt_file.write(format_table(block) + "\n")
 
@@ -78,3 +82,12 @@ def format_table(table):
         formatted_table.append(separator)  # Горизонтальная линия после каждой строки данных
 
     return "\n".join(formatted_table)
+
+
+def is_list_item(paragraph):
+    """
+    Проверяет, является ли параграф пунктом списка.
+    """
+    p = paragraph._p
+    numPr = p.pPr.numPr if p.pPr is not None else None
+    return numPr is not None
