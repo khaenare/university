@@ -3,14 +3,31 @@ from docx.oxml.text.paragraph import CT_P
 from docx.oxml.table import CT_Tbl
 from docx.text.paragraph import Paragraph
 from docx.table import Table
+from docx.shared import Inches
 import os
+
+def save_images(doc, output_folder):
+    """
+    Сохраняет изображения из документа DOCX в указанную папку.
+    """
+    os.makedirs(output_folder, exist_ok=True)
+    image_count = 0
+    for rel in doc.part.rels.values():
+        if "image" in rel.target_ref:
+            image_count += 1
+            image_data = rel.target_part.blob
+            image_path = os.path.join(output_folder, f"image{image_count}.png")
+            with open(image_path, "wb") as img_file:
+                img_file.write(image_data)
+    return image_count
 
 
 def convert_docx_to_txt(input_file):
     """
-    Конвертирует файл DOCX в TXT, с улучшенным отображением таблиц и поддержкой списков.
+    Конвертирует файл DOCX в TXT, с поддержкой таблиц, списков и изображений.
     """
     output_file = os.path.splitext(input_file)[0] + ".txt"
+    output_folder = os.path.splitext(input_file)[0] + "_images"
 
     doc = Document(input_file)
 
@@ -19,13 +36,18 @@ def convert_docx_to_txt(input_file):
             if isinstance(block, Paragraph):
                 text = block.text.strip()
                 if text:
-                    # Проверка на пункт списка
                     if is_list_item(block):
-                        txt_file.write(f"- {text}\n")  # Добавляем дефис перед пунктом списка
+                        txt_file.write(f"- {text}\n")
                     else:
                         txt_file.write(text + "\n")
             elif isinstance(block, Table):
                 txt_file.write(format_table(block) + "\n")
+
+        # Сохраняем изображения
+        image_count = save_images(doc, output_folder)
+        if image_count > 0:
+            txt_file.write(
+                f"\n[В документе найдено {image_count} изображений, они сохранены в папке '{output_folder}']\n")
 
     print(f"Файл успешно конвертирован в {output_file}")
 
