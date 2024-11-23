@@ -1,25 +1,32 @@
 from docx import Document
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 import os
+
+# Регистрация шрифта с поддержкой кириллицы
+pdfmetrics.registerFont(TTFont('DejaVuSans', 'DejaVuSans.ttf'))
 
 def convert_docx_to_pdf(input_file):
     """
-    Конвертирует файл DOCX в PDF.
+    Конвертирует файл DOCX в PDF с корректным отображением текста и таблиц.
     """
     output_file = os.path.splitext(input_file)[0] + ".pdf"
 
     # Открываем документ DOCX
     doc = Document(input_file)
 
-    # Создаем PDF-файл
+    # Настраиваем PDF-документ
     pdf = canvas.Canvas(output_file, pagesize=letter)
     width, height = letter
-    margin = 50  # Поля страницы
+    margin = 50
     y = height - margin
 
-    # Функция для добавления текста в PDF
-    def add_text_to_pdf(text, font="Helvetica", font_size=12, line_spacing=14):
+    def add_text_to_pdf(text, font="DejaVuSans", font_size=12, line_spacing=14):
+        """
+        Добавляет текст в PDF с автоматическим переносом строк.
+        """
         nonlocal y
         pdf.setFont(font, font_size)
         for line in text.split("\n"):
@@ -30,20 +37,72 @@ def convert_docx_to_pdf(input_file):
             pdf.drawString(margin, y, line)
             y -= line_spacing
 
-    # Перебираем содержимое документа
+    def draw_table(table):
+        """
+        Рисует таблицу в PDF с динамической шириной колонок и поддержкой переноса строк.
+        """
+        nonlocal y
+        if y - 20 * len(table.rows) < margin:  # Если таблица не помещается, перейти на новую страницу
+            pdf.showPage()
+            y = height - margin
+
+        # Вычисляем ширину каждой колонки на основе максимальной длины текста
+        col_widths = [
+            max(pdf.stringWidth(cell.text.strip(), "DejaVuSans", 10) + 10 for cell in column)
+            for column in zip(*[row.cells for row in table.rows])
+        ]
+        total_width = sum(col_widths)
+        if total_width > width - 2 * margin:  # Если таблица выходит за границы, масштабируем колонки
+            scale = (width - 2 * margin) / total_width
+            col_widths = [w * scale for w in col_widths]
+
+        cell_height = 20  # Минимальная высота строки таблицы
+
+        for row in table.rows:
+            max_cell_height = cell_height  # Определяем высоту строки на основе контента
+            x = margin
+            row_texts = []  # Список текстов для каждой ячейки
+            for cell, col_width in zip(row.cells, col_widths):
+                cell_text = cell.text.strip()
+                wrapped_text = []  # Текст с переносами строк
+                words = cell_text.split(" ")
+                line = ""
+                for word in words:
+                    if pdf.stringWidth(line + word, "DejaVuSans", 10) <= col_width - 5:
+                        line += word + " "
+                    else:
+                        wrapped_text.append(line.strip())
+                        line = word + " "
+                if line:
+                    wrapped_text.append(line.strip())
+                row_texts.append((wrapped_text, col_width))
+                max_cell_height = max(max_cell_height, len(wrapped_text) * 12 + 5)
+
+            # Если строка превышает высоту страницы
+            if y - max_cell_height < margin:
+                pdf.showPage()
+                y = height - margin
+
+            # Рисуем ячейки строки
+            for (wrapped_text, col_width), cell_x in zip(row_texts, col_widths):
+                pdf.rect(x, y - max_cell_height, col_width, max_cell_height)  # Рисуем ячейку
+                text_y = y - 12  # Начинаем рисовать текст чуть ниже верхнего края ячейки
+                for line in wrapped_text:
+                    pdf.drawString(x + 2, text_y, line)  # Рисуем каждую строку текста
+                    text_y -= 12
+                x += col_width
+            y -= max_cell_height  # Переходим к следующей строке
+
+    # Обработка текста
     for paragraph in doc.paragraphs:
         text = paragraph.text.strip()
         if text:
             add_text_to_pdf(text)
-            y -= 10  # Добавляем небольшой отступ между абзацами
 
     # Обработка таблиц
     for table in doc.tables:
-        for row in table.rows:
-            row_text = " | ".join(cell.text.strip() for cell in row.cells)
-            add_text_to_pdf(row_text, font="Courier", font_size=10)
-        y -= 20  # Отступ между таблицами
+        draw_table(table)
 
-    # Сохраняем PDF
+    # Сохранение PDF
     pdf.save()
     print(f"Файл успешно конвертирован в {output_file}")
