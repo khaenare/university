@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-from converters import convert_txt_to_pdf
+from converters.txt_to_pdf import convert_txt_to_pdf
+from converters.txt_to_docx import convert_txt_to_docx
 import os
 
 class DocumentConverterApp:
@@ -65,6 +66,8 @@ class DocumentConverterApp:
         try:
             if target_format == "PDF":
                 convert_txt_to_pdf(input_file)
+            if target_format == "DOCX":
+                convert_txt_to_docx(input_file)
             else:
                 raise NotImplementedError(f"Конвертация в {target_format} еще не реализована.")
         except Exception as e:
