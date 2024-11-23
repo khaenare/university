@@ -23,19 +23,39 @@ def convert_docx_to_pdf(input_file):
     margin = 50
     y = height - margin
 
-    def add_text_to_pdf(text, font="DejaVuSans", font_size=12, line_spacing=14):
+    def add_text_to_pdf(text, font="DejaVuSans", font_size=12, line_spacing=14, indent=20):
         """
-        Добавляет текст в PDF с автоматическим переносом строк.
+        Добавляет текст в PDF с автоматическим переносом строк, контролем выхода за границы страницы
+        и поддержкой табуляции (отступа).
         """
         nonlocal y
         pdf.setFont(font, font_size)
-        for line in text.split("\n"):
-            if y < margin:  # Если текст выходит за границу страницы
-                pdf.showPage()
-                pdf.setFont(font, font_size)
-                y = height - margin
-            pdf.drawString(margin, y, line)
-            y -= line_spacing
+
+        for line_index, line in enumerate(text.split("\n")):
+            # Добавляем отступ только для первой строки абзаца
+            current_indent = indent if line_index == 0 else 0
+            words = line.split(" ")
+            current_line = ""
+            for word in words:
+                if pdf.stringWidth(current_line + word, font, font_size) > width - 2 * margin - current_indent:
+                    if y < margin + line_spacing:  # Если места на странице нет
+                        pdf.showPage()
+                        pdf.setFont(font, font_size)
+                        y = height - margin
+                    pdf.drawString(margin + current_indent, y, current_line.strip())
+                    y -= line_spacing
+                    current_line = word + " "
+                    current_indent = 0  # После первой строки отступ больше не нужен
+                else:
+                    current_line += word + " "
+            # Печатаем последнюю строку
+            if current_line.strip():
+                if y < margin + line_spacing:  # Если места на странице нет
+                    pdf.showPage()
+                    pdf.setFont(font, font_size)
+                    y = height - margin
+                pdf.drawString(margin + current_indent, y, current_line.strip())
+                y -= line_spacing
 
     def draw_table(table):
         """
