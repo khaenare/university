@@ -52,9 +52,16 @@ class Student(Person):
         """
         return self._grades
 
-     def view_assignments(self):
+    def submit_assignment(self, assignment: 'Assignment', submission: str):
         """
-        Выводит список заданий по курсам, на которые студент записан.
+        Відправляє вирішине завдання
+        """
+        assignment.add_submission(self._student_id, submission)
+        print(f"Assignment '{assignment.title}' submitted by {self.get_full_name()}")
+
+    def view_assignments(self):
+        """
+        Відображає список курсів на яких записан студент
         """
         print("\nYour Assignments:")
         for course in self._courses:
