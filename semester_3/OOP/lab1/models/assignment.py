@@ -8,14 +8,13 @@ class Assignment:
         self.title = title
         self.due_date = due_date
         self.max_grade = max_grade
-        self.submissions = {}  # Новое: словарь {student_id: submission}
-        self.grades = {}       # Новое: словарь {student_id: grade_value}
+        self.submissions = {}  # {student_id: submission}
+        self.grades = {}       # {student_id: grade_value}
 
     def is_due(self) -> bool:
         """
         Перевіряє, чи минув термін здачі завдання.
         """
-        # Для простоти припустимо, що due_date у форматі 'YYYY-MM-DD'
         from datetime import datetime
         due = datetime.strptime(self.due_date, '%Y-%m-%d')
         return datetime.now() > due
