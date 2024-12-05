@@ -27,6 +27,6 @@ class Assignment:
 
     def assign_grade(self, student_id: int, grade_value: float):
         """
-        Присваивает оценку студенту за это задание.
+        Присвоює оцінку студенту за це завдання.
         """
         self.grades[student_id] = grade_value
