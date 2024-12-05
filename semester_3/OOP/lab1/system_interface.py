@@ -261,7 +261,7 @@ class SystemInterface:
         print("\nYour Courses:")
         for course in self.current_user._courses_taught:
             print(f"- {course.course_id}: {course.title}")
-            
+
     def assign_grade_for_assignment(self):
         print("\nAssign Grade for Assignment")
         if not self.current_user._courses_taught:
