@@ -1,9 +1,9 @@
 from models.person import Person
+from models.assignment import Assignment
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from models.course import Course
-    from models.assignment import Assignment
     from models.student import Student
 
 class Teacher(Person):
