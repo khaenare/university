@@ -62,3 +62,10 @@ class Course:
         Призначає викладача на курс.
         """
         self.teacher = teacher
+
+     def add_assignment(self, assignment: Assignment):
+        """
+        Додає завдання до курсу.
+        """
+        self.assignments.append(assignment)
+        print(f"Assignment '{assignment.title}' added to course {self.title}.")
