@@ -1,6 +1,6 @@
 class Assignment:
     """
-    Класс, представляющий задание курса.
+    Клас, що представляє завдання курсу.
     """
 
     def __init__(self, assignment_id: int, title: str, due_date: str, max_grade: float):
@@ -11,9 +11,9 @@ class Assignment:
 
     def is_due(self) -> bool:
         """
-        Проверяет, истек ли срок сдачи задания.
+        Перевіряє, чи минув термін здачі завдання.
         """
-        # Для простоты предположим, что due_date в формате 'YYYY-MM-DD'
+        # Для простоти припустимо, що due_date у форматі 'YYYY-MM-DD'
         from datetime import datetime
         due = datetime.strptime(self.due_date, '%Y-%m-%d')
         return datetime.now() > due
