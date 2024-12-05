@@ -63,7 +63,7 @@ class Course:
         """
         self.teacher = teacher
 
-     def add_assignment(self, assignment: Assignment):
+    def add_assignment(self, assignment: Assignment):
         """
         Додає завдання до курсу.
         """
