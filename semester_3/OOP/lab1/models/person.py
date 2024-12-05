@@ -1,6 +1,6 @@
 class Person:
     """
-    Базовый класс для представления человека.
+    Базовий клас для представлення людини.
     """
 
     def __init__(self, name: str, surname: str, email: str):
@@ -10,18 +10,18 @@ class Person:
 
     def get_full_name(self) -> str:
         """
-        Возвращает полное имя человека.
+        Повертає повне ім'я людини.
         """
         return f"{self._name} {self._surname}"
 
     def get_email(self) -> str:
         """
-        Возвращает электронную почту человека.
+        Повертає електронну пошту людини.
         """
         return self._email
 
     def set_email(self, email: str):
         """
-        Устанавливает электронную почту человека.
+        Встановлює електронну пошту людини.
         """
         self._email = email
