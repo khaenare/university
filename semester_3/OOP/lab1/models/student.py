@@ -25,11 +25,12 @@ class Student(Person):
         else:
             print(f"Student is already enrolled in the course {course.title}")
 
-    def submit_assignment(self, assignment_id: int, submission: str):
+    def submit_assignment(self, assignment: 'Assignment', submission: str):
         """
         Відправляє рішення завдання.
         """
-        print(f"Assignment {assignment_id} submitted by {self.get_full_name()}")
+        assignment.add_submission(self._student_id, submission)
+        print(f"Assignment '{assignment.title}' submitted by {self.get_full_name()}")
 
     def calculate_gpa(self) -> float:
         """
