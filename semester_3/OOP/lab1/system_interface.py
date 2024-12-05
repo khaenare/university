@@ -14,11 +14,11 @@ class SystemInterface:
         self.schedule = Schedule()
         self.current_user = None
 
-        # Инициализируем систему с одним администратором
+        # Ініціалізуємо систему з одним адміністратором
         self.setup_initial_data()
 
     def setup_initial_data(self):
-        # Создаем администратора по умолчанию
+        # Створюємо адміністратора за замовчуванням
         admin = Administrator("Admin", "Adminov", "admin@example.com", 1)
         self.administrators.append(admin)
 
@@ -54,12 +54,10 @@ class SystemInterface:
         else:
             print("Invalid role. Please try again.")
 
-
-#------------------------------------------------------------------
-  
-
+    #-----------------------------------------------------------------------------
+    # Адміністратор
     def admin_menu(self):
-        # Добавим новые пункты меню
+        self.current_user = self.administrators[0]
         while True:
             print(f"\nAdministrator Menu ({self.current_user.get_full_name()})")
             print("1. Create Course")
@@ -85,27 +83,6 @@ class SystemInterface:
                 break
             else:
                 print("Invalid choice. Please try again.")
-
-      def register_teacher(self):
-        print("\nRegister Teacher")
-        name = input("Enter first name: ")
-        surname = input("Enter last name: ")
-        email = input("Enter email: ")
-        teacher_id = len(self.teachers) + 1
-        teacher = Teacher(name, surname, email, teacher_id)
-        self.teachers.append(teacher)
-        print(f"Teacher '{teacher.get_full_name()}' registered successfully with ID {teacher_id}.")
-
-    def register_student(self):
-        print("\nRegister Student")
-        name = input("Enter first name: ")
-        surname = input("Enter last name: ")
-        email = input("Enter email: ")
-        student_id = len(self.students) + 1
-        student = Student(name, surname, email, student_id)
-        self.students.append(student)
-        print(f"Student '{student.get_full_name()}' registered successfully with ID {student_id}.")
-
 
     def create_course(self):
         print("\nCreate Course")
@@ -152,6 +129,26 @@ class SystemInterface:
 
         self.current_user.assign_teacher_to_course(teacher, course)
 
+    def register_teacher(self):
+        print("\nRegister Teacher")
+        name = input("Enter first name: ")
+        surname = input("Enter last name: ")
+        email = input("Enter email: ")
+        teacher_id = len(self.teachers) + 1
+        teacher = Teacher(name, surname, email, teacher_id)
+        self.teachers.append(teacher)
+        print(f"Teacher '{teacher.get_full_name()}' registered successfully with ID {teacher_id}.")
+
+    def register_student(self):
+        print("\nRegister Student")
+        name = input("Enter first name: ")
+        surname = input("Enter last name: ")
+        email = input("Enter email: ")
+        student_id = len(self.students) + 1
+        student = Student(name, surname, email, student_id)
+        self.students.append(student)
+        print(f"Student '{student.get_full_name()}' registered successfully with ID {student_id}.")
+
     def view_courses(self):
         print("\nCourses:")
         for course in self.courses:
@@ -174,9 +171,8 @@ class SystemInterface:
                 return course
         return None
 
-#------------------------------------------------------------------
-
-
+    # -----------------------------------------------------------------------------
+    # Викладач
     def teacher_menu(self):
         if not self.teachers:
             print("No teachers registered.")
@@ -194,8 +190,9 @@ class SystemInterface:
             print(f"\nTeacher Menu ({self.current_user.get_full_name()})")
             print("1. Create Assignment")
             print("2. Assign Grade")
-            print("3. View Courses")
-            print("4. Logout")
+            print("3. Assign Grade for Assignment")
+            print("4. View Courses")
+            print("5. Logout")
             choice = input("Select an option: ")
 
             if choice == '1':
@@ -203,8 +200,10 @@ class SystemInterface:
             elif choice == '2':
                 self.assign_grade()
             elif choice == '3':
-                self.view_teacher_courses()
+                self.assign_grade_for_assignment()
             elif choice == '4':
+                self.view_teacher_courses()
+            elif choice == '5':
                 self.current_user = None
                 break
             else:
@@ -262,15 +261,53 @@ class SystemInterface:
         print("\nYour Courses:")
         for course in self.current_user._courses_taught:
             print(f"- {course.course_id}: {course.title}")
+            
+    def assign_grade_for_assignment(self):
+        print("\nAssign Grade for Assignment")
+        if not self.current_user._courses_taught:
+            print("You are not assigned to any courses.")
+            return
 
+        self.view_teacher_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses_taught:
+            print("Invalid course.")
+            return
 
+        if not course.assignments:
+            print("No assignments for this course.")
+            return
 
+        print("\nAssignments:")
+        for assignment in course.assignments:
+            print(f"- {assignment.assignment_id}: {assignment.title}")
 
-#------------------------------------------------------------------
+        assignment_id = int(input("Enter assignment ID: "))
+        assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
+        if not assignment:
+            print("Assignment not found.")
+            return
 
+        if not course.students:
+            print("No students enrolled in this course.")
+            return
 
+        print("\nStudents:")
+        for student in course.students:
+            print(f"- {student._student_id}: {student.get_full_name()}")
 
+        student_id = int(input("Enter student ID: "))
+        student = self.get_student_by_id(student_id)
+        if not student or student not in course.students:
+            print("Invalid student.")
+            return
 
+        grade_value = float(input("Enter grade value: "))
+        self.current_user.assign_grade_for_assignment(student, course, assignment_id, grade_value)
+
+    # -----------------------------------------------------------------------------
+    # Студент
     def student_menu(self):
         if not self.students:
             print("No students registered.")
@@ -288,8 +325,10 @@ class SystemInterface:
             print(f"\nStudent Menu ({self.current_user.get_full_name()})")
             print("1. Enroll in Course")
             print("2. View Enrolled Courses")
-            print("3. View Grades")
-            print("4. Logout")
+            print("3. View Assignments")
+            print("4. Submit Assignment")
+            print("5. View Grades")
+            print("6. Logout")
             choice = input("Select an option: ")
 
             if choice == '1':
@@ -297,8 +336,12 @@ class SystemInterface:
             elif choice == '2':
                 self.view_student_courses()
             elif choice == '3':
-                self.view_student_grades()
+                self.view_student_assignments()
             elif choice == '4':
+                self.submit_assignment()
+            elif choice == '5':
+                self.view_student_grades()
+            elif choice == '6':
                 self.current_user = None
                 break
             else:
@@ -341,3 +384,33 @@ class SystemInterface:
             if student._student_id == student_id:
                 return student
         return None
+
+    def view_student_assignments(self):
+        self.current_user.view_assignments()
+
+    def submit_assignment(self):
+        print("\nSubmit Assignment")
+        self.view_student_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses:
+            print("Invalid course.")
+            return
+
+        if not course.assignments:
+            print("No assignments for this course.")
+            return
+
+        print("\nAssignments:")
+        for assignment in course.assignments:
+            status = "Submitted" if self.current_user._student_id in assignment.submissions else "Not Submitted"
+            print(f"- [{status}] {assignment.assignment_id}: {assignment.title}")
+
+        assignment_id = int(input("Enter assignment ID: "))
+        assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
+        if not assignment:
+            print("Assignment not found.")
+            return
+
+        submission = input("Enter your submission: ")
+        self.current_user.submit_assignment(assignment, submission)
