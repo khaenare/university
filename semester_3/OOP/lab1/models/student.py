@@ -51,3 +51,17 @@ class Student(Person):
         Повертає словник оцінок студента.
         """
         return self._grades
+
+     def view_assignments(self):
+        """
+        Выводит список заданий по курсам, на которые студент записан.
+        """
+        print("\nYour Assignments:")
+        for course in self._courses:
+            print(f"\nCourse: {course.title}")
+            if course.assignments:
+                for assignment in course.assignments:
+                    status = "Submitted" if self._student_id in assignment.submissions else "Not Submitted"
+                    print(f"- [{status}] {assignment.assignment_id}: {assignment.title}, Due: {assignment.due_date}")
+            else:
+                print("No assignments for this course.")
