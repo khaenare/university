@@ -4,8 +4,11 @@ from models.administrator import Administrator
 from models.online_course import OnlineCourse
 from models.onsite_course import OnsiteCourse
 from models.schedule import Schedule
+from system_interface import SystemInterface
 
-def main():
+from datetime import datetime
+
+def demo():
     # Створюємо адміністратора
     admin = Administrator("Іван", "Іванов", "admin@example.com", 1)
 
@@ -29,11 +32,11 @@ def main():
     student.enroll_course(online_course)
     student.enroll_course(onsite_course)
 
-    # Викладач створює завдання
-    teacher.create_assignment(online_course, "Homework 1", "2024-12-31", 100)
+    # Викладач створює завдання та зберігаємо його в змінну
+    assignment = teacher.create_assignment(online_course, "Homework 1", "2024-12-31", 100)
 
-    # Студент відправляє рішення завдання
-    student.submit_assignment(1, "My solution")
+    # Студент відправляє рішення завдання (тепер передається об'єкт завдання)
+    student.submit_assignment(assignment, "My solution")
 
     # Викладач виставляє оцінку
     teacher.assign_grade(student, online_course, 95)
@@ -43,12 +46,23 @@ def main():
 
     # Робота з розкладом
     schedule = Schedule()
-    from datetime import datetime
     schedule.add_event({"title": "Programming Lecture", "date": datetime.now().date()})
     today_events = schedule.get_today_events()
     print("Today's events:")
     for event in today_events:
         print(event.get('title'))
 
+
+def main():
+    system = SystemInterface()
+    system.run()
+
 if __name__ == "__main__":
-    main()
+    print("\nSelect the mode to run the console program: ")
+    print("1. Demonstrative mode")
+    print("2. Interactive mode")
+    choice = input("Select an option: ").strip().lower()
+    if choice == "1":
+        demo()
+    else:
+        main()
