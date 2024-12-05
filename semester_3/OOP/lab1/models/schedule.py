@@ -2,7 +2,7 @@ from typing import List
 
 class Schedule:
     """
-    Класс, представляющий расписание.
+    Клас, що представляє розклад.
     """
 
     def __init__(self):
@@ -10,21 +10,21 @@ class Schedule:
 
     def add_event(self, event: dict):
         """
-        Добавляет событие в расписание.
+        Додає подію до розкладу.
         """
         self.events.append(event)
-        print(f"Событие '{event.get('title')}' добавлено в расписание.")
+        print(f"Event '{event.get('title')}' added to schedule.")
 
     def remove_event(self, event_title: str):
         """
-        Удаляет событие из расписания по названию.
+        Видаляє подію з розкладу за назвою.
         """
         self.events = [event for event in self.events if event.get('title') != event_title]
-        print(f"Событие '{event_title}' удалено из расписания.")
+        print(f"Event '{event_title}' removed from schedule.")
 
     def get_today_events(self) -> List[dict]:
         """
-        Возвращает список событий на сегодня.
+        Повертає список подій на сьогодні.
         """
         from datetime import datetime
         today = datetime.now().date()
