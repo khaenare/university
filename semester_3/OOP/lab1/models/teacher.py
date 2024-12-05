@@ -47,3 +47,14 @@ class Teacher(Person):
             course.set_teacher(self)
         else:
             print(f"Course {course.title} is already assigned.")
+
+    def assign_grade_for_assignment(self, student: 'Student', course: 'Course', assignment_id: int, grade_value: float):
+        """
+        Выставляет оценку студенту за конкретное задание.
+        """
+        assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
+        if assignment:
+            assignment.assign_grade(student._student_id, grade_value)
+            print(f"Grade {grade_value} assigned to {student.get_full_name()} for assignment '{assignment.title}' in course {course.title}")
+        else:
+            print("Assignment not found.")
