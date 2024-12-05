@@ -35,8 +35,10 @@ class Teacher(Person):
             new_assignment = Assignment(assignment_id, title, due_date, max_grade)
             course.add_assignment(new_assignment)
             print(f"Assignment '{title}' created for course {course.title}")
+            return new_assignment  # ВАЖНО: Возвращаем задание!
         else:
             print(f"Error: Teacher does not teach course {course.title}")
+            return None
 
     def add_course(self, course: 'Course'):
         """
