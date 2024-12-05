@@ -50,7 +50,7 @@ class Teacher(Person):
 
     def assign_grade_for_assignment(self, student: 'Student', course: 'Course', assignment_id: int, grade_value: float):
         """
-        Выставляет оценку студенту за конкретное задание.
+        Виставляє оцінку студенту по курсу за конкретне завдання
         """
         assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
         if assignment:
