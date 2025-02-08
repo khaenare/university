@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>table.png</title>
+</head>
+<body>
+  <!-- Основна таблиця: один рядок, три стовпці -->
+  <table border="1" width="100%" height="600" cellpadding="0" cellspacing="0">
+    <tr>
+      <!-- Лівий стовпець: поділ на три рядки (25%, 25%, 50%) -->
+      <td width="25%" valign="top">
+        <table border="1" width="100%" height="100%" cellpadding="0" cellspacing="0">
+          <tr height="25%">
+            <td align="center"></td>
+          </tr>
+          <tr height="25%">
+            <td align="center"></td>
+          </tr>
+          <tr height="50%">
+            <td align="center"></td>
+          </tr>
+        </table>
+      </td>
+
+      <!-- Центральний стовпець -->
+      <td width="25%" align="center" valign="top"></td>
+
+      <!-- Правий стовпець: зверху (50%) і знизу (50%) -->
+      <td width="50%" valign="top">
+        <table border="1" width="100%" height="100%" cellpadding="0" cellspacing="0">
+          <!-- Верхня половина (50%) -->
+          <tr height="50%">
+            <td align="center"></td>
+          </tr>
+          <!-- Нижня половина (50%), в якій ще одна вкладена таблиця -->
+          <tr height="50%">
+            <td valign="top" align="center">
+              <table border="1" width="100%" height="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <!-- Ліва клітинка, об’єднана на 2 рядки -->
+                  <td width="50%" rowspan="2" align="center"></td>
+                  <!-- Права клітинка зверху -->
+                  <td width="50%" height="50%" align="center"></td>
+                </tr>
+                <tr>
+                  <!-- Права клітинка знизу -->
+                  <td width="50%" height="50%" align="center"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
