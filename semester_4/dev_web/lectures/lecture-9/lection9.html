@@ -22,17 +22,22 @@
             padding-bottom: 175px;
             gap: 20px;
         }
+
+
         .sidebar img:first-child {
             width: 125px;
             height: 200px;
             margin-top: 60px;
             margin-bottom: 60px;
             box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+            z-index: 1;
         }
         .sidebar img:not(:first-child) {
             width: 250px;
             height: 200px;
             object-fit: cover;
+            z-index: 1;
+            margin-left: auto;
         }
         .content {
             width: 70%;
@@ -47,6 +52,7 @@
             width: 700px;
             height: 350px;
             margin-top: 60px;
+            z-index: 1;
         }
 
         .left-column, .right-column {
@@ -71,10 +77,29 @@
         .highlight {
             background-color: yellow;
         }
+
+        .overlay {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        .overlay-top {
+            top: 0;
+            height: 175px;
+        }
+
+        .overlay-bottom {
+            bottom: 0;
+            height: 125px;
+        }
+
     </style>
 </head>
 <body>
-
+<div class="overlay overlay-top"></div>
 <div class="sidebar">
     <img src="https://via.placeholder.com/125x200" alt="Image 1">
     <img src="https://via.placeholder.com/250x200" alt="Image 2">
@@ -114,5 +139,6 @@
         </div>
     </div>
 </div>
+<div class="overlay overlay-bottom"></div>
 </body>
 </html>
