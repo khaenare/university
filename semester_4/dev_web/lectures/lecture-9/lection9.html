@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            background-color: #CCCCFF;
+            margin: 0;
+            display: flex;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 30%;
+            min-height: 100vh;
+            background-color: #8080FF;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-right: 10px;
+            padding-top: 10vh;
+            padding-bottom: 175px;
+            gap: 20px;
+        }
+        .sidebar img:first-child {
+            width: 125px;
+            height: 200px;
+            margin-top: 60px;
+            margin-bottom: 60px;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .sidebar img:not(:first-child) {
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+        }
+        .content {
+            width: 70%;
+            min-height: 100vh;
+            padding: 120px 40px 20px 40px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+        .content img {
+            display: block;
+            width: 700px;
+            height: 350px;
+            margin-top: 60px;
+        }
+
+        .left-column, .right-column {
+            width: 330px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .right-column {
+            margin-left: 40px;
+        }
+
+        .columns-wrapper {
+            display: flex;
+            gap: 40px;
+            justify-content: flex-start;
+        }
+
+        .intro-text {
+            width: 700px;
+        }
+
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <img src="https://via.placeholder.com/125x200" alt="Image 1">
+    <img src="https://via.placeholder.com/250x200" alt="Image 2">
+    <img src="https://via.placeholder.com/250x200" alt="Image 3">
+    <img src="https://via.placeholder.com/250x200" alt="Image 4">
+    <img src="https://via.placeholder.com/250x200" alt="Image 5">
+</div>
+<div class="content">
+    <div class="intro-text">
+        <p>Автомобіль — самохідна колісна машина, яка приводиться в рух встановленим у неї двигуном і призначена для перевезення людей, вантажу, буксирування транспортних засобів, виконання спеціальних робіт та перевезення спеціального устаткування безрейковими дорогами. Пересувається переважно суходолом.</p>
+    </div>
+    <img src="https://via.placeholder.com/700x350" alt="Main Image">
+
+    <div class="columns-wrapper">
+        <div class="left-column">
+            <h2>Кузов</h2>
+            <p>Кузов — це частина автомобіля або іншого транспортного засобу, яка призначена для розміщення пасажирів і вантажу. Кузов вантажного автомобіля кріпиться до рами автомобіля. Абсолютна більшість легкових автомобілів мають безрамні тримальні кузови, які одночасно виконують роль рами — до них приєднується решта вузлів і агрегатів автомобіля. Також безрамний кузов притаманний більшості автобусів.</p>
+            <h2>Призначення</h2>
+            <p>Більшість сучасних автомобілів мають чотири колеса та двигун що приводить їх в рух. Більшість автомобілів що вироблялися до 2010 року починають рух за допомогою двигуна внутрішнього згоряння, який працює на спалюванні викопного палива. Гібридні автомобілі активно почали виробляти у 2000 році, після 2010 року електромобілі.</p>
+            <h2>Легкові автомобілі</h2>
+            <p>Легкові автомобілі, призначені для індивідуальних перевезень пасажирів, мають <span class="highlight">від 2 до 9 місць</span>, включаючи місце водія. За європейською класифікацією розрізняють такі класи легкових автомобілів.</p>
+        </div>
+        <div class="right-column">
+            <h2>Історія</h2>
+            <p>Швидкий розвиток автомобілів почався після появи швидкохідних і економічних, двигунів внутрішнього згоряння. У 1879 році Бенц отримав патент на свій перший двигун, який був розроблений в 1878 році.</p>
+            <h2>Класифікація</h2>
+            <p>Сучасні автомобілі за призначенням поділяються на:</p>
+            <ul>
+                <li>транспортні — основна група, призначені для перевезення людей і вантажу</li>
+                <li>вантажні,</li>
+                <li>пасажирські:</li>
+                <li>легкові,</li>
+                <li>мікроавтобуси,</li>
+                <li>автобуси;</li>
+                <li>спеціальні — обладнані відповідним устаткуванням і призначені для виконання певних виробничих операцій</li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
