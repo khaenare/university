@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      width: 80%;
+      max-width: 800px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .task h2 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .table {
+      display: flex;
+      flex-direction: column;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .box {
+      height: 60px;
+      text-align: center;
+      line-height: 60px;
+      font-size: 18px;
+      border-radius: 10px;
+      flex-grow: 1;
+    }
+    .blue { background-color: #87CEFA; }
+    .yellow { background-color: #FFD700; }
+    .pink { background-color: #DA70D6; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="task">
+    <h2>Завдання 1</h2>
+    <div class="table">
+      <div class="row">
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+        <div class="box yellow"></div>
+        <div class="box yellow"></div>
+      </div>
+      <div class="row">
+        <div class="box yellow" style="flex-basis: 37%"></div>
+        <div class="box pink" style="flex-basis: 26%"></div>
+        <div class="box pink" style="flex-basis: 37%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container"style="max-width: 700px;">
+  <div class="task">
+    <h2>Завдання 2</h2>
+    <div class="table">
+      <div class="row">
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+        <div class="box yellow"></div>
+      </div>
+      <div class="row">
+        <div class="box yellow"></div>
+        <div class="box yellow"></div>
+        <div class="box pink"></div>
+        <div class="box pink"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container" style="max-width: 600px;">
+  <div class="task">
+    <h2>Завдання 3</h2>
+    <div class="table">
+      <div class="row">
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+        <div class="box blue"></div>
+      </div>
+      <div class="row">
+        <div class="box yellow"></div>
+        <div class="box yellow"></div>
+        <div class="box yellow"></div>
+      </div>
+      <div class="row">
+        <div class="box pink" style="flex-basis: 45%"></div>
+        <div class="box pink" style="flex-basis: 55%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container" style="max-width: 400px;">
+  <div class="task">
+    <h2>Завдання 4</h2>
+    <div class="table">
+      <div class="row">
+        <div class="box blue" style="flex-basis: 45%"></div>
+        <div class="box blue" style="flex-basis: 55%"></div>
+      </div>
+      <div class="row">
+        <div class="box blue" style="flex-basis: 45%"></div>
+        <div class="box yellow" style="flex-basis: 55%"></div>
+      </div>
+      <div class="row">
+        <div class="box yellow" style="flex-basis: 45%"></div>
+        <div class="box yellow" style="flex-basis: 55%"></div>
+      </div>
+      <div class="row">
+        <div class="box pink" style="flex-basis: 45%"></div>
+        <div class="box pink" style="flex-basis: 55%"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container" style="max-width: 200px;">
+  <div class="task">
+    <h2>Завдання 5</h2>
+  <div class="table">
+    <div class="row">
+      <div class="box blue"></div>
+    </div>
+    <div class="row">
+      <div class="box blue"></div>
+    </div>
+    <div class="row">
+      <div class="box blue"></div>
+    </div>
+    <div class="row">
+      <div class="box yellow"></div>
+    </div>
+    <div class="row">
+      <div class="box yellow"></div>
+    </div>
+    <div class="row">
+      <div class="box yellow"></div>
+    </div>
+    <div class="row">
+      <div class="box pink"></div>
+    </div>
+    <div class="row">
+      <div class="box pink"></div>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>
