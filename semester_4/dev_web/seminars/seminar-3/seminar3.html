@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        .animal-options {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .animal-options label {
+            width: 50%;
+        }
+        .italic {
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Форма заявки на роботу в зоопарку</h1>
+<p><span class="italic">Будь ласка, заповніть форму. Обов'язкові поля відмічені <span style="color: red;">*</span></span></p>
+
+<form action="#" method="post">
+    <fieldset>
+        <legend>Контактна інформація</legend>
+        <label for="name">Ім'я <span style="color: red;">*</span>:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="phone">Телефон:</label><br>
+        <input type="tel" id="phone" name="phone"><br><br>
+
+        <label for="email">E-mail <span style="color: red;">*</span>:</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+    </fieldset>
+
+    <fieldset>
+        <legend>Персональна інформація</legend>
+        <label for="age">Вік <span style="color: red;">*</span>:</label><br>
+        <input type="number" id="age" name="age" required><br><br>
+
+        <label for="gender">Стать:</label><br>
+        <select id="gender" name="gender">
+            <option value="Чоловік">Чоловік</option>
+            <option value="Жінка">Жінка</option>
+            <option value="Інше">Інше</option>
+        </select><br><br>
+
+        <label for="qualities">Перерахуйте особисті якості:</label><br>
+        <textarea id="qualities" name="qualities" rows="4" cols="50"></textarea><br><br>
+    </fieldset>
+
+    <fieldset>
+        <legend>Виберіть улюблених тварин:</legend>
+        <div class="animal-options">
+            <label for="zebra">
+                <input type="checkbox" id="zebra" name="animals" value="Зебра">
+                Зебра
+            </label>
+
+            <label for="elephant">
+                <input type="checkbox" id="elephant" name="animals" value="Слон">
+                Слон
+            </label>
+
+            <label for="tiger">
+                <input type="checkbox" id="tiger" name="animals" value="Тигр">
+                Тигр
+            </label>
+
+            <label for="human">
+                <input type="checkbox" id="human" name="animals" value="Людина">
+                Людина
+            </label>
+
+            <label for="skunk">
+                <input type="checkbox" id="skunk" name="animals" value="Скунс">
+                Скунс
+            </label>
+
+            <label for="lion">
+                <input type="checkbox" id="lion" name="animals" value="Лев">
+                Лев
+            </label>
+
+            <label for="hippopotamus">
+                <input type="checkbox" id="hippopotamus" name="animals" value="Носоріг">
+                Носоріг
+            </label>
+
+            <label for="turtle">
+                <input type="checkbox" id="turtle" name="animals" value="Черепаха">
+                Черепаха
+            </label>
+        </div><br><br>
+    </fieldset>
+
+    <button type="submit">Відправити</button>
+</form>
+</body>
+</html>
