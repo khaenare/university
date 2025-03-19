@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зразок дизайну</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f4d9; /* Пастельно-желтый цвет */
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Выравнивание по левому краю */
+            padding: 20px;
+        }
+
+        .image-block {
+            width: 600px; /* Ширина изображения */
+            height: 350px; /* Высота изображения */
+            margin-top: 30px; /* Отступ сверху */
+            margin-left: 45px; /* Отступ слева одинаковый для всех блоков */
+            margin-bottom: 30px; /* Отступ снизу */
+            text-align: left; /* Выравнивание изображения по левому краю */
+            border: 5px solid #d4d4d4;
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .image-block img {
+            width: 100%; /* Устанавливаем изображение на всю ширину блока */
+            height: 100%; /* Устанавливаем изображение на всю высоту блока */
+            border-bottom: 5px solid #d4d4d4;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .text-block {
+            width: 600px; /* Ширина текстового блока, совпадает с шириной изображения */
+            height: 500px; /* Высота текстового блока */
+            background-color: #fff;
+            border: 5px solid #d4d4d4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            margin-left: 45px; /* Отступ слева одинаковый */
+            position: relative; /* Для размещения кнопок внутри */
+        }
+
+        .text-block h3 {
+            color: #333;
+            font-size: 22px;
+        }
+
+        .text-block p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Кнопки внутри текстового блока */
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px; /* Отступ снизу для кнопок */
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .button-container button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="image-block">
+        <img src="https://via.placeholder.com/600x350" alt="Приклад зображення">
+    </div>
+
+    <div class="text-block">
+        <div class="button-container">
+            <button>Кнопка 1</button>
+            <button>Кнопка 2</button>
+            <button>Кнопка 3</button>
+        </div>
+        <h3>About Envato</h3>
+        <p>Envato is a startup based out of Australia with people around the world and sites serving pages every second. We started in a living room in 2008 and have been steadily working to build our company into a world-class contender. Our background is creative, we love open source, we believe that work is about way more than just making money, and we’re totally committed to making products that are awesome!</p>
+        <a href="https://envato.com" target="_blank">Visit The Envato Website</a>
+    </div>
+
+</div>
+
+</body>
+</html>
