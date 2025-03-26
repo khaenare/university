@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
+        .team-section {
+            background-color: #f2f2f2;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .team-container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .team-member {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 20px;
+            background-color: white;
+        }
+        .gray-bg {
+            background-color: #d9d9d9;
+        }
+        .team-member img {
+            width: 195px;
+            height: 195px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid red;
+        }
+        .social-icons {
+            margin-top: 10px;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+        .social-icons li {
+            margin: 0 5px;
+        }
+        .social-icons img {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            border: 2px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="team-section">
+    <div class="container team-container">
+        <h2 class="fw-bold">Наша команда</h2>
+        <p>Ми три козаки із Запорізької Січі. Багато мандруємо по світу, спілкуємось з людьми з різних країн та епох.<br>Навіть зустрічаємось з інопланетянами</p>
+    </div>
+</div>
+
+<div class="container-lg text-center mt-4">
+    <div class="row row-cols-md-3 row-cols-1 g-0">
+
+        <!-- Козак Око -->
+        <div class="col d-flex">
+            <div class="team-member w-100">
+                <img src="Cossack-oko.png" alt="Козак Око">
+                <h4>Козак Око</h4>
+                <p>Маленький козак, але бадьорий та войовничий</p>
+                <ul class="social-icons">
+                    <li><a href="#"><img src="google.png" alt="Google"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Козак Грай -->
+        <div class="col d-flex">
+            <div class="team-member gray-bg w-100">
+                <img src="Cossack-gray.png" alt="Козак Грай">
+                <h4>Козак Грай</h4>
+                <p>Отаман нашої команди. Спокійний та кмітливий козак</p>
+                <ul class="social-icons">
+                    <li><a href="#"><img src="google.png" alt="Google"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Козак Тур -->
+        <div class="col d-flex">
+            <div class="team-member w-100">
+                <img src="Cossack-tur.png" alt="Козак Тур">
+                <h4>Козак Тур</h4>
+                <p>Здоровий та сильний козак. Часто буває сором'язливим</p>
+                <ul class="social-icons">
+                    <li><a href="#"><img src="google.png" alt="Google"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                    <li><a href="#"><img src="facebook.png" alt="Facebook"></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
