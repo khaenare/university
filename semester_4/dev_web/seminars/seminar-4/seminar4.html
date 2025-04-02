@@ -1,108 +1,188 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Зразок дизайну</title>
+    <title>Animal Brands</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f4d9; /* Пастельно-желтый цвет */
+            font-family: sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            transition: background-color 0.5s ease;
         }
-
-        .container {
+        #audiojungle.active ~ .sidebar,
+        #audiojungle.active {
+            background-color: #c8e6c9;
+        }
+        #activeden.active ~ .sidebar,
+        #activeden.active {
+            background-color: #ffe0b2;
+        }
+        #photodune.active ~ .sidebar,
+        #photodune.active {
+            background-color: #a8dadc;
+        }
+        #brands-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        .brand-block {
+            width: 530px;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .brand-block.active {
+            display: flex;
+            opacity: 1;
+        }
+        .logo-img {
+            border: 5px solid #fff;
+            width: 530px;
+            height: 250px;
+            object-fit: cover;
+        }
+        .mini-block {
+            background: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 5px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* Выравнивание по левому краю */
-            padding: 20px;
+            gap: 10px;
         }
-
-        .image-block {
-            width: 600px; /* Ширина изображения */
-            height: 350px; /* Высота изображения */
-            margin-top: 30px; /* Отступ сверху */
-            margin-left: 45px; /* Отступ слева одинаковый для всех блоков */
-            margin-bottom: 30px; /* Отступ снизу */
-            text-align: left; /* Выравнивание изображения по левому краю */
-            border: 5px solid #d4d4d4;
-            border-radius: 8px;
-            background-color: #fff;
-        }
-
-        .image-block img {
-            width: 100%; /* Устанавливаем изображение на всю ширину блока */
-            height: 100%; /* Устанавливаем изображение на всю высоту блока */
-            border-bottom: 5px solid #d4d4d4;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-
-        .text-block {
-            width: 600px; /* Ширина текстового блока, совпадает с шириной изображения */
-            height: 500px; /* Высота текстового блока */
-            background-color: #fff;
-            border: 5px solid #d4d4d4;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            margin-left: 45px; /* Отступ слева одинаковый */
-            position: relative; /* Для размещения кнопок внутри */
-        }
-
-        .text-block h3 {
-            color: #333;
-            font-size: 22px;
-        }
-
-        .text-block p {
-            font-size: 16px;
-            color: #666;
-        }
-
-        /* Кнопки внутри текстового блока */
-        .button-container {
+        .menu {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px; /* Отступ снизу для кнопок */
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-
-        .button-container button {
+        .menu button {
             padding: 10px 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #333;
+            font-weight: bold;
             font-size: 14px;
-            color: #fff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
+            border-radius: 0;
+            transition: 0.3s;
+            text-transform: none;
+
+        }
+        #activeden.active .menu button:hover {
+            background: #ffcc66;
+            color: #000;
+        }
+        .brand-block:not(#activeden).active .menu button:hover {
+            color: #00ffff;
+        }
+        .content-box {
+            display: block;
+        }
+        .content-box img {
+            float: left;
+            margin-right: 15px;
+            margin-bottom: 10px;
+            width: 150px;
+            border: 2px solid #ccc;
+        }
+        .sidebar {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sidebar img {
+            width: 100%;
+            border: 3px solid #fff;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .button-container button:hover {
-            background-color: #0056b3;
+        .sidebar img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #fff;
         }
-
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="image-block">
-        <img src="https://via.placeholder.com/600x350" alt="Приклад зображення">
-    </div>
-
-    <div class="text-block">
-        <div class="button-container">
-            <button>Кнопка 1</button>
-            <button>Кнопка 2</button>
-            <button>Кнопка 3</button>
+<div id="brands-container">
+    <div class="brand-block active" id="audiojungle">
+        <img src="https://via.placeholder.com/530x250/7fbf3f/ffffff?text=audiojungle" class="logo-img" alt="audiojungle">
+        <p class="text-center text-white fw-semibold fst-italic mt-2">Royalty-free audio library for creative professionals</p>
+        <div class="mini-block">
+            <div class="menu">
+                <button>About Envato</button>
+                <button>Marketplace</button>
+                <button>Tuts+ Network</button>
+            </div>
+            <div class="content-box">
+                <img src="https://via.placeholder.com/150x100" alt="mini">
+                <p>Audiojungle is a jungle-themed library of audio tracks for use in your creative work. Music, sound effects, and more. Our catalog features thousands of tracks across genres — from cinematic soundscapes to playful jingles. Whether you're an indie developer or a large production studio, our intuitive filters make it easy to find exactly what you need. You can also preview, favorite, and organize your tracks to streamline your workflow. Join a thriving community of audio professionals and take your sound to the next level.</p>
+                <p><a href="#" style="color:#3366cc; text-decoration: underline; font-weight: bold;">Visit The Envato Website</a></p>
+            </div>
         </div>
-        <h3>About Envato</h3>
-        <p>Envato is a startup based out of Australia with people around the world and sites serving pages every second. We started in a living room in 2008 and have been steadily working to build our company into a world-class contender. Our background is creative, we love open source, we believe that work is about way more than just making money, and we’re totally committed to making products that are awesome!</p>
-        <a href="https://envato.com" target="_blank">Visit The Envato Website</a>
     </div>
-
+    <div class="brand-block" id="activeden">
+        <img src="https://via.placeholder.com/530x250/ff9900/ffffff?text=activeden" class="logo-img" alt="activeden">
+        <p class="text-center text-white fw-semibold fst-italic mt-2">Flash components and interactive web elements</p>
+        <div class="mini-block">
+            <div class="menu">
+                <button>About Envato</button>
+                <button>Marketplace</button>
+                <button>Tuts+ Network</button>
+            </div>
+            <div class="content-box">
+                <img src="https://via.placeholder.com/150x100" alt="mini">
+                <p>Activeden is a dynamic site full of Flash components, templates, and games to make your projects interactive and fun. With support for animation, interactivity, and prebuilt code snippets, Activeden has long been a go-to source for rapid prototyping and live demos. Our assets save time and improve user engagement. Discover customizable UI elements and smooth transitions to enrich any web experience. Whether you're learning or building professionally, Activeden has something for everyone.</p>
+                <p><a href="#" style="color:#3366cc; text-decoration: underline; font-weight: bold;">Visit The Envato Website</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="brand-block" id="photodune">
+        <img src="https://via.placeholder.com/530x250/00cccc/ffffff?text=photodune" class="logo-img" alt="photodune">
+        <p class="text-center text-white fw-semibold fst-italic mt-2">Diverse stock photography for any purpose</p>
+        <div class="mini-block">
+            <div class="menu">
+                <button>About Envato</button>
+                <button>Marketplace</button>
+                <button>Tuts+ Network</button>
+            </div>
+            <div class="content-box">
+                <img src="https://via.placeholder.com/150x100" alt="mini">
+                <p>Photodune is a collection of royalty-free photos for designers, marketers, and businesses to use freely. Explore curated collections designed to match your creative vision. From editorial shots to abstract textures, Photodune offers diversity and inspiration. With flexible licensing and affordable packs, designers can build entire visual identities from a single platform. Start creating stunning content today with images that speak volumes.</p>
+                <p><a href="#" style="color:#3366cc; text-decoration: underline; font-weight: bold;">Visit The Envato Website</a></p>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <img src="https://via.placeholder.com/100x100/7fbf3f/ffffff?text=Audiojungle" alt="audiojungle" onclick="showBlock('audiojungle')">
+        <img src="https://via.placeholder.com/100x60/ff9900/ffffff?text=ActiveDen" alt="activeden" onclick="showBlock('activeden')">
+        <img src="https://via.placeholder.com/100x60/00cccc/ffffff?text=PhotoDune" alt="photodune" onclick="showBlock('photodune')">
+    </div>
 </div>
-
+<script>
+    function showBlock(id) {
+        document.querySelectorAll('.brand-block').forEach(block => {
+            block.classList.remove('active');
+        });
+        document.getElementById(id).classList.add('active');
+        const body = document.body;
+        if (id === 'audiojungle') {
+            body.style.backgroundColor = '#c8e6c9';
+        } else if (id === 'activeden') {
+            body.style.backgroundColor = '#ffe0b2';
+        } else if (id === 'photodune') {
+            body.style.backgroundColor = '#a8dadc';
+        }
+    }
+    document.body.style.backgroundColor = '#c8e6c9';
+</script>
 </body>
 </html>
