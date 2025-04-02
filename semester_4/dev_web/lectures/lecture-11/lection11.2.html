@@ -6,11 +6,11 @@
   <title>Person Table</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Зелена підсвітка при наведенні на Mini Navarro */
-    tr.hover-highlight:hover {
-      background-color: #c6f6d5 !important; /* light green */
+    /* Підсвітка зелена при наведенні на будь-який рядок таблиці */
+    .table > tbody > tr:hover > td {
+      background-color: #c6f6d5 !important;
     }
-
+    
     /* Таблиця без вертикальних контурів */
     .table td, .table th {
       border-left: none;
@@ -106,7 +106,7 @@
         <button class="btn btn-secondary btn-sm">Show Details</button>
       </td>
     </tr>
-    <tr class="hover-highlight">
+    <tr>
       <td>Mini Navarro</td>
       <td>9</td>
       <td>No :(</td>
@@ -114,6 +114,7 @@
         <button class="btn btn-secondary btn-sm">Info modal</button>
         <button class="btn btn-secondary btn-sm">Show Details</button>
       </td>
+    </tr>
     </tr>
     <tr>
       <td>Geneva Wilson</td>
