@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-5">
+<h1 class="mb-4">Date and Time of Visit</h1>
+<div id="visitInfo" class="alert alert-primary"></div>
+<div id="timeSpentInfo" class="alert alert-secondary"></div>
+<script>
+    // Зберігаємо час початку сесії
+    const startTime = Date.now();
+
+    // Функція для отримання і форматування дати, часу та дня тижня
+    function displayVisitInfo() {
+        const now = new Date();
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const dayName = days[now.getDay()];
+        const date = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const year = now.getFullYear();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        const info = `Visit Date: ${date}.${month}.${year}, Time: ${hours}:${minutes}:${seconds}, Day: ${dayName}`;
+        document.getElementById('visitInfo').textContent = info;
+    }
+
+    // Функція для відображення витраченого часу
+    function displayTimeSpent() {
+        const elapsed = Date.now() - startTime;
+        const secondsSpent = Math.floor(elapsed / 1000) % 60;
+        const minutesSpent = Math.floor(elapsed / (1000 * 60)) % 60;
+        const hoursSpent = Math.floor(elapsed / (1000 * 60 * 60));
+        const spentInfo = `Time spent on site: ${hoursSpent} h ${minutesSpent} min ${secondsSpent} sec`;
+        document.getElementById('timeSpentInfo').textContent = spentInfo;
+    }
+
+    // Викликаємо функції при завантаженні сторінки
+    window.addEventListener('load', () => {
+        displayVisitInfo();
+        displayTimeSpent(); // відображає початкове значення витраченого часу
+        setInterval(displayTimeSpent, 1000); // оновлює кожну секунду
+    });
+
+    // Відображення часу, проведеного на сайті перед закриттям/перезавантаженням
+    window.addEventListener('beforeunload', () => {
+        displayTimeSpent();
+    });
+</script>
+</body>
+</html>
