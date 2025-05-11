@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container my-4">
+  <!-- Кнопки додавання та видалення полів -->
+  <div class="mb-3">
+    <button id="addBtn" class="btn btn-primary me-2">Додати текстове поле</button>
+    <button id="removeBtn" class="btn btn-danger">Вилучити текстове поле</button>
+  </div>
+  <!-- Контейнер для текстових полів -->
+  <div id="fieldsContainer">
+    <input type="text" class="form-control mb-2" placeholder="Текстове поле">
+  </div>
+</div>
+
+<script>
+  const addBtn = document.getElementById('addBtn');
+  const removeBtn = document.getElementById('removeBtn');
+  const container = document.getElementById('fieldsContainer');
+
+  // Додає нове текстове поле в контейнер
+  addBtn.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control mb-2';
+    input.placeholder = 'Текстове поле';
+    container.appendChild(input);
+  });
+
+  // Видаляє всі поля, крім першого
+  removeBtn.addEventListener('click', () => {
+    // поки в контейнері більше одного поля, видаляємо останнє
+    while (container.children.length > 1) {
+      container.removeChild(container.lastChild);
+    }
+  });
+</script>
+</body>
+</html>
