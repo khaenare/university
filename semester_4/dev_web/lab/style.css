@@ -1,0 +1,498 @@
+:root {
+    /* Основные цвета */
+    --color-primary: #28a745;
+    --color-primary-dark: #218838;
+    --color-bg-light: #f0f9f4;
+    --color-bg-lighter: #e9f7ee;
+    --color-text: #333;
+    --color-muted: #666;
+}
+
+/* Базові установки */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-size: 14px;
+    line-height: 22px;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'PT Sans', sans-serif;
+    color: var(--color-text);
+    background: #fff;
+}
+
+@media (max-width: 992px) {
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+    .product-card {
+        padding: 12px;
+        border-radius: 4px;
+    }
+    .product-card h3 {
+        font-size: 1.1rem;
+    }
+    .product-card .price {
+        font-size: 1rem;
+    }
+    .btn-add {
+        padding: 6px 12px;
+        font-size: .9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .product-card {
+        padding: 10px;
+    }
+    .product-card h3 {
+        font-size: 1rem;
+    }
+    .product-card .price {
+        font-size: .9rem;
+    }
+    .btn-add {
+        width: 100%;
+        padding: 8px 0;
+        font-size: .9rem;
+    }
+}
+
+/* Шрифти */
+@font-face {
+    font-family: 'PT Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('fonts/PTSans-Regular.ttf') format('truetype');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'PT Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('fonts/PTSans-Bold.ttf') format('truetype');
+    font-display: swap;
+}
+
+/* Універсальні селектори */
+* {
+    box-sizing: border-box;
+}
+.hidden {
+    display: none !important;
+}
+.wrapper {
+    max-width: 980px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+/* HEADER & FOOTER */
+.site-header,
+.site-footer {
+    background: var(--color-bg-lighter);
+    border: 1px solid #ddd;
+}
+.site-header { border-bottom: none; }
+.site-footer  { border-top:    none; padding: 20px 0; }
+
+.header-wrapper,
+.footer-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+.logo img {
+    margin-right: 10px;
+}
+.brand h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+.brand .tagline {
+    margin: 0;
+    font-size: 14px;
+    color: var(--color-muted);
+}
+.contacts .phone,
+.feedback-link {
+    margin: 0;
+    font-size: 16px;
+}
+.feedback-link {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 14px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: text-decoration .2s;
+}
+.feedback-link:hover {
+    text-decoration: underline;
+    color: var(--color-primary-dark);
+}
+
+.footer-menu a,
+.footer-menu a:visited {
+    color: var(--color-text) !important;
+    text-decoration: none !important;
+}
+.footer-menu a:hover,
+.footer-menu a:focus,
+.footer-menu a:active {
+    color: var(--color-text) !important;
+    background: none !important;
+}
+
+/* NAVIGATION */
+.site-menu {
+    background: var(--color-primary);
+}
+.menu-list {
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.menu-list li {
+    margin: 0;
+}
+.menu-list a {
+    display: block;
+    padding: 12px 20px;
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s;
+}
+.menu-list a:hover {
+    background: var(--color-primary-dark);
+}
+
+/* SLIDER */
+/* Слайдер во всю ширину и строго по центру вьюпорта */
+.slider {
+    position: relative;
+    width: 100vw;            /* занять всю ширину экрана */
+    height: 300px;
+    left: 50%;               /* сдвигаем «точку отсчёта» правой границы в центр */
+    transform: translateX(-50%); /* смещаем сам блок на половину своей ширины влево */
+    overflow: hidden;
+    margin-bottom: 40px;     /* отступ под слайдером */
+}
+
+/* Тот же fade-эффект */
+.slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.slide.active {
+    opacity: 1;
+}
+
+/* Центрируем картинку и обрезаем лишнее */
+.slide img {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Стрелки навигации */
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    width: 40px; height: 40px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background .2s;
+}
+.slider-nav.prev { left: 10px; }
+.slider-nav.next { right: 10px; }
+.slider-nav:hover { background: rgba(0,0,0,0.7); }
+
+
+/* LAYOUT */
+main.content {
+    flex: 1;
+}
+.content-wrapper {
+    display: flex;
+    gap: 32px;
+    margin: 20px 0;
+}
+.sidebar {
+    width: 200px;
+}
+
+/* SIDEBAR (табличний) */
+.sidebar-table {
+    display: table;
+    width: 100%;
+    background: var(--color-bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.sidebar-row {
+    display: table-row;
+}
+.sidebar-row a {
+    display: table-cell;
+    padding: 14px 18px;
+    font-size: 16px;
+    color: var(--color-text);
+    text-decoration: none;
+    vertical-align: middle;
+    transition: background .25s, color .25s;
+}
+.sidebar-row:not(:last-child) a {
+    border-bottom: 1px solid #e0e0e0;
+}
+.sidebar-row a:hover,
+.sidebar-row a.active {
+    background: var(--color-bg-light);
+    color: var(--color-primary);
+    border-left: 4px solid var(--color-primary);
+    padding-left: 14px;
+}
+.sidebar-row:first-child a {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.sidebar-row:last-child a {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.sidebar-row:nth-child(even) a {
+    background: #fcfcfc;
+}
+
+/* CATALOG & PRODUCTS */
+.catalog {
+    flex: 1;
+}
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 24px;
+}
+.product-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    padding: 16px;
+    text-align: center;
+    border-radius: 6px;
+    transition: box-shadow .2s;
+    text-decoration: none !important;
+    color: inherit !important;
+    background-color: #fff;
+}
+.product-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.product-card img {
+    flex-shrink: 0;
+    max-width: 100%;
+    height: auto;
+}
+/* прижимаем текст вниз */
+.product-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.product-card .card-body h5,
+.product-card .card-body .card-text {
+    margin-bottom: .5rem;
+}
+.product-card h3,
+.product-card .price {
+    margin: 0;
+    color: inherit !important;
+}
+.price {
+    font-size: 18px;
+    font-weight: 700;
+}
+.btn-add {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background .2s;
+}
+.btn-add:hover {
+    background: var(--color-primary-dark);
+}
+
+/* PAGINATION */
+.pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 24px;
+}
+.pagination a {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--color-bg-light);
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color .2s, color .2s, transform .1s;
+}
+.pagination a:hover {
+    background: var(--color-bg-lighter);
+    transform: translateY(-1px);
+}
+.pagination a.active {
+    background: var(--color-primary);
+    color: #fff;
+    cursor: default;
+}
+
+/* CATALOG INFO BLOCKS */
+.catalog-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin: 40px 0;
+}
+.catalog-info__item {
+    background: var(--color-bg-light);
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.catalog-info__item h3 {
+    margin-top: 0;
+    font-size: 20px;
+    color: var(--color-text);
+}
+.catalog-info__item p {
+    margin-bottom: 0;
+    color: var(--color-muted);
+    line-height: 1.6;
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s;
+    z-index: 1000;
+}
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+.feedback-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s;
+    z-index: 1001;
+}
+.feedback-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+.feedback-modal h2 {
+    margin-top: 0;
+}
+.feedback-modal label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+.feedback-modal input,
+.feedback-modal textarea {
+    width: 100%;
+    padding: 6px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+}
+.feedback-modal input:invalid,
+.feedback-modal textarea:invalid {
+    border-color: #d00;
+    background: #fee;
+}
+.feedback-modal button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+.feedback-modal button:hover {
+    background: var(--color-primary-dark);
+}
+
+body {
+    position: relative;
+    z-index: 0;
+}
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/logo.png');
+    background-repeat: repeat;
+    background-position: center;
+    background-size: 80px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: -1;
+}

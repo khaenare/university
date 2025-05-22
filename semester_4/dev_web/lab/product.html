@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- Header -->
+<header class="site-header">
+  <div class="wrapper header-wrapper">
+    <div class="logo">
+      <img src="images/logo.png" alt="Логотип Vilka.Ua" width="60" height="60">
+      <div class="brand"><h1>Vilka.Ua</h1><p class="tagline">Доставка прямо від виробника!</p></div>
+    </div>
+    <div class="contacts">
+      <p class="phone">+38 (044) 123-45-67</p>
+      <p class="phone">+38 (044) 765-43-21</p>
+      <a href="#" class="feedback-link">Зворотній зв'язок</a>
+    </div>
+  </div>
+</header>
+
+<!-- Навігація -->
+<nav class="site-menu">
+  <div class="wrapper">
+    <ul class="menu-list">
+      <li><a href="index.html">Головна</a></li>
+      <li><a href="product.html" class="active">Товар</a></li>
+      <li><a href="delivery.html">Доставка</a></li>
+      <li><a href="price.html">Прайс-лист</a></li>
+      <li><a href="contacts.html">Контакти</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Основний вміст -->
+<main class="content">
+  <div class="wrapper content-wrapper">
+    <!-- Бічна панель -->
+    <aside class="sidebar">
+      <div class="sidebar-table">
+        <div class="sidebar-row"><a href="index.html">Головна</a></div>
+        <div class="sidebar-row"><a href="catalog.html">Каталог</a></div>
+        <div class="sidebar-row"><a href="product.html" class="active">Товар</a></div>
+        <div class="sidebar-row"><a href="delivery.html">Доставка</a></div>
+      </div>
+    </aside>
+
+    <!-- Деталі товару -->
+    <section class="catalog">
+      <h2>Ультра-чайник «SupremeHeat 3000»</h2>
+      <div class="product-grid" style="display:flex; gap:32px; align-items:flex-start;">
+        <!-- Галерея -->
+        <div class="product-gallery" style="flex:1;">
+          <img src="images/product1.jpg" alt="SupremeHeat 3000" style="width:100%;border:1px solid #ddd;border-radius:6px;">
+          <!-- Тут можна додати мініатюри -->
+        </div>
+        <!-- Інформація про товар -->
+        <div class="product-info" style="flex:1;">
+          <p class="price" style="font-size:24px;margin-bottom:16px;">1 599 грн</p>
+          <button class="btn-add" style="margin-bottom:24px;">Додати до кошика</button>
+          <h3>Опис</h3>
+          <p>Сучасний електрочайник з функцією підтримки температури, корпус з нержавної сталі, LED-підсвітка.</p>
+          <h3>Характеристики</h3>
+          <ul>
+            <li>Об'єм: 1.7 л</li>
+            <li>Потужність: 2200 Вт</li>
+            <li>Матеріал: нерж. сталь</li>
+            <li>Гарантія: 2 роки</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="wrapper footer-wrapper">
+    <div class="footer-menu">
+      <ul>
+        <li><a href="index.html">Головна</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="delivery.html">Доставка</a></li>
+        <li><a href="price.html">Прайс-лист</a></li>
+        <li><a href="contacts.html">Контакти</a></li>
+      </ul>
+    </div>
+    <div class="credits">
+      <p>© 2025 ПК «Vilka.Ua»</p>
+      <p>info@dec-tam.ua</p>
+      <p>Розробка сайту — Ляшенко</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Модальне вікно відгуків -->
+<div class="modal-overlay"></div>
+<div class="feedback-modal">
+  <form id="feedback-form">
+    <h2>Зворотній зв'язок</h2>
+    <label>Ваше ім’я*<input type="text" name="name" required></label>
+    <label>Телефон*<input type="tel" name="phone" required></label>
+    <label>Email*<input type="email" name="email" required></label>
+    <textarea name="message" placeholder="Повідомлення"></textarea>
+    <button type="submit">Відправити</button>
+  </form>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
