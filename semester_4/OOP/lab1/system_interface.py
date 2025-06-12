@@ -1,0 +1,416 @@
+from models.administrator import Administrator
+from models.teacher import Teacher
+from models.student import Student
+from models.online_course import OnlineCourse
+from models.onsite_course import OnsiteCourse
+from models.schedule import Schedule
+
+class SystemInterface:
+    def __init__(self):
+        self.administrators = []
+        self.teachers = []
+        self.students = []
+        self.courses = []
+        self.schedule = Schedule()
+        self.current_user = None
+
+        # Ініціалізуємо систему з одним адміністратором
+        self.setup_initial_data()
+
+    def setup_initial_data(self):
+        # Створюємо адміністратора за замовчуванням
+        admin = Administrator("Admin", "Adminov", "admin@example.com", 1)
+        self.administrators.append(admin)
+
+    def run(self):
+        while True:
+            print("\nWelcome to the University Management System")
+            print("1. Login")
+            print("2. Exit")
+            choice = input("Select an option: ")
+
+            if choice == '1':
+                self.login()
+            elif choice == '2':
+                print("Goodbye!")
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def login(self):
+        print("\nLogin")
+        print("Select role:")
+        print("1. Administrator")
+        print("2. Teacher")
+        print("3. Student")
+        role_choice = input("Select your role: ")
+
+        if role_choice == '1':
+            self.admin_menu()
+        elif role_choice == '2':
+            self.teacher_menu()
+        elif role_choice == '3':
+            self.student_menu()
+        else:
+            print("Invalid role. Please try again.")
+
+    #-----------------------------------------------------------------------------
+    # Адміністратор
+    def admin_menu(self):
+        self.current_user = self.administrators[0]
+        while True:
+            print(f"\nAdministrator Menu ({self.current_user.get_full_name()})")
+            print("1. Create Course")
+            print("2. Assign Teacher to Course")
+            print("3. Register Teacher")
+            print("4. Register Student")
+            print("5. View Courses")
+            print("6. Logout")
+            choice = input("Select an option: ")
+
+            if choice == '1':
+                self.create_course()
+            elif choice == '2':
+                self.assign_teacher_to_course()
+            elif choice == '3':
+                self.register_teacher()
+            elif choice == '4':
+                self.register_student()
+            elif choice == '5':
+                self.view_courses()
+            elif choice == '6':
+                self.current_user = None
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def create_course(self):
+        print("\nCreate Course")
+        course_id = input("Enter course ID: ")
+        title = input("Enter course title: ")
+        description = input("Enter course description: ")
+        course_type = input("Enter course type (online/onsite): ")
+
+        if course_type.lower() == 'online':
+            platform = input("Enter platform: ")
+            course = OnlineCourse(course_id, title, description, platform)
+        elif course_type.lower() == 'onsite':
+            location = input("Enter location: ")
+            course = OnsiteCourse(course_id, title, description, location)
+        else:
+            print("Invalid course type.")
+            return
+
+        self.courses.append(course)
+        print(f"Course '{title}' created successfully.")
+
+    def assign_teacher_to_course(self):
+        print("\nAssign Teacher to Course")
+        if not self.teachers:
+            print("No teachers available.")
+            return
+        if not self.courses:
+            print("No courses available.")
+            return
+
+        self.view_teachers()
+        teacher_id = input("Enter teacher ID: ")
+        teacher = self.get_teacher_by_id(int(teacher_id))
+        if not teacher:
+            print("Teacher not found.")
+            return
+
+        self.view_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course:
+            print("Course not found.")
+            return
+
+        self.current_user.assign_teacher_to_course(teacher, course)
+
+    def register_teacher(self):
+        print("\nRegister Teacher")
+        name = input("Enter first name: ")
+        surname = input("Enter last name: ")
+        email = input("Enter email: ")
+        teacher_id = len(self.teachers) + 1
+        teacher = Teacher(name, surname, email, teacher_id)
+        self.teachers.append(teacher)
+        print(f"Teacher '{teacher.get_full_name()}' registered successfully with ID {teacher_id}.")
+
+    def register_student(self):
+        print("\nRegister Student")
+        name = input("Enter first name: ")
+        surname = input("Enter last name: ")
+        email = input("Enter email: ")
+        student_id = len(self.students) + 1
+        student = Student(name, surname, email, student_id)
+        self.students.append(student)
+        print(f"Student '{student.get_full_name()}' registered successfully with ID {student_id}.")
+
+    def view_courses(self):
+        print("\nCourses:")
+        for course in self.courses:
+            print(f"- {course.course_id}: {course.title} ({'Online' if isinstance(course, OnlineCourse) else 'Onsite'})")
+
+    def view_teachers(self):
+        print("\nTeachers:")
+        for teacher in self.teachers:
+            print(f"- {teacher._teacher_id}: {teacher.get_full_name()}")
+
+    def get_teacher_by_id(self, teacher_id):
+        for teacher in self.teachers:
+            if teacher._teacher_id == teacher_id:
+                return teacher
+        return None
+
+    def get_course_by_id(self, course_id):
+        for course in self.courses:
+            if course.course_id == course_id:
+                return course
+        return None
+
+    # -----------------------------------------------------------------------------
+    # Викладач
+    def teacher_menu(self):
+        if not self.teachers:
+            print("No teachers registered.")
+            return
+
+        self.view_teachers()
+        teacher_id = input("Enter your teacher ID: ")
+        teacher = self.get_teacher_by_id(int(teacher_id))
+        if not teacher:
+            print("Teacher not found.")
+            return
+
+        self.current_user = teacher
+        while True:
+            print(f"\nTeacher Menu ({self.current_user.get_full_name()})")
+            print("1. Create Assignment")
+            print("2. Assign Grade")
+            print("3. Assign Grade for Assignment")
+            print("4. View Courses")
+            print("5. Logout")
+            choice = input("Select an option: ")
+
+            if choice == '1':
+                self.create_assignment()
+            elif choice == '2':
+                self.assign_grade()
+            elif choice == '3':
+                self.assign_grade_for_assignment()
+            elif choice == '4':
+                self.view_teacher_courses()
+            elif choice == '5':
+                self.current_user = None
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def create_assignment(self):
+        print("\nCreate Assignment")
+        if not self.current_user._courses_taught:
+            print("You are not assigned to any courses.")
+            return
+
+        self.view_teacher_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses_taught:
+            print("Invalid course.")
+            return
+
+        title = input("Enter assignment title: ")
+        due_date = input("Enter due date (YYYY-MM-DD): ")
+        max_grade = float(input("Enter max grade: "))
+        self.current_user.create_assignment(course, title, due_date, max_grade)
+
+    def assign_grade(self):
+        print("\nAssign Grade")
+        if not self.current_user._courses_taught:
+            print("You are not assigned to any courses.")
+            return
+
+        self.view_teacher_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses_taught:
+            print("Invalid course.")
+            return
+
+        if not course.students:
+            print("No students enrolled in this course.")
+            return
+
+        print("\nStudents:")
+        for student in course.students:
+            print(f"- {student._student_id}: {student.get_full_name()}")
+
+        student_id = int(input("Enter student ID: "))
+        student = self.get_student_by_id(student_id)
+        if not student or student not in course.students:
+            print("Invalid student.")
+            return
+
+        grade_value = float(input("Enter grade value: "))
+        self.current_user.assign_grade(student, course, grade_value)
+
+    def view_teacher_courses(self):
+        print("\nYour Courses:")
+        for course in self.current_user._courses_taught:
+            print(f"- {course.course_id}: {course.title}")
+
+    def assign_grade_for_assignment(self):
+        print("\nAssign Grade for Assignment")
+        if not self.current_user._courses_taught:
+            print("You are not assigned to any courses.")
+            return
+
+        self.view_teacher_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses_taught:
+            print("Invalid course.")
+            return
+
+        if not course.assignments:
+            print("No assignments for this course.")
+            return
+
+        print("\nAssignments:")
+        for assignment in course.assignments:
+            print(f"- {assignment.assignment_id}: {assignment.title}")
+
+        assignment_id = int(input("Enter assignment ID: "))
+        assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
+        if not assignment:
+            print("Assignment not found.")
+            return
+
+        if not course.students:
+            print("No students enrolled in this course.")
+            return
+
+        print("\nStudents:")
+        for student in course.students:
+            print(f"- {student._student_id}: {student.get_full_name()}")
+
+        student_id = int(input("Enter student ID: "))
+        student = self.get_student_by_id(student_id)
+        if not student or student not in course.students:
+            print("Invalid student.")
+            return
+
+        grade_value = float(input("Enter grade value: "))
+        self.current_user.assign_grade_for_assignment(student, course, assignment_id, grade_value)
+
+    # -----------------------------------------------------------------------------
+    # Студент
+    def student_menu(self):
+        if not self.students:
+            print("No students registered.")
+            return
+
+        self.view_students()
+        student_id = input("Enter your student ID: ")
+        student = self.get_student_by_id(int(student_id))
+        if not student:
+            print("Student not found.")
+            return
+
+        self.current_user = student
+        while True:
+            print(f"\nStudent Menu ({self.current_user.get_full_name()})")
+            print("1. Enroll in Course")
+            print("2. View Enrolled Courses")
+            print("3. View Assignments")
+            print("4. Submit Assignment")
+            print("5. View Grades")
+            print("6. Logout")
+            choice = input("Select an option: ")
+
+            if choice == '1':
+                self.enroll_in_course()
+            elif choice == '2':
+                self.view_student_courses()
+            elif choice == '3':
+                self.view_student_assignments()
+            elif choice == '4':
+                self.submit_assignment()
+            elif choice == '5':
+                self.view_student_grades()
+            elif choice == '6':
+                self.current_user = None
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+    def enroll_in_course(self):
+        print("\nAvailable Courses:")
+        for course in self.courses:
+            if self.current_user not in course.students:
+                print(f"- {course.course_id}: {course.title}")
+        course_id = input("Enter course ID to enroll: ")
+        course = self.get_course_by_id(course_id)
+        if not course:
+            print("Course not found.")
+            return
+
+        self.current_user.enroll_course(course)
+
+    def view_student_courses(self):
+        print("\nYour Courses:")
+        for course in self.current_user._courses:
+            print(f"- {course.course_id}: {course.title}")
+
+    def view_student_grades(self):
+        print("\nYour Grades:")
+        grades = self.current_user.get_grades()
+        if not grades:
+            print("No grades available.")
+        else:
+            for course_title, grade in grades.items():
+                print(f"- {course_title}: {grade}")
+
+    def view_students(self):
+        print("\nStudents:")
+        for student in self.students:
+            print(f"- {student._student_id}: {student.get_full_name()}")
+
+    def get_student_by_id(self, student_id):
+        for student in self.students:
+            if student._student_id == student_id:
+                return student
+        return None
+
+    def view_student_assignments(self):
+        self.current_user.view_assignments()
+
+    def submit_assignment(self):
+        print("\nSubmit Assignment")
+        self.view_student_courses()
+        course_id = input("Enter course ID: ")
+        course = self.get_course_by_id(course_id)
+        if not course or course not in self.current_user._courses:
+            print("Invalid course.")
+            return
+
+        if not course.assignments:
+            print("No assignments for this course.")
+            return
+
+        print("\nAssignments:")
+        for assignment in course.assignments:
+            status = "Submitted" if self.current_user._student_id in assignment.submissions else "Not Submitted"
+            print(f"- [{status}] {assignment.assignment_id}: {assignment.title}")
+
+        assignment_id = int(input("Enter assignment ID: "))
+        assignment = next((a for a in course.assignments if a.assignment_id == assignment_id), None)
+        if not assignment:
+            print("Assignment not found.")
+            return
+
+        submission = input("Enter your submission: ")
+        self.current_user.submit_assignment(assignment, submission)
