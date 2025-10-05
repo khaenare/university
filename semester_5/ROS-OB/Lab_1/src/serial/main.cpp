@@ -37,18 +37,21 @@ int main() {
 
     std::cout << "Initial data generated successfully." << std::endl;
 
-    if (Size <= 5) {
-        std::cout << "Matrix:" << std::endl;
-        for (int i = 0; i < Size; i++) {
-            for (int j = 0; j < Size; j++) {
-                std::cout << pMatrix[i * Size + j] << "\t";
-            }
-            std::cout << std::endl;
+    // === Task 5: matrix-vector multiplication ===
+    for (int i = 0; i < Size; i++) {
+        double sum = 0.0;
+        for (int j = 0; j < Size; j++) {
+            sum += pMatrix[i * Size + j] * pVector[j];
         }
+        pResult[i] = sum;
+    }
 
-        std::cout << "Vector:" << std::endl;
+    std::cout << "Matrix-vector multiplication completed." << std::endl;
+
+    if (Size <= 5) {
+        std::cout << "Result vector:" << std::endl;
         for (int i = 0; i < Size; i++) {
-            std::cout << pVector[i] << "\t";
+            std::cout << pResult[i] << "\t";
         }
         std::cout << std::endl;
     }
