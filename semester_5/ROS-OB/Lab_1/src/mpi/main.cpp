@@ -1,5 +1,11 @@
+// src/parallel/main.cpp
+// Exercise 4 — Task 10: test the parallel program correctness (C++17 + MPI)
+
 #include <iostream>
+#include <cmath>
 #include <mpi.h>
+
+const double EPS = 1e-6;
 
 // === Initialization ===
 void ProcessInitialization(double*& pMatrix, double*& pVector,
@@ -69,7 +75,7 @@ void ParallelCalculation(double* pProcRows, double* pVector,
     printf("\n");
 }
 
-// === Task 9: gather results on process 0 ===
+// === Gather results ===
 void ResultGathering(double* pProcResult, double* pResult,
                      int Size, int ProcRank, int ProcNum) {
     int RowNum = Size / ProcNum;
@@ -77,13 +83,36 @@ void ResultGathering(double* pProcResult, double* pResult,
     MPI_Gather(pProcResult, RowNum, MPI_DOUBLE,
                pResult, RowNum, MPI_DOUBLE,
                0, MPI_COMM_WORLD);
+}
 
-    if (ProcRank == 0) {
-        printf("\nFull result vector gathered on process 0:\n");
-        for (int i = 0; i < Size; i++)
-            printf("%8.4f ", pResult[i]);
-        printf("\n");
+// === Serial reference computation (only for rank 0) ===
+void SerialMultiplication(double* pMatrix, double* pVector,
+                          double* pSerialResult, int Size) {
+    for (int i = 0; i < Size; i++) {
+        pSerialResult[i] = 0.0;
+        for (int j = 0; j < Size; j++)
+            pSerialResult[i] += pMatrix[i * Size + j] * pVector[j];
     }
+}
+
+// === Compare serial and parallel results ===
+void TestCorrectness(double* pResult, double* pSerialResult,
+                     int Size, int ProcRank) {
+    if (ProcRank != 0) return;
+
+    bool correct = true;
+    for (int i = 0; i < Size; i++) {
+        if (fabs(pResult[i] - pSerialResult[i]) > EPS) {
+            printf("Difference detected at index %d: parallel = %.6f, serial = %.6f\n",
+                   i, pResult[i], pSerialResult[i]);
+            correct = false;
+        }
+    }
+
+    if (correct)
+        printf("\n=== Parallel result matches serial computation ===\n");
+    else
+        printf("\n*** Parallel result differs from serial computation ***\n");
 }
 
 // === Termination ===
@@ -105,6 +134,7 @@ void ProcessTermination(double*& pMatrix, double*& pVector,
 int main(int argc, char* argv[]) {
     int ProcNum, ProcRank, Size;
     double *pMatrix, *pVector, *pResult, *pProcRows, *pProcResult;
+    double* pSerialResult = nullptr;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
@@ -117,8 +147,24 @@ int main(int argc, char* argv[]) {
     DataDistribution(pMatrix, pVector, pProcRows, Size, ProcRank, ProcNum);
     ParallelCalculation(pProcRows, pVector, pProcResult, Size, ProcRank, ProcNum);
     ResultGathering(pProcResult, pResult, Size, ProcRank, ProcNum);
+
+    // === NEW: print gathered result on process 0 ===
+    if (ProcRank == 0) {
+        printf("\nFull result vector gathered on process 0:\n");
+        for (int i = 0; i < Size; i++)
+            printf("%8.4f ", pResult[i]);
+        printf("\n");
+
+        // === Serial check ===
+        pSerialResult = new double[Size];
+        SerialMultiplication(pMatrix, pVector, pSerialResult, Size);
+        TestCorrectness(pResult, pSerialResult, Size, ProcRank);
+        delete[] pSerialResult;
+    }
+
     ProcessTermination(pMatrix, pVector, pResult, pProcRows, pProcResult, ProcRank);
 
     MPI_Finalize();
     return 0;
 }
+
