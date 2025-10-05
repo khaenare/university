@@ -28,17 +28,15 @@ int main() {
     pVector = new double[Size];
     pResult = new double[Size];
 
-    // Заповнення тестовими даними (можна змінити формулу, якщо потрібно інше)
     for (int i = 0; i < Size; i++) {
         for (int j = 0; j < Size; j++) {
-            pMatrix[i * Size + j] = i + j + 1;  // приклад: матриця зі зростаючими числами
+            pMatrix[i * Size + j] = i + j + 1;
         }
-        pVector[i] = 1.0; // простий вектор з одиниць
+        pVector[i] = 1.0;
     }
 
     std::cout << "Initial data generated successfully." << std::endl;
 
-    // Перевірочний висновок для малих розмірів (наприклад, <=5)
     if (Size <= 5) {
         std::cout << "Matrix:" << std::endl;
         for (int i = 0; i < Size; i++) {
@@ -54,5 +52,17 @@ int main() {
         }
         std::cout << std::endl;
     }
+
+    // === Task 4: terminate program execution ===
+    delete[] pMatrix;
+    delete[] pVector;
+    delete[] pResult;
+
+    pMatrix = nullptr;
+    pVector = nullptr;
+    pResult = nullptr;
+
+    std::cout << "Memory freed. Program completed successfully." << std::endl;
+
     return 0;
 }
