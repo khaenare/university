@@ -28,6 +28,7 @@ void ProcessInitialization(double*& pMatrix, double*& pVector,
                 pMatrix[i * Size + j] = i + j + 1;
             pVector[i] = 1.0;
         }
+
         printf("Initial data generated successfully on process 0.\n");
     } else {
         pVector = new double[Size];
@@ -46,19 +47,15 @@ void DataDistribution(double* pMatrix, double* pVector,
     MPI_Scatter(pMatrix, RowNum * Size, MPI_DOUBLE,
                 pProcRows, RowNum * Size, MPI_DOUBLE,
                 0, MPI_COMM_WORLD);
-
-    printf("Process %d received its matrix block (%d rows) and full vector.\n",
-           ProcRank, RowNum);
 }
 
-// === Parallel matrix-vector multiplication (Task 8) ===
+// === Parallel matrix-vector multiplication ===
 void ParallelCalculation(double* pProcRows, double* pVector,
                          double*& pProcResult, int Size,
                          int ProcRank, int ProcNum) {
     int RowNum = Size / ProcNum;
     pProcResult = new double[RowNum];
 
-    // partial results
     for (int i = 0; i < RowNum; i++) {
         pProcResult[i] = 0.0;
         for (int j = 0; j < Size; j++)
@@ -67,12 +64,27 @@ void ParallelCalculation(double* pProcRows, double* pVector,
 
     printf("\nProcRank = %d\n", ProcRank);
     printf("Part of result vector:\n");
-    for (int i = 0; i < RowNum; i++) {
+    for (int i = 0; i < RowNum; i++)
         printf("%8.4f ", pProcResult[i]);
-    }
     printf("\n");
 }
 
+// === Task 9: gather results on process 0 ===
+void ResultGathering(double* pProcResult, double* pResult,
+                     int Size, int ProcRank, int ProcNum) {
+    int RowNum = Size / ProcNum;
+
+    MPI_Gather(pProcResult, RowNum, MPI_DOUBLE,
+               pResult, RowNum, MPI_DOUBLE,
+               0, MPI_COMM_WORLD);
+
+    if (ProcRank == 0) {
+        printf("\nFull result vector gathered on process 0:\n");
+        for (int i = 0; i < Size; i++)
+            printf("%8.4f ", pResult[i]);
+        printf("\n");
+    }
+}
 
 // === Termination ===
 void ProcessTermination(double*& pMatrix, double*& pVector,
@@ -93,7 +105,6 @@ void ProcessTermination(double*& pMatrix, double*& pVector,
 int main(int argc, char* argv[]) {
     int ProcNum, ProcRank, Size;
     double *pMatrix, *pVector, *pResult, *pProcRows, *pProcResult;
-    double Start, Finish, Duration;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
@@ -105,6 +116,7 @@ int main(int argc, char* argv[]) {
     ProcessInitialization(pMatrix, pVector, pResult, Size, ProcRank, ProcNum);
     DataDistribution(pMatrix, pVector, pProcRows, Size, ProcRank, ProcNum);
     ParallelCalculation(pProcRows, pVector, pProcResult, Size, ProcRank, ProcNum);
+    ResultGathering(pProcResult, pResult, Size, ProcRank, ProcNum);
     ProcessTermination(pMatrix, pVector, pResult, pProcRows, pProcResult, ProcRank);
 
     MPI_Finalize();
