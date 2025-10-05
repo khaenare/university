@@ -1,4 +1,5 @@
 #include <iostream>
+#include <mpi.h>   // только ради MPI_Wtime()
 
 int main() {
     double* pMatrix = nullptr;
@@ -37,6 +38,9 @@ int main() {
 
     std::cout << "Initial data generated successfully." << std::endl;
 
+    // === Timing start ===
+    double Start = MPI_Wtime();
+
     // === Task 5: matrix-vector multiplication ===
     for (int i = 0; i < Size; i++) {
         double sum = 0.0;
@@ -46,8 +50,13 @@ int main() {
         pResult[i] = sum;
     }
 
+    // === Timing end ===
+    double Finish = MPI_Wtime();
+    double Duration = Finish - Start;
     std::cout << "Matrix-vector multiplication completed." << std::endl;
+    std::cout << "Execution time: " << Duration << " seconds" << std::endl;
 
+    // === Result preview for small sizes ===
     if (Size <= 5) {
         std::cout << "Result vector:" << std::endl;
         for (int i = 0; i < Size; i++) {

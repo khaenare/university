@@ -41,7 +41,6 @@ void DataDistribution(double* pMatrix, double* pVector,
                       int ProcRank, int ProcNum,
                       int*& sendcounts, int*& displs,
                       int& RowNum) {
-    // compute rows per process (some will have one more)
     int base = Size / ProcNum;
     int extra = Size % ProcNum;
 
@@ -181,9 +180,21 @@ int main(int argc, char* argv[]) {
     ProcessInitialization(pMatrix, pVector, pResult, Size, ProcRank, ProcNum);
     DataDistribution(pMatrix, pVector, pProcRows, Size, ProcRank, ProcNum,
                      sendcounts, displs, RowNum);
+
+    // === timing start ===
+    MPI_Barrier(MPI_COMM_WORLD);
+    double Start = MPI_Wtime();
+
     ParallelCalculation(pProcRows, pVector, pProcResult, Size, RowNum, ProcRank);
     ResultGathering(pProcResult, pResult, Size, ProcRank, ProcNum,
                     sendcounts, displs, RowNum);
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    double Finish = MPI_Wtime();
+    double Duration = Finish - Start;
+
+    if (ProcRank == 0)
+        printf("\nParallel execution time: %.6f seconds\n", Duration);
 
     if (ProcRank == 0) {
         pSerialResult = new double[Size];
