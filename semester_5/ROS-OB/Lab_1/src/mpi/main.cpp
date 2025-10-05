@@ -1,9 +1,16 @@
-// src/parallel/main.cpp
-// Exercise 4 — Task 1: open the project ParallelMatrixVectorMult (C++17)
-
 #include <iostream>
+#include <mpi.h>
 
-int main() {
-    std::cout << "Parallel matrix-vector multiplication program" << std::endl;
+int main(int argc, char* argv[]) {
+    // === Initialize MPI environment ===
+    MPI_Init(&argc, &argv);
+
+    std::cout << "MPI environment initialized successfully." << std::endl;
+
+    // === Finalize MPI ===
+    MPI_Finalize();
+
+    std::cout << "MPI environment finalized successfully." << std::endl;
+
     return 0;
 }
