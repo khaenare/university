@@ -1,26 +1,47 @@
+// src/parallel/main.cpp
+// Exercise 4 — Task 5: input the initial data (C++17 + MPI)
+
 #include <iostream>
 #include <mpi.h>
 
-// Function for memory allocation and data initialization
+// === Function for memory allocation and data initialization ===
 void ProcessInitialization(double*& pMatrix, double*& pVector,
                            double*& pResult, int& Size,
                            int ProcRank, int ProcNum) {
+    // === Input the size on process 0 ===
     if (ProcRank == 0) {
         do {
             printf("\nEnter size of the matrix and vector: ");
             scanf("%d", &Size);
             if (Size < ProcNum) {
-                printf("Size of the objects must be greater than "
-                       "number of processes!\n");
+                printf("Size of the objects must be greater than number of processes!\n");
             }
             if (Size % ProcNum != 0) {
-                printf("Size of objects must be divisible by "
-                       "number of processes!\n");
+                printf("Size of objects must be divisible by number of processes!\n");
             }
         } while ((Size < ProcNum) || (Size % ProcNum != 0));
     }
 
+    // === Broadcast Size to all processes ===
     MPI_Bcast(&Size, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+    // === Task 5: initialize data only on process 0 ===
+    if (ProcRank == 0) {
+        // Allocate memory for full objects
+        pMatrix = new double[Size * Size];
+        pVector = new double[Size];
+        pResult = new double[Size];
+
+        // Fill with simple dummy data
+        for (int i = 0; i < Size; i++) {
+            for (int j = 0; j < Size; j++) {
+                pMatrix[i * Size + j] = i + j + 1;  // ascending pattern
+            }
+            pVector[i] = 1.0;  // unit vector
+        }
+
+        printf("Initial data generated successfully on process 0.\n");
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -35,7 +56,6 @@ int main(int argc, char* argv[]) {
     // === Initialize MPI environment ===
     MPI_Init(&argc, &argv);
 
-    // === Determine number of processes and rank ===
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 
@@ -43,10 +63,9 @@ int main(int argc, char* argv[]) {
         printf("Parallel matrix-vector multiplication program\n");
 
     // === Memory allocation and data initialization ===
-    // Replace the prints from Task 3 with the initialization call:
     ProcessInitialization(pMatrix, pVector, pResult, Size, ProcRank, ProcNum);
 
-    printf("Process %d received Size = %d\n", ProcRank, Size);
+    printf("Process %d ready (Size = %d)\n", ProcRank, Size);
 
     // === Finalize MPI ===
     MPI_Finalize();
