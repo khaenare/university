@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cmath>
 #include <mpi.h>
+#include <unistd.h> // for sleep()
+
 
 const double EPS = 1e-6;
 
@@ -165,37 +167,56 @@ void ProcessTermination(double*& pMatrix, double*& pVector,
 // === Main ===
 int main(int argc, char* argv[]) {
     int ProcNum, ProcRank, Size;
-    double *pMatrix, *pVector, *pResult, *pProcRows, *pProcResult;
-    double* pSerialResult = nullptr;
+    double *pMatrix = nullptr, *pVector = nullptr, *pResult = nullptr;
+    double *pProcRows = nullptr, *pProcResult = nullptr;
+    double *pSerialResult = nullptr;
     int *sendcounts = nullptr, *displs = nullptr;
     int RowNum = 0;
 
+    // === Initialize MPI ===
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &ProcNum);
     MPI_Comm_rank(MPI_COMM_WORLD, &ProcRank);
 
+    // === Disable stdout buffering (critical for macOS/OpenMPI) ===
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     if (ProcRank == 0)
         printf("Parallel matrix-vector multiplication program\n");
 
+    // === Initialization ===
     ProcessInitialization(pMatrix, pVector, pResult, Size, ProcRank, ProcNum);
     DataDistribution(pMatrix, pVector, pProcRows, Size, ProcRank, ProcNum,
                      sendcounts, displs, RowNum);
 
-    // === timing start ===
+    // === Timing start ===
     MPI_Barrier(MPI_COMM_WORLD);
     double Start = MPI_Wtime();
 
+    // === Parallel computation ===
     ParallelCalculation(pProcRows, pVector, pProcResult, Size, RowNum, ProcRank);
     ResultGathering(pProcResult, pResult, Size, ProcRank, ProcNum,
                     sendcounts, displs, RowNum);
 
+    // === Timing end ===
     MPI_Barrier(MPI_COMM_WORLD);
     double Finish = MPI_Wtime();
-    double Duration = Finish - Start;
+    double LocalDuration = Finish - Start;
+    double MaxDuration = 0.0;
 
-    if (ProcRank == 0)
-        printf("\nParallel execution time: %.6f seconds\n", Duration);
+    // === Collect global max time ===
+    MPI_Reduce(&LocalDuration, &MaxDuration, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
+
+
+    // === Print only once from rank 0 ===
+    if (ProcRank == 0) {
+        printf("\n=== Execution time (parallel, %d processes): %.6f seconds ===\n",
+               ProcNum, MaxDuration);
+        fflush(stdout);
+    }
+
+    // === Serial verification ===
     if (ProcRank == 0) {
         pSerialResult = new double[Size];
         SerialMultiplication(pMatrix, pVector, pSerialResult, Size);
@@ -203,8 +224,16 @@ int main(int argc, char* argv[]) {
         delete[] pSerialResult;
     }
 
+    // === Memory cleanup ===
     ProcessTermination(pMatrix, pVector, pResult, pProcRows,
                        pProcResult, sendcounts, displs, ProcRank);
+
+    // === Safety barrier to ensure all output is flushed ===
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (ProcRank == 0) {
+        fflush(stdout);
+        sleep(1); // ensures full stdout flush on macOS ARM
+    }
 
     MPI_Finalize();
     return 0;
