@@ -1,46 +1,47 @@
 import numpy as np
 
-def pseudo_inverse_moore_penrose(A, eps=1e-6, max_iter=50):
+
+def check_moore_penrose_conditions(A: np.ndarray, A_plus: np.ndarray, tolerance: float = 1e-8) -> bool:
     """
-    Стійка реалізація псевдообернення за формулою Мура–Пенроуза
-    з Tikhonov-регуляризацією та поступовим зменшенням δ.
-    Використовується формула:
-        A⁺ = (Aᵀ A + δ I)⁻¹ Aᵀ
+    Verifies the four Moore-Penrose conditions for the pseudo-inverse of matrix A.
     """
+    # Condition 1: A * A⁺ * A ≈ A
+    condition_1 = np.allclose(A @ A_plus @ A, A, atol=tolerance)
 
-    m, n = A.shape
-    I = np.eye(n)
+    # Condition 2: A⁺ * A * A⁺ ≈ A⁺
+    condition_2 = np.allclose(A_plus @ A @ A_plus, A_plus, atol=tolerance)
 
-    # Початкове значення δ (регуляризація)
-    delta = 1.0
+    # Condition 3: A * A⁺ is symmetric
+    condition_3 = np.allclose(A @ A_plus, (A @ A_plus).T, atol=tolerance)
 
-    A_T = A.T
-    A_TA = A_T @ A
+    # Condition 4: A⁺ * A is symmetric
+    condition_4 = np.allclose(A_plus @ A, (A_plus @ A).T, atol=tolerance)
 
-    A_pinv_prev = None
+    print("Checking Moore-Penrose conditions:")
+    print(f"1) A * A⁺ * A ≈ A: {condition_1}")
+    print(f"2) A⁺ * A * A⁺ ≈ A⁺: {condition_2}")
+    print(f"3) A * A⁺ is symmetric: {condition_3}")
+    print(f"4) A⁺ * A is symmetric: {condition_4}")
 
-    for _ in range(max_iter):
-        # Обчислюємо псевдообернену з поточним δ
-        A_pinv = np.linalg.solve(A_TA + delta * I, A_T)
-
-        # Перевірка стабільності і збіжності
-        if A_pinv_prev is not None:
-            if np.linalg.norm(A_pinv - A_pinv_prev, ord='fro') < eps:
-                break
-
-        A_pinv_prev = A_pinv
-        delta *= 0.5  # плавно зменшуємо регуляризацію
-
-    return A_pinv
+    return condition_1 and condition_2 and condition_3 and condition_4
 
 
-def is_pseudoinverse(A, A_plus, tol=1e-5):
+def moore_penrose_pseudo_inverse(A: np.ndarray, epsilon: float = 1e-6) -> np.ndarray:
     """
-    Перевіряє умови Мура–Пенроуза.
+    Computes the Moore-Penrose pseudo-inverse of matrix A using the regularization technique.
     """
-    c1 = np.allclose(A @ A_plus @ A, A, atol=tol)
-    c2 = np.allclose(A_plus @ A @ A_plus, A_plus, atol=tol)
-    c3 = np.allclose((A @ A_plus).T, A @ A_plus, atol=tol)
-    c4 = np.allclose((A_plus @ A).T, A_plus @ A, atol=tol)
+    ATA = A.T @ A
+    identity = np.eye(A.shape[1])
 
-    return c1 and c2 and c3 and c4
+    # Regularization to handle singular matrices
+    pinv = np.linalg.inv(ATA + epsilon * identity) @ A.T
+    return pinv
+
+
+def greville_pseudo_inverse(A: np.ndarray, epsilon: float = 1e-6) -> np.ndarray:
+    """
+    Computes the Greville pseudo-inverse of matrix A using a different regularization method.
+    """
+    ATA = A.T @ A
+    pinv = np.linalg.inv(ATA + epsilon * np.eye(A.shape[1])) @ A.T
+    return pinv

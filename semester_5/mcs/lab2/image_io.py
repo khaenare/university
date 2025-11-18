@@ -3,19 +3,18 @@ from PIL import Image
 
 def read_grayscale_image(path):
     """
-    Зчитує BMP-зображення, переводить у відтінки сірого
-    та повертає його як матрицю float у діапазоні [0, 1].
+    Зчитує BMP-файл, конвертує його в grayscale і нормалізує пікселі.
+    Повертає матрицю numpy.
     """
-    img = Image.open(path).convert("L")   # переведення у grayscale
-    arr = np.asarray(img, dtype=np.float32)
-    arr = arr / 255.0                     # нормалізація до діапазону [0, 1]
-    return arr
+    img = Image.open(path).convert('L')  # Конвертируем в grayscale
+    img_data = np.array(img) / 255.0    # Нормализуем значения пикселей
+    return img_data
 
 def save_grayscale_image(path, matrix):
     """
-    Зберігає матрицю значень [0, 1] як BMP-файл у форматі grayscale.
-    Значення автоматично обрізаються до допустимого діапазону.
+    Преобразует матрицу numpy обратно в изображение и сохраняет как BMP.
     """
-    matrix = np.clip(matrix, 0.0, 1.0)    # гарантія коректного діапазону
-    img = Image.fromarray((matrix * 255).astype(np.uint8), mode="L")
+    img_data = np.clip(matrix * 255, 0, 255).astype(np.uint8)  # Преобразуем обратно в диапазон [0, 255]
+    img = Image.fromarray(img_data)
     img.save(path)
+
