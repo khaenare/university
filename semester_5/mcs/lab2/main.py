@@ -65,6 +65,50 @@ def construct_operator_and_predict(X: np.ndarray, Y: np.ndarray, pinv_func, meth
     return A, Y_pred, errors
 
 
+def plot_comparison(results):
+    fig, axs = plt.subplots(2, 2, figsize=(15, 10))
+
+    # Images
+    axs[0, 0].imshow(results['X'], cmap='gray')
+    axs[0, 0].set_title('Вхідне зображення X')
+
+    axs[0, 1].imshow(results['Y'], cmap='gray')
+    axs[0, 1].set_title('Цільове зображення Y')
+
+    axs[1, 0].imshow(results['Y_pred_moore'], cmap='gray')
+    axs[1, 0].set_title(f"Мур-Пенроуз\nRMSE = {results['RMSE_moore']}")
+
+    axs[1, 1].imshow(results['Y_pred_greville'], cmap='gray')
+    axs[1, 1].set_title(f"Гревіль\nRMSE = {results['RMSE_greville']}")
+
+    plt.show()
+
+    # Plot time comparison
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.bar(['Мур-Пенроуз', 'Гревіль'], [results['time_moore'], results['time_greville']])
+    ax.set_title('Час виконання')
+    ax.set_ylabel('Час (секунди)')
+    plt.show()
+
+    # Plot RMSE comparison
+    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.bar(['Мур-Пенроуз', 'Гревіль'], [results['RMSE_moore'], results['RMSE_greville']])
+    ax.set_title('Похибка RMSE')
+    ax.set_ylabel('RMSE')
+    plt.show()
+
+    # Display comparison table
+    import pandas as pd
+    comparison_data = {
+        'Метод': ['Мур-Пенроуз', 'Гревіль'],
+        'Час виконання (с)': [results['time_moore'], results['time_greville']],
+        'RMSE': [results['RMSE_moore'], results['RMSE_greville']]
+    }
+    comparison_df = pd.DataFrame(comparison_data)
+    print("\nТаблиця порівняння:")
+    print(comparison_df)
+
+
 def main():
     # 1. Load images and preprocess them
     X = read_grayscale_image('x3.bmp')
@@ -90,19 +134,20 @@ def main():
     save_grayscale_image('result_moore_penrose.bmp', Y_pred_moore)
     save_grayscale_image('result_greville.bmp', Y_pred_greville)
 
-    # 5. Visualize the results
-    fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+    # 5. Prepare comparison results
+    results = {
+        'X': X,
+        'Y': Y,
+        'Y_pred_moore': Y_pred_moore,
+        'Y_pred_greville': Y_pred_greville,
+        'RMSE_moore': errors_moore[2],
+        'RMSE_greville': errors_greville[2],
+        'time_moore': time_moore,
+        'time_greville': time_greville
+    }
 
-    axs[0].imshow(X, cmap='gray')
-    axs[0].set_title('Input Image (X)')
-
-    axs[1].imshow(Y, cmap='gray')
-    axs[1].set_title('Output Image (Y)')
-
-    axs[2].imshow(Y_pred_moore, cmap='gray')
-    axs[2].set_title('Reconstructed Image (Moore-Penrose)')
-
-    plt.show()
+    # 6. Visualize results and comparison
+    plot_comparison(results)
 
 
 if __name__ == "__main__":
