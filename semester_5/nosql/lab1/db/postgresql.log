@@ -14,3 +14,30 @@
 2025-11-26 18:16:34.202 EET [33043] LOG:  checkpoint complete: wrote 1340 buffers (8.2%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=135.422 s, sync=0.019 s, total=135.467 s; sync files=577, longest=0.002 s, average=0.001 s; distance=6754 kB, estimate=6754 kB; lsn=0/1E1FAB0, redo lsn=0/1E1FA20
 2025-11-26 18:19:18.205 EET [33043] LOG:  checkpoint starting: time
 2025-11-26 18:19:19.229 EET [33043] LOG:  checkpoint complete: wrote 10 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.018 s, sync=0.002 s, total=1.024 s; sync files=11, longest=0.001 s, average=0.001 s; distance=50 kB, estimate=6084 kB; lsn=0/1E2C2F8, redo lsn=0/1E2C2A0
+2025-11-26 18:24:18.229 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:24:19.044 EET [33043] LOG:  checkpoint complete: wrote 8 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.811 s, sync=0.002 s, total=0.815 s; sync files=8, longest=0.001 s, average=0.001 s; distance=7 kB, estimate=5476 kB; lsn=0/1E2E2E8, redo lsn=0/1E2E290
+2025-11-26 18:26:47.678 EET [33476] FATAL:  role "your_user" does not exist
+2025-11-26 18:27:15.957 EET [33481] ERROR:  null value in column "client_id" of relation "projects" violates not-null constraint
+2025-11-26 18:27:15.957 EET [33481] DETAIL:  Failing row contains (2, null, null, Project 0, Project description, 5000.00, 10000.00, open, f, 2025-11-26 18:27:15.956618+02, null, null, null).
+2025-11-26 18:27:15.957 EET [33481] STATEMENT:  
+	            INSERT INTO projects (title, description, budget_min, budget_max, status)
+	            VALUES ('Project 0', 'Project description', 5000, 10000, 'open')
+	        
+2025-11-26 18:29:18.012 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:29:18.525 EET [33507] ERROR:  insert or update on table "proposals" violates foreign key constraint "fk_proposals_project"
+2025-11-26 18:29:18.525 EET [33507] DETAIL:  Key (project_id)=(0) is not present in table "projects".
+2025-11-26 18:29:18.525 EET [33507] STATEMENT:  
+	            INSERT INTO proposals (project_id, freelancer_id, cover_letter, bid_amount, status)
+	            VALUES (0, 1, 'Cover letter', 1000, 'pending')
+	        
+2025-11-26 18:29:19.633 EET [33043] LOG:  checkpoint complete: wrote 16 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.619 s, sync=0.002 s, total=1.622 s; sync files=11, longest=0.001 s, average=0.001 s; distance=169 kB, estimate=4945 kB; lsn=0/23FA060, redo lsn=0/1E587A0
+2025-11-26 18:30:46.098 EET [33547] ERROR:  insert or update on table "messages" violates foreign key constraint "fk_messages_contract"
+2025-11-26 18:30:46.098 EET [33547] DETAIL:  Key (contract_id)=(10003) is not present in table "contracts".
+2025-11-26 18:30:46.098 EET [33547] STATEMENT:  
+	                       INSERT INTO messages (contract_id, sender_id, receiver_id, body, sent_at, is_read, is_deleted)
+	                       VALUES (10003, 1, 2, 'Message body', '2025-11-26T12:00:00Z', false, false)
+	                       
+2025-11-26 18:34:18.624 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:38:04.921 EET [33043] LOG:  checkpoint complete: wrote 2242 buffers (13.7%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 4 recycled; write=226.291 s, sync=0.002 s, total=226.298 s; sync files=40, longest=0.001 s, average=0.001 s; distance=52690 kB, estimate=52690 kB; lsn=0/6163410, redo lsn=0/51CD0C8
+2025-11-26 18:39:18.923 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:43:48.056 EET [33043] LOG:  checkpoint complete: wrote 8017 buffers (48.9%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 10 recycled; write=269.128 s, sync=0.002 s, total=269.134 s; sync files=35, longest=0.001 s, average=0.001 s; distance=166270 kB, estimate=166270 kB; lsn=0/11CEF398, redo lsn=0/F42C938
