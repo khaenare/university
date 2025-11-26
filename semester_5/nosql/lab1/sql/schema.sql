@@ -393,6 +393,23 @@ BEGIN
 END;
 $$;
 
+-- Процедура для создания нового сообщения
+CREATE OR REPLACE PROCEDURE sp_create_message(
+    IN p_contract_id INT,
+    IN p_sender_id INT,
+    IN p_receiver_id INT,
+    IN p_body TEXT,
+    IN p_is_read BOOLEAN,
+    IN p_is_deleted BOOLEAN,
+    IN p_sent_at TIMESTAMPTZ
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO messages (contract_id, sender_id, receiver_id, body, is_read, is_deleted, sent_at)
+    VALUES (p_contract_id, p_sender_id, p_receiver_id, p_body, p_is_read, p_is_deleted, p_sent_at);
+END;
+$$;
 
 
 -- ===========================================

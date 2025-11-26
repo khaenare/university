@@ -1,147 +1,16 @@
-2025-11-26 16:19:58.949 EET [31028] LOG:  starting PostgreSQL 18.1 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit
-2025-11-26 16:19:58.951 EET [31028] LOG:  listening on IPv4 address "127.0.0.1", port 5432
-2025-11-26 16:19:58.951 EET [31028] LOG:  listening on IPv6 address "::1", port 5432
-2025-11-26 16:19:58.951 EET [31028] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
-2025-11-26 16:19:58.953 EET [31034] LOG:  database system was shut down at 2025-11-26 16:19:58 EET
-2025-11-26 16:19:58.954 EET [31028] LOG:  database system is ready to accept connections
-2025-11-26 16:21:34.020 EET [31122] ERROR:  invalid byte sequence for encoding "UTF8": 0xc0 0x20
-2025-11-26 16:21:34.021 EET [31122] ERROR:  invalid byte sequence for encoding "UTF8": 0xc0 0x20
-2025-11-26 16:24:58.953 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 16:27:07.658 EET [31032] LOG:  checkpoint complete: wrote 1274 buffers (7.8%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=128.663 s, sync=0.020 s, total=128.705 s; sync files=495, longest=0.001 s, average=0.001 s; distance=6662 kB, estimate=6662 kB; lsn=0/1E088E0, redo lsn=0/1E08850
-2025-11-26 16:44:52.285 EET [31618] ERROR:  insert or update on table "projects" violates foreign key constraint "fk_projects_client"
-2025-11-26 16:44:52.285 EET [31618] DETAIL:  Key (client_id)=(1) is not present in table "users".
-2025-11-26 16:44:52.285 EET [31618] CONTEXT:  SQL statement "INSERT INTO projects (
-	        client_id,
-	        category_id,
-	        title,
-	        description,
-	        budget_min,
-	        budget_max,
-	        status,
-	        is_deleted,
-	        created_at,
-	        created_by
-	    )
-	    VALUES (
-	        p_client_id,
-	        p_category_id,
-	        p_title,
-	        p_description,
-	        p_budget_min,
-	        p_budget_max,
-	        'open',
-	        FALSE,
-	        NOW(),
-	        p_created_by
-	    )"
-	PL/pgSQL function sp_create_project(integer,integer,character varying,text,numeric,numeric,integer) line 3 at SQL statement
-2025-11-26 16:44:52.285 EET [31618] STATEMENT:  CALL sp_create_project(1, 1, 'Landing page for fintech startup', 'Need responsive landing page with modern design.', 500.0, 1000.0, 1)
-2025-11-26 16:44:58.655 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 16:45:00.078 EET [31032] LOG:  checkpoint complete: wrote 14 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.418 s, sync=0.002 s, total=1.423 s; sync files=10, longest=0.001 s, average=0.001 s; distance=12 kB, estimate=5997 kB; lsn=0/1E0B948, redo lsn=0/1E0B8F0
-2025-11-26 16:46:51.955 EET [31670] ERROR:  null value in column "password_hash" of relation "users" violates not-null constraint
-2025-11-26 16:46:51.955 EET [31670] DETAIL:  Failing row contains (1, client@example.com, null, Client User, client, f, 2025-11-26 16:46:51.954047+02, null, null, null).
-2025-11-26 16:46:51.955 EET [31670] STATEMENT:  
-	            INSERT INTO users (user_id, full_name, email, user_type)
-	            VALUES 
-	                (1, 'Client User', 'client@example.com', 'client'),
-	                (2, 'Freelancer User', 'freelancer@example.com', 'freelancer')
-	            ON CONFLICT (user_id) DO NOTHING;
-	        
-2025-11-26 16:47:42.940 EET [31696] ERROR:  insert or update on table "projects" violates foreign key constraint "fk_projects_client"
-2025-11-26 16:47:42.940 EET [31696] DETAIL:  Key (client_id)=(1) is not present in table "users".
-2025-11-26 16:47:42.940 EET [31696] CONTEXT:  SQL statement "INSERT INTO projects (
-	        client_id,
-	        category_id,
-	        title,
-	        description,
-	        budget_min,
-	        budget_max,
-	        status,
-	        is_deleted,
-	        created_at,
-	        created_by
-	    )
-	    VALUES (
-	        p_client_id,
-	        p_category_id,
-	        p_title,
-	        p_description,
-	        p_budget_min,
-	        p_budget_max,
-	        'open',
-	        FALSE,
-	        NOW(),
-	        p_created_by
-	    )"
-	PL/pgSQL function sp_create_project(integer,integer,character varying,text,numeric,numeric,integer) line 3 at SQL statement
-2025-11-26 16:47:42.940 EET [31696] STATEMENT:  CALL sp_create_project(1, 1, 'Landing page for fintech startup', 'Need responsive landing page with modern design.', 500.0, 1000.0, 1)
-2025-11-26 16:49:41.499 EET [31716] ERROR:  insert or update on table "projects" violates foreign key constraint "fk_projects_client"
-2025-11-26 16:49:41.499 EET [31716] DETAIL:  Key (client_id)=(1) is not present in table "users".
-2025-11-26 16:49:41.499 EET [31716] CONTEXT:  SQL statement "INSERT INTO projects (
-	        client_id,
-	        category_id,
-	        title,
-	        description,
-	        budget_min,
-	        budget_max,
-	        status,
-	        is_deleted,
-	        created_at,
-	        created_by
-	    )
-	    VALUES (
-	        p_client_id,
-	        p_category_id,
-	        p_title,
-	        p_description,
-	        p_budget_min,
-	        p_budget_max,
-	        'open',
-	        FALSE,
-	        NOW(),
-	        p_created_by
-	    )"
-	PL/pgSQL function sp_create_project(integer,integer,character varying,text,numeric,numeric,integer) line 3 at SQL statement
-2025-11-26 16:49:41.499 EET [31716] STATEMENT:  CALL sp_create_project(1, 1, 'Landing page for fintech startup', 'Need responsive landing page with modern design.', 500.0, 1000.0, 1)
-2025-11-26 16:49:58.078 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 16:49:58.893 EET [31032] LOG:  checkpoint complete: wrote 8 buffers (0.0%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.814 s, sync=0.001 s, total=0.816 s; sync files=8, longest=0.001 s, average=0.001 s; distance=2 kB, estimate=5397 kB; lsn=0/1E0C498, redo lsn=0/1E0C440
-2025-11-26 16:54:14.586 EET [31122] ERROR:  syntax error at or near "f" at character 1
-2025-11-26 16:54:14.586 EET [31122] STATEMENT:  f log_contract_*
-	SELECT * FROM users;
-2025-11-26 16:55:11.631 EET [31122] ERROR:  syntax error at or near "SELECT" at character 21
-2025-11-26 16:55:11.631 EET [31122] STATEMENT:  SELECT * FROM users
-	SELECT * FROM users;
-2025-11-26 16:59:58.893 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 17:00:08.919 EET [31032] LOG:  checkpoint complete: wrote 99 buffers (0.6%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=10.010 s, sync=0.007 s, total=10.027 s; sync files=92, longest=0.001 s, average=0.001 s; distance=203 kB, estimate=4878 kB; lsn=0/1E3F298, redo lsn=0/1E3F208
-2025-11-26 17:03:05.547 EET [31905] ERROR:  procedure sp_create_message(integer, integer, integer, unknown, boolean, boolean, unknown) does not exist at character 6
-2025-11-26 17:03:05.547 EET [31905] HINT:  No procedure matches the given name and argument types. You might need to add explicit type casts.
-2025-11-26 17:03:05.547 EET [31905] STATEMENT:  CALL sp_create_message(1, 1, 2, 'Привіт! Як йде робота?', false, false, '2025-11-26T12:00:00Z')
-2025-11-26 17:04:58.920 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 17:05:00.347 EET [31032] LOG:  checkpoint complete: wrote 14 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.422 s, sync=0.003 s, total=1.428 s; sync files=14, longest=0.001 s, average=0.001 s; distance=3 kB, estimate=4390 kB; lsn=0/1E401E0, redo lsn=0/1E40188
-2025-11-26 17:07:10.698 EET [31971] ERROR:  insert or update on table "messages" violates foreign key constraint "fk_messages_contract"
-2025-11-26 17:07:10.698 EET [31971] DETAIL:  Key (contract_id)=(1) is not present in table "contracts".
-2025-11-26 17:07:10.698 EET [31971] CONTEXT:  SQL statement "INSERT INTO messages (contract_id, sender_id, receiver_id, body, is_read, is_deleted, sent_at)
-	    VALUES (p_contract_id, p_sender_id, p_receiver_id, p_body, p_is_read, p_is_deleted, p_sent_at)"
-	PL/pgSQL function sp_create_message(integer,integer,integer,text,boolean,boolean,timestamp with time zone) line 3 at SQL statement
-2025-11-26 17:07:10.698 EET [31971] STATEMENT:  CALL sp_create_message(1, 1, 2, 'Привіт! Як йде робота?', false, false, '2025-11-26T12:00:00Z')
-2025-11-26 17:09:58.352 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 17:10:01.307 EET [31032] LOG:  checkpoint complete: wrote 29 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=2.950 s, sync=0.004 s, total=2.956 s; sync files=28, longest=0.001 s, average=0.001 s; distance=60 kB, estimate=3957 kB; lsn=0/1E4F4D8, redo lsn=0/1E4F480
-2025-11-26 17:14:58.308 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 17:15:01.863 EET [31032] LOG:  checkpoint complete: wrote 35 buffers (0.2%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=3.549 s, sync=0.004 s, total=3.556 s; sync files=32, longest=0.001 s, average=0.001 s; distance=62 kB, estimate=3568 kB; lsn=0/1E5F0C8, redo lsn=0/1E5F070
-2025-11-26 17:22:29.395 EET [32173] FATAL:  role "your_user" does not exist
-2025-11-26 17:26:28.828 EET [32206] FATAL:  role "your_user" does not exist
-2025-11-26 17:32:32.096 EET [32335] FATAL:  role "your_user" does not exist
-2025-11-26 17:34:58.875 EET [31032] LOG:  checkpoint starting: time
-2025-11-26 17:34:59.183 EET [31032] LOG:  checkpoint complete: wrote 3 buffers (0.0%), wrote 0 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=0.304 s, sync=0.001 s, total=0.309 s; sync files=3, longest=0.001 s, average=0.001 s; distance=2 kB, estimate=3211 kB; lsn=0/1E5F9B8, redo lsn=0/1E5F960
-2025-11-26 17:49:23.740 EET [32486] ERROR:  update or delete on table "projects" violates foreign key constraint "fk_contracts_project" on table "contracts"
-2025-11-26 17:49:23.740 EET [32486] DETAIL:  Key (project_id)=(1) is still referenced from table "contracts".
-2025-11-26 17:49:23.740 EET [32486] STATEMENT:  DELETE FROM projects WHERE project_id IS NOT NULL;
-2025-11-26 17:49:52.682 EET [32499] ERROR:  update or delete on table "projects" violates foreign key constraint "fk_contracts_project" on table "contracts"
-2025-11-26 17:49:52.682 EET [32499] DETAIL:  Key (project_id)=(1) is still referenced from table "contracts".
-2025-11-26 17:49:52.682 EET [32499] STATEMENT:  DELETE FROM projects WHERE project_id IS NOT NULL;
-2025-11-26 17:52:22.272 EET [32552] ERROR:  Проект не існує, видалений або не відкритий для откликів
-2025-11-26 17:52:22.272 EET [32552] CONTEXT:  PL/pgSQL function sp_create_proposal(integer,integer,text,numeric,integer) line 10 at RAISE
-2025-11-26 17:52:22.272 EET [32552] STATEMENT:  CALL sp_create_proposal(1, 2, 'I have strong experience in React and modern UI.', 750.0, 2)
-2025-11-26 17:52:53.178 EET [32563] ERROR:  Проект не існує, видалений або не відкритий для откликів
-2025-11-26 17:52:53.178 EET [32563] CONTEXT:  PL/pgSQL function sp_create_proposal(integer,integer,text,numeric,integer) line 10 at RAISE
-2025-11-26 17:52:53.178 EET [32563] STATEMENT:  CALL sp_create_proposal(1, 2, 'I have strong experience in React and modern UI.', 750.0, 2)
+2025-11-26 18:09:18.701 EET [33039] LOG:  starting PostgreSQL 18.1 (Postgres.app) on aarch64-apple-darwin23.6.0, compiled by Apple clang version 15.0.0 (clang-1500.3.9.4), 64-bit
+2025-11-26 18:09:18.702 EET [33039] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2025-11-26 18:09:18.702 EET [33039] LOG:  listening on IPv6 address "::1", port 5432
+2025-11-26 18:09:18.702 EET [33039] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2025-11-26 18:09:18.705 EET [33045] LOG:  database system was shut down at 2025-11-26 18:09:18 EET
+2025-11-26 18:09:18.706 EET [33039] LOG:  database system is ready to accept connections
+2025-11-26 18:10:55.754 EET [33111] ERROR:  procedure sp_create_message(integer, integer, integer, unknown, boolean, boolean, unknown) does not exist at character 6
+2025-11-26 18:10:55.754 EET [33111] HINT:  No procedure matches the given name and argument types. You might need to add explicit type casts.
+2025-11-26 18:10:55.754 EET [33111] STATEMENT:  CALL sp_create_message(1, 1, 2, 'Привіт! Як йде робота?', false, false, '2025-11-26T12:00:00Z')
+2025-11-26 18:14:18.736 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:14:21.192 EET [33201] ERROR:  procedure sp_create_message(integer, integer, integer, unknown, boolean, boolean, unknown) does not exist at character 6
+2025-11-26 18:14:21.192 EET [33201] HINT:  No procedure matches the given name and argument types. You might need to add explicit type casts.
+2025-11-26 18:14:21.192 EET [33201] STATEMENT:  CALL sp_create_message(1, 1, 2, 'Привіт! Як йде робота?', false, false, '2025-11-26T12:00:00Z')
+2025-11-26 18:16:34.202 EET [33043] LOG:  checkpoint complete: wrote 1340 buffers (8.2%), wrote 3 SLRU buffers; 1 WAL file(s) added, 0 removed, 0 recycled; write=135.422 s, sync=0.019 s, total=135.467 s; sync files=577, longest=0.002 s, average=0.001 s; distance=6754 kB, estimate=6754 kB; lsn=0/1E1FAB0, redo lsn=0/1E1FA20
+2025-11-26 18:19:18.205 EET [33043] LOG:  checkpoint starting: time
+2025-11-26 18:19:19.229 EET [33043] LOG:  checkpoint complete: wrote 10 buffers (0.1%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 0 recycled; write=1.018 s, sync=0.002 s, total=1.024 s; sync files=11, longest=0.001 s, average=0.001 s; distance=50 kB, estimate=6084 kB; lsn=0/1E2C2F8, redo lsn=0/1E2C2A0
