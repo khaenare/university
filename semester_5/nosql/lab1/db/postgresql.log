@@ -41,3 +41,10 @@
 2025-11-26 18:38:04.921 EET [33043] LOG:  checkpoint complete: wrote 2242 buffers (13.7%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 4 recycled; write=226.291 s, sync=0.002 s, total=226.298 s; sync files=40, longest=0.001 s, average=0.001 s; distance=52690 kB, estimate=52690 kB; lsn=0/6163410, redo lsn=0/51CD0C8
 2025-11-26 18:39:18.923 EET [33043] LOG:  checkpoint starting: time
 2025-11-26 18:43:48.056 EET [33043] LOG:  checkpoint complete: wrote 8017 buffers (48.9%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 10 recycled; write=269.128 s, sync=0.002 s, total=269.134 s; sync files=35, longest=0.001 s, average=0.001 s; distance=166270 kB, estimate=166270 kB; lsn=0/11CEF398, redo lsn=0/F42C938
+2025-11-26 18:56:37.173 EET [33039] LOG:  received fast shutdown request
+2025-11-26 18:56:37.174 EET [33039] LOG:  aborting any active transactions
+2025-11-26 18:56:37.174 EET [33039] LOG:  background worker "logical replication launcher" (PID 33048) exited with exit code 1
+2025-11-26 18:56:37.174 EET [33043] LOG:  shutting down
+2025-11-26 18:56:37.175 EET [33043] LOG:  checkpoint starting: shutdown immediate
+2025-11-26 18:56:37.182 EET [33043] LOG:  checkpoint complete: wrote 1219 buffers (7.4%), wrote 1 SLRU buffers; 0 WAL file(s) added, 0 removed, 2 recycled; write=0.007 s, sync=0.001 s, total=0.008 s; sync files=8, longest=0.001 s, average=0.001 s; distance=41738 kB, estimate=153816 kB; lsn=0/11CEF448, redo lsn=0/11CEF448
+2025-11-26 18:56:37.186 EET [33039] LOG:  database system is shut down
