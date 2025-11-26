@@ -2,24 +2,24 @@ import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 
 
-# Функция для подключения к MongoDB
+# Функція для підключення до MongoDB
 async def get_db():
     client = AsyncIOMotorClient("mongodb://localhost:27017/")
     return client["freelance_platform"]
 
 
-# Функция для вставки нового проекта
+# Функція для вставки нового проекту
 async def insert_project():
     db = await get_db()
     projects_collection = db["projects"]
 
-    # Пример нового проекта
+    # Приклад нового проекту
     new_project = {
         "title": "Розробка веб-сайту",
         "description": "Проект для створення корпоративного сайту",
         "budget": 5000,
         "skills_required": ["Python", "Django", "PostgreSQL"],
-        "client_id": 1,  # Ссылка на пользователя
+        "client_id": 1,  # Посилання на користувача
         "status": "open"
     }
 
@@ -27,12 +27,12 @@ async def insert_project():
     print(f"Проект додано з ID: {result.inserted_id}")
 
 
-# Функция для вставки предложений
+# Функція для вставки пропозицій
 async def insert_proposal():
     db = await get_db()
     proposals_collection = db["proposals"]
 
-    # Пример предложения
+    # Приклад пропозиції
     new_proposal = {
         "project_id": 1,
         "freelancer_id": 2,
@@ -45,12 +45,12 @@ async def insert_proposal():
     print(f"Пропозиція додана з ID: {result.inserted_id}")
 
 
-# Функция для вставки сообщений
+# Функція для вставки повідомлень
 async def insert_message():
     db = await get_db()
     messages_collection = db["messages"]
 
-    # Пример сообщения
+    # Приклад повідомлення
     new_message = {
         "contract_id": 1,
         "sender_id": 1,
@@ -65,7 +65,7 @@ async def insert_message():
     print(f"Повідомлення додано з ID: {result.inserted_id}")
 
 
-# Асинхронно запускаем функции
+# Асинхронно запускаємо функції
 async def main():
     await insert_project()
     await insert_proposal()

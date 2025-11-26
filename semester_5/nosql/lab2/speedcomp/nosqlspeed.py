@@ -11,7 +11,7 @@ async def insert_mongo_data():
 
     start_time = time.time()
 
-    # Вставляем 10000 проектов
+    # Вставляємо 10000 проектів
     for i in range(100000):
         project = {
             "title": f"Project {i}",
@@ -21,7 +21,7 @@ async def insert_mongo_data():
         }
         await projects_collection.insert_one(project)
 
-    # Вставляем 10000 предложений
+    # Вставляємо 10000 пропозицій
     for i in range(100000):
         proposal = {
             "project_id": i,
@@ -32,7 +32,7 @@ async def insert_mongo_data():
         }
         await proposals_collection.insert_one(proposal)
 
-    # Вставляем 10000 сообщений
+    # Вставляємо 10000 повідомлень
     for i in range(100000):
         message = {
             "contract_id": i,
@@ -47,7 +47,7 @@ async def insert_mongo_data():
 
     end_time = time.time()
 
-    print(f"Time taken to insert 10,000 documents in MongoDB: {end_time - start_time} seconds")
+    print(f"Час, витрачений на вставку 10,000 документів у MongoDB: {end_time - start_time} секунд")
 
 asyncio.run(insert_mongo_data())
 
@@ -58,12 +58,11 @@ async def fetch_mongo_data():
 
     start_time = time.time()
 
-    # Извлекаем все проекты
+    # Отримуємо всі проекти
     async for project in projects_collection.find():
-        pass  # Просто читаем все проекты
+        pass  # Просто читаємо всі проекти
 
     end_time = time.time()
-    print(f"Time taken to fetch all projects from MongoDB: {end_time - start_time} seconds")
+    print(f"Час, витрачений на отримання всіх проектів з MongoDB: {end_time - start_time} секунд")
 
 asyncio.run(fetch_mongo_data())
-

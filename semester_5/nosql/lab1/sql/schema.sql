@@ -352,7 +352,7 @@ USING GIN (
     to_tsvector('simple', COALESCE(title, '') || ' ' || COALESCE(description, ''))
 );
 
--- Процедура для создания нового контракта
+-- Процедура для створення нового контракту
 CREATE OR REPLACE PROCEDURE sp_create_contract(
     IN p_project_id INT,
     IN p_client_id INT,
@@ -393,7 +393,7 @@ BEGIN
 END;
 $$;
 
--- Процедура для создания нового сообщения
+-- Процедура для створення нового повідомлення
 CREATE OR REPLACE PROCEDURE sp_create_message(
     IN p_contract_id INT,
     IN p_sender_id INT,

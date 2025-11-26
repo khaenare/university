@@ -4,7 +4,7 @@ from typing import Optional, Callable
 from .connection import get_connection
 from .project_repository import ProjectRepository
 from .contract_repository import ContractRepository
-from .message_repository import MessageRepository  # Добавляем импорт репозитория сообщений
+from .message_repository import MessageRepository  # Додаємо імпорт репозиторію повідомлень
 
 
 class UnitOfWork:

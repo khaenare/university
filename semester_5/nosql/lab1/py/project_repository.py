@@ -57,7 +57,7 @@ class ProjectRepository(BaseRepository):
 
     def get_project_by_id(self, project_id: int) -> Optional[Dict[str, Any]]:
         """
-        Получить проект по ID
+        Отримати проект за ID
         """
         sql = "SELECT * FROM projects WHERE project_id = %s"
         return self._fetch_one(sql, [project_id])

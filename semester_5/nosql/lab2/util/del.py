@@ -7,19 +7,19 @@ async def clear_mongo_data():
     client = AsyncIOMotorClient("mongodb://localhost:27017/")
     db = client["freelance_platform"]
 
-    # Очистка всех коллекций
+    # Очищення всіх колекцій
     await db["projects"].delete_many({})
     await db["proposals"].delete_many({})
     await db["messages"].delete_many({})
 
-    print("Все проекты, предложения и сообщения удалены из MongoDB.")
+    print("Всі проекти, пропозиції та повідомлення видалені з MongoDB.")
 
 
 asyncio.run(clear_mongo_data())
 
 
 def clear_sql_data():
-    # Подключение к базе данных
+    # Підключення до бази даних
     conn = psycopg2.connect(
         dbname="template1",
         user="matvii",
@@ -29,24 +29,22 @@ def clear_sql_data():
     )
     cursor = conn.cursor()
 
-    # Удаление всех сообщений
+    # Видалення всіх повідомлень
     cursor.execute("DELETE FROM messages WHERE contract_id IS NOT NULL;")
 
-    # Удаление всех предложений
+    # Видалення всіх пропозицій
     cursor.execute("DELETE FROM proposals WHERE project_id IS NOT NULL;")
 
-    # Удаление всех контрактов
+    # Видалення всіх контрактів
     cursor.execute("DELETE FROM contracts WHERE contract_id IS NOT NULL;")
 
-    # Удаление всех проектов
+    # Видалення всіх проектів
     cursor.execute("DELETE FROM projects WHERE project_id IS NOT NULL;")
 
-
-
-    # Завершаем транзакцию
+    # Завершуємо транзакцію
     conn.commit()
 
-    print("Все проекты, предложения и сообщения удалены из PostgreSQL.")
+    print("Всі проекти, пропозиції та повідомлення видалені з PostgreSQL.")
 
     cursor.close()
     conn.close()

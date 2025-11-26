@@ -1,13 +1,9 @@
 from lab1.py.unit_of_work import UnitOfWork
 
-
-
-
-
 def insert_project():
-    # Пример данных о проекте
+    # Приклад даних про проект
     CLIENT_ID = 1
-    CATEGORY_ID = 1  # Например, категория для проектов
+    CATEGORY_ID = 1  # Наприклад, категорія для проектів
     project_data = {
         "title": "Landing page for fintech startup",
         "description": "Need responsive landing page with modern design.",
@@ -16,7 +12,7 @@ def insert_project():
         "created_by": CLIENT_ID
     }
 
-    # Вставка проекта с использованием UnitOfWork
+    # Вставка проекту з використанням UnitOfWork
     with UnitOfWork() as uow:
         uow.projects.create_project(
             client_id=CLIENT_ID,
@@ -27,13 +23,13 @@ def insert_project():
             budget_max=project_data["budget_max"],
             created_by=project_data["created_by"]
         )
-        print("Project created via sp_create_project.")
+        print("Проект створено через sp_create_project.")
 
 insert_project()
 
 
 def insert_proposal():
-    PROJECT_ID = 1  # Например, ID проекта, на который фрилансер отправляет предложение
+    PROJECT_ID = 1  # Наприклад, ID проекту, на який фрилансер надсилає пропозицію
     FREELANCER_ID = 2  # ID фрилансера
     proposal_data = {
         "cover_letter": "I have strong experience in React and modern UI.",
@@ -41,7 +37,7 @@ def insert_proposal():
         "created_by": FREELANCER_ID
     }
 
-    # Вставка предложения с использованием UnitOfWork
+    # Вставка пропозиції з використанням UnitOfWork
     with UnitOfWork() as uow:
         uow.projects.create_proposal(
             project_id=PROJECT_ID,
@@ -50,7 +46,7 @@ def insert_proposal():
             bid_amount=proposal_data["bid_amount"],
             created_by=proposal_data["created_by"]
         )
-        print("Proposal created via sp_create_proposal.")
+        print("Пропозиція створена через sp_create_proposal.")
 
 insert_proposal()
 
@@ -66,7 +62,7 @@ def insert_contract():
         "created_by": CLIENT_ID
     }
 
-    # Вставка контракта с использованием UnitOfWork
+    # Вставка контракту з використанням UnitOfWork
     with UnitOfWork() as uow:
         uow.contracts.create_contract(
             project_id=PROJECT_ID,
@@ -78,16 +74,16 @@ def insert_contract():
             fixed_price=contract_data["fixed_price"],
             created_by=contract_data["created_by"]
         )
-        print("Contract created.")
+        print("Контракт створений.")
 
-# Сначала создаем контракт
+# Спочатку створюємо контракт
 insert_contract()
 
 
 def insert_message():
-    CONTRACT_ID = 1  # Предположим, что у нас уже есть контракт с ID 1
-    SENDER_ID = 1    # ID отправителя (например, клиент)
-    RECEIVER_ID = 2  # ID получателя (например, фрилансер)
+    CONTRACT_ID = 1  # Припускаємо, що у нас вже є контракт з ID 1
+    SENDER_ID = 1    # ID відправника (наприклад, клієнт)
+    RECEIVER_ID = 2  # ID отримувача (наприклад, фрилансер)
     message_data = {
         "body": "Привіт! Як йде робота?",
         "is_read": False,
@@ -95,7 +91,7 @@ def insert_message():
         "sent_at": "2025-11-26T12:00:00Z"
     }
 
-    # Вставка сообщения с использованием UnitOfWork
+    # Вставка повідомлення з використанням UnitOfWork
     with UnitOfWork() as uow:
         uow.messages.create_message(
             contract_id=CONTRACT_ID,
@@ -106,6 +102,6 @@ def insert_message():
             is_deleted=message_data["is_deleted"],
             sent_at=message_data["sent_at"]
         )
-        print("Message created via sp_create_message.")
+        print("Повідомлення створено через sp_create_message.")
 
 insert_message()
