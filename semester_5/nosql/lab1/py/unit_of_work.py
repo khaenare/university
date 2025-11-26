@@ -1,10 +1,10 @@
-# unit_of_work.py
-
 from typing import Optional, Callable
 
-from connection import get_connection
-from project_repository import ProjectRepository
-from contract_repository import ContractRepository
+# nosql/lab1/py/unit_of_work.py
+from .connection import get_connection
+from .project_repository import ProjectRepository
+from .contract_repository import ContractRepository
+from .message_repository import MessageRepository  # Добавляем импорт репозитория сообщений
 
 
 class UnitOfWork:
@@ -28,6 +28,7 @@ class UnitOfWork:
         # Repositories
         self.projects: Optional[ProjectRepository] = None
         self.contracts: Optional[ContractRepository] = None
+        self.messages: Optional[MessageRepository] = None  # Добавляем атрибут для репозитория сообщений
 
     def __enter__(self):
         self.connection = self._connection_factory()
@@ -36,6 +37,7 @@ class UnitOfWork:
         # Initialize repositories with shared connection and cursor
         self.projects = ProjectRepository(self.connection, self.cursor)
         self.contracts = ContractRepository(self.connection, self.cursor)
+        self.messages = MessageRepository(self.connection, self.cursor)  # Инициализируем репозиторий сообщений
 
         return self
 

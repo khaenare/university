@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from base_repository import BaseRepository
+from .base_repository import BaseRepository
 
 
 class ContractRepository(BaseRepository):
@@ -26,6 +26,32 @@ class ContractRepository(BaseRepository):
         """
         where = "WHERE contract_id = %s"
         return self._fetch_one_from_view("v_contract_details", where, [contract_id])
+
+    def create_contract(
+            self,
+            project_id: int,
+            client_id: int,
+            freelancer_id: int,
+            start_date: str,
+            status: str,
+            hourly_rate: Optional[float],
+            fixed_price: float,
+            created_by: int,
+    ) -> None:
+        """
+        Create contract using sp_create_contract.
+        """
+        params = [
+            project_id,
+            client_id,
+            freelancer_id,
+            start_date,
+            status,
+            hourly_rate,
+            fixed_price,
+            created_by,
+        ]
+        self._execute_procedure("sp_create_contract", params)
 
     # ---------- Milestones and payments ----------
 

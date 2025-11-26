@@ -352,6 +352,48 @@ USING GIN (
     to_tsvector('simple', COALESCE(title, '') || ' ' || COALESCE(description, ''))
 );
 
+-- Процедура для создания нового контракта
+CREATE OR REPLACE PROCEDURE sp_create_contract(
+    IN p_project_id INT,
+    IN p_client_id INT,
+    IN p_freelancer_id INT,
+    IN p_start_date DATE,
+    IN p_status VARCHAR(20),
+    IN p_hourly_rate NUMERIC(12, 2),
+    IN p_fixed_price NUMERIC(12, 2),
+    IN p_created_by INT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO contracts (
+        project_id,
+        client_id,
+        freelancer_id,
+        start_date,
+        status,
+        hourly_rate,
+        fixed_price,
+        is_deleted,
+        created_at,
+        created_by
+    )
+    VALUES (
+        p_project_id,
+        p_client_id,
+        p_freelancer_id,
+        p_start_date,
+        p_status,
+        p_hourly_rate,
+        p_fixed_price,
+        FALSE,
+        NOW(),
+        p_created_by
+    );
+END;
+$$;
+
+
 
 -- ===========================================
 -- Додаткові індекси для демонстрації різних типів

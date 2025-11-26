@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List, Optional
 
-from base_repository import BaseRepository
+from .base_repository import BaseRepository
 
 
 class ProjectRepository(BaseRepository):
