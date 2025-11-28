@@ -4,13 +4,26 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Невелика точка входу для демонстрації роботи парсерів і сортування.
+ * Невелика точка входу для демонстрації роботи:
+ * - валідація XML за XSD;
+ * - парсери DOM, SAX, StAX;
+ * - сортування;
+ * - XSLT-перетворення.
  */
 public class Main {
 
     public static void main(String[] args) {
         try {
             String xmlPath = "src/xml/tourist_vouchers.xml";
+            String xsdPath = "src/xml/tourist_vouchers.xsd";
+            String xslPath = "src/xsl/tourist_vouchers_group_by_type.xsl";
+            String groupedOutputPath = "src/xml/tourist_vouchers_grouped.xml";
+
+            // ==== Валідація XML за XSD ====
+            XmlValidator validator = new XmlValidator();
+            boolean isValid = validator.validate(xmlPath, xsdPath);
+            System.out.println("Результат валідації: " + isValid);
+            System.out.println();
 
             // ==== Парсинг DOM ====
             TouristVouchersParser domParser = new DomTouristVouchersParser();
@@ -40,6 +53,11 @@ public class Main {
             for (TouristVoucher voucher : staxVouchers) {
                 System.out.println(voucher);
             }
+
+            // ==== XSLT-перетворення (групування за type) ====
+            System.out.println("\nЗапуск XSLT-перетворення (групування путівок за типом)...");
+            XsltTransformer xsltTransformer = new XsltTransformer();
+            xsltTransformer.transform(xmlPath, xslPath, groupedOutputPath);
 
         } catch (Exception e) {
             e.printStackTrace();
