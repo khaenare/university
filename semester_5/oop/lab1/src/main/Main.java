@@ -119,6 +119,8 @@ public class Main {
             System.out.println("3. Пошук кави за ціною");
             System.out.println("4. Вивести всі товари в фургоні");
             System.out.println("5. Вихід");
+            System.out.println("6. Зберегти дані у файл");
+            System.out.println("7. Завантажити дані з файла");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // Зчитуємо символ нового рядка
@@ -140,6 +142,17 @@ public class Main {
                 case 5:
                     System.out.println("Завершення програми.");
                     return;
+                case 6:
+                    if (coffeeVan.saveToFile("data.txt")) {
+                        System.out.println("Дані успішно збережено у data.txt");
+                    }
+                    break;
+                case 7:
+                    if (coffeeVan.loadFromFile("data.txt")) {
+                        System.out.println("Дані успішно завантажено з data.txt");
+                        coffeeVan.printCoffeeList();
+                    }
+                    break;
                 default:
                     System.out.println("Невірний вибір. Спробуйте ще раз.");
             }

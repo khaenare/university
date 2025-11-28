@@ -18,9 +18,11 @@ public class LoadedCoffee {
         return coffee;
     }
 
-    public PackageType getPackType() {
+    // Повертає тип упаковки, у якій знаходиться кава
+    public PackageType getPackageType() {
         return packType;
     }
+
 
     @Override
     public String toString() {

@@ -1,0 +1,5 @@
+VOLUME=5.0
+
+COFFEE:
+Ground;1;1.0;1.0;DENSE
+Ground;2;2.0;2.0;DENSE

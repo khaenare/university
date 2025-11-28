@@ -17,6 +17,12 @@ public class Coffee {
         return name;
     }
 
+    // Повертає тип кави як текст (для збереження у файл)
+    public String getTypeName() {
+        return this.getClass().getSimpleName().replace("Coffee", "");
+    }
+
+
     public double getPrice() {
         return price;
     }
