@@ -1,4 +1,4 @@
-package tourist;
+package tourist.model;
 
 /**
  * Тип туристичної путівки.

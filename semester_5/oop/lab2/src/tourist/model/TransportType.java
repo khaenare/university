@@ -1,4 +1,4 @@
-package tourist;
+package tourist.model;
 
 /**
  * Вид транспорту для подорожі.

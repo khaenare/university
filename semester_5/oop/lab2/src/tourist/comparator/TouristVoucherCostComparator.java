@@ -1,4 +1,6 @@
-package tourist;
+package tourist.comparator;
+
+import tourist.model.TouristVoucher;
 
 import java.util.Comparator;
 

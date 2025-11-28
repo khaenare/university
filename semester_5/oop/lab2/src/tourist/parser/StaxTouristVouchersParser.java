@@ -1,4 +1,6 @@
-package tourist;
+package tourist.parser;
+
+import tourist.model.*;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;

@@ -1,4 +1,6 @@
-package tourist;
+package tourist.parser;
+
+import tourist.model.TouristVoucher;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package tourist;
+package tourist.util;
 
 import org.xml.sax.SAXException;
 

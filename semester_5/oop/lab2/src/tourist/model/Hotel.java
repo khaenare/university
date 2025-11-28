@@ -1,4 +1,4 @@
-package tourist;
+package tourist.model;
 
 /**
  * Модель готелю, що описує блок <hotel> у XML.
