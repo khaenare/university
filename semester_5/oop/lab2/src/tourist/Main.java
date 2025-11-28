@@ -6,17 +6,27 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            // Шлях до XML відносно кореня проєкту
             String xmlPath = "src/xml/tourist_vouchers.xml";
 
-            TouristVouchersParser parser = new DomTouristVouchersParser();
-            List<TouristVoucher> vouchers = parser.parse(xmlPath);
+            // DOM
+            TouristVouchersParser domParser = new DomTouristVouchersParser();
+            List<TouristVoucher> domVouchers = domParser.parse(xmlPath);
+            System.out.println("DOM -> кількість путівок: " + domVouchers.size());
 
-            // Простіше за все перевірити, що парсер реально щось повернув
-            System.out.println("Кількість путівок: " + vouchers.size());
-            for (TouristVoucher voucher : vouchers) {
-                System.out.println(voucher);
+            // SAX
+            TouristVouchersParser saxParser = new SaxTouristVouchersParser();
+            List<TouristVoucher> saxVouchers = saxParser.parse(xmlPath);
+            System.out.println("SAX -> кількість путівок: " + saxVouchers.size());
+
+            // StAX
+            TouristVouchersParser staxParser = new StaxTouristVouchersParser();
+            List<TouristVoucher> staxVouchers = staxParser.parse(xmlPath);
+            System.out.println("StAX -> кількість путівок: " + staxVouchers.size());
+
+            for (TouristVoucher v : staxVouchers) {
+                System.out.println("StAX: " + v);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
