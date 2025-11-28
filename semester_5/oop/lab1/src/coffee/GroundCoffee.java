@@ -1,15 +1,12 @@
 package coffee;
 
+// Підклас для меленої кави
 public class GroundCoffee extends Coffee {
-    private String grindType;
+    private String grindType; // Тип помолу
 
-    public GroundCoffee(String name, double price, double weight, double volume, String grindType) {
-        super(name, price, weight, volume);
-        this.grindType = grindType;
-    }
-
-    public String getGrindType() {
-        return grindType;
+    public GroundCoffee(String name, double price, double volume) {
+        super(name, price, volume);
+        this.grindType = "Fine"; // Значення за замовчуванням
     }
 
     @Override

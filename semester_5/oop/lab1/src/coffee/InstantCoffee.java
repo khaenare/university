@@ -1,19 +1,17 @@
 package coffee;
 
+// Підклас для розчинної кави
 public class InstantCoffee extends Coffee {
-    private String packagingType;
+    private String form; // Наприклад "банка" або "пакетик"
 
-    public InstantCoffee(String name, double price, double weight, double volume, String packagingType) {
-        super(name, price, weight, volume);
-        this.packagingType = packagingType;
-    }
-
-    public String getPackagingType() {
-        return packagingType;
+    public InstantCoffee(String name, double price, double volume) {
+        super(name, price, volume);
+        this.form = "Can"; // Значення за замовчуванням
     }
 
     @Override
     public String toString() {
-        return super.toString() + ", packagingType='" + packagingType + "'";
+        return super.toString() + ", form='" + form + "'";
     }
 }
+

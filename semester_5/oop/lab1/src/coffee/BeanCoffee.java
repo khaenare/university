@@ -1,15 +1,12 @@
 package coffee;
 
+// Підклас для зернової кави
 public class BeanCoffee extends Coffee {
-    private String roastLevel;
+    private String roastLevel; // Рівень обсмаження
 
-    public BeanCoffee(String name, double price, double weight, double volume, String roastLevel) {
-        super(name, price, weight, volume);
-        this.roastLevel = roastLevel;
-    }
-
-    public String getRoastLevel() {
-        return roastLevel;
+    public BeanCoffee(String name, double price, double volume) {
+        super(name, price, volume);
+        this.roastLevel = "Medium Roast"; // Значення за замовчуванням
     }
 
     @Override
@@ -17,3 +14,4 @@ public class BeanCoffee extends Coffee {
         return super.toString() + ", roastLevel='" + roastLevel + "'";
     }
 }
+

@@ -1,18 +1,18 @@
 package coffee;
 
 public class Coffee {
-    private String name;
-    private double price;
-    private double weight;
-    private double volume;
+    private String name; // Назва кави
+    private double price; // Ціна кави
+    private double volume; // Об'єм кави
 
-    public Coffee(String name, double price, double weight, double volume) {
+    // Конструктор для ініціалізації кави
+    public Coffee(String name, double price, double volume) {
         this.name = name;
         this.price = price;
-        this.weight = weight;
         this.volume = volume;
     }
 
+    // Геттери
     public String getName() {
         return name;
     }
@@ -21,20 +21,18 @@ public class Coffee {
         return price;
     }
 
-    public double getWeight() {
-        return weight;
-    }
-
     public double getVolume() {
         return volume;
     }
 
+    // Метод для обчислення ціни за літр (замість ціни за кг)
     public double getPricePerKg() {
-        return price / weight;
+        return price / volume; // Ціна за літр
     }
 
+    // Метод для виведення інформації про каву
     @Override
     public String toString() {
-        return "Coffee{name='" + name + "', price=" + price + ", weight=" + weight + ", volume=" + volume + "}";
+        return "Coffee{name='" + name + "', price=" + price + ", volume=" + volume + "}";
     }
 }
