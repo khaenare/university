@@ -4,8 +4,8 @@
     <tourist_voucher id="tv1">
         <type>WEEKEND</type>
         <country>Ukraine</country>
-        <days>3</days>
-        <nights>2</nights>
+        <days>10</days>
+        <nights>9</nights>
         <transport>TRAIN</transport>
         <hotel>
             <name>Dnipro Hotel</name>
