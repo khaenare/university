@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tourist_vouchers>
+    <tourist_voucher id="tv1">
+        <type>WEEKEND</type>
+        <country>Ukraine</country>
+        <days>3</days>
+        <nights>2</nights>
+        <transport>TRAIN</transport>
+        <hotel>
+            <name>Dnipro Hotel</name>
+            <stars>3</stars>
+            <room_type>DOUBLE</room_type>
+            <meals>BB</meals>
+            <tv>true</tv>
+            <air_conditioner>false</air_conditioner>
+        </hotel>
+        <cost currency="EUR">250</cost>
+    </tourist_voucher>
+
+    <tourist_voucher id="tv2">
+        <type>EXCURSION</type>
+        <country>Poland</country>
+        <days>5</days>
+        <nights>4</nights>
+        <transport>BUS</transport>
+        <hotel>
+            <name>Old Town Inn</name>
+            <stars>4</stars>
+            <room_type>DOUBLE</room_type>
+            <meals>HB</meals>
+            <tv>true</tv>
+            <air_conditioner>true</air_conditioner>
+        </hotel>
+        <cost currency="EUR">480</cost>
+    </tourist_voucher>
+
+    <tourist_voucher id="tv3">
+        <type>REST</type>
+        <country>Greece</country>
+        <days>7</days>
+        <nights>6</nights>
+        <transport>AIR</transport>
+        <hotel>
+            <name>Sea Breeze Resort</name>
+            <stars>5</stars>
+            <room_type>DOUBLE</room_type>
+            <meals>AI</meals>
+            <tv>true</tv>
+            <air_conditioner>true</air_conditioner>
+        </hotel>
+        <cost currency="EUR">980</cost>
+    </tourist_voucher>
+
+    <tourist_voucher id="tv4">
+        <type>PILGRIMAGE</type>
+        <country>Italy</country>
+        <days>6</days>
+        <nights>5</nights>
+        <transport>AIR</transport>
+        <hotel>
+            <name>Saint Maria House</name>
+            <stars>3</stars>
+            <room_type>SINGLE</room_type>
+            <meals>FB</meals>
+            <tv>false</tv>
+            <air_conditioner>false</air_conditioner>
+        </hotel>
+        <cost currency="EUR">620</cost>
+    </tourist_voucher>
+</tourist_vouchers>
