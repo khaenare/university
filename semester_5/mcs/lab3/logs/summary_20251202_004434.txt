@@ -1,0 +1,11 @@
+Parameter Identification Results (Variant 1)
+--------------------------------
+
+Identified parameters:
+c4: 0.120000
+m1: 11.999995
+m3: 17.999989
+
+Cost function: 1.210814e-08
+Iterations: 7
+Execution time: 0.07 s
