@@ -210,3 +210,4 @@ plt.tight_layout()
 plt.savefig("spline_graph.png", dpi=300)
 print("Графік збережено як spline_graph.png")
 plt.show()
+

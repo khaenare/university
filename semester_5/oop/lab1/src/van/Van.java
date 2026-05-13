@@ -192,4 +192,7 @@ public class Van {
     public double getCurrentVolume() {
         return currentVolume;
     }
+    public List<LoadedCoffee> getCoffeeList() {
+        return new ArrayList<>(coffeeList);
+    }
 }

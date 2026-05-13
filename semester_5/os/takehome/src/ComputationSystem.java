@@ -20,7 +20,7 @@ public class ComputationSystem {
     // Налаштування часу (в мілісекундах)
     private static final int SOFT_TIMEOUT_MS = 5000; // Час до появи меню (5 сек)
 
-    // Флаг для уникнення "гонки" виводу (щоб результат не псував меню)
+    // Флаг для уникнення гонки виводу
     private static final AtomicBoolean isPromptActive = new AtomicBoolean(false);
 
     public static void main(String[] args) {
@@ -138,7 +138,7 @@ public class ComputationSystem {
             Thread.sleep(100);
         }
 
-        // Закриття ресурсів (важливо для MacOS/Linux, щоб не втрачати дескриптори файлів)
+        // Закриття ресурсів
         try {
             pipeF.sink().close(); pipeF.source().close();
             pipeG.sink().close(); pipeG.source().close();
@@ -152,7 +152,7 @@ public class ComputationSystem {
     private enum PromptResult { CONTINUE, CANCEL }
 
     /**
-     * Меню користувача (вимога з Відео 2).
+     * Меню користувача
      */
     private static PromptResult showPrompt(Double resF, Double resG) {
         Scanner promptScanner = new Scanner(System.in);
