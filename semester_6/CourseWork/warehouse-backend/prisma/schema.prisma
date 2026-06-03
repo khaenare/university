@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+enum ProductType {
+  COMPONENT
+  FINISHED
+}
+
+enum TransactionType {
+  RECEIPT
+  ISSUE_SALE
+  ISSUE_PRODUCTION
+  PRODUCTION_OUTPUT
+  ADJUSTMENT
+}
+
+enum WriteOffReason {
+  SALE
+  PRODUCTION
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  passwordHash  String
+  role          UserRole
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  refreshTokens RefreshToken[]
+  auditLogs     AuditLog[]
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Supplier {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  contactName  String?
+  contactEmail String?
+  contactPhone String?
+  address      String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  receipts     Receipt[]
+}
+
+model Product {
+  id                String                 @id @default(cuid())
+  sku               String                 @unique
+  name              String
+  unit              String
+  type              ProductType
+  isActive          Boolean                @default(true)
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  receiptLines      ReceiptLine[]
+  writeOffLines     WriteOffLine[]
+  stockTransactions InventoryTransaction[]
+  bomAsFinished     Bom[]                  @relation("BomFinishedProduct")
+  bomAsComponent    BomItem[]
+  productionFinishedOrders ProductionOrder[]     @relation("ProductionFinishedProduct")
+  productionOrderItems    ProductionOrderItem[]  @relation("ProductionComponent")
+  costSnapshots           CostSnapshot[]
+}
+
+model Bom {
+  id                String    @id @default(cuid())
+  finishedProductId String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  finishedProduct   Product   @relation("BomFinishedProduct", fields: [finishedProductId], references: [id], onDelete: Cascade)
+  items             BomItem[]
+
+  @@unique([finishedProductId])
+}
+
+model BomItem {
+  id          String  @id @default(cuid())
+  bomId       String
+  componentId String
+  quantity    Decimal @db.Decimal(14, 3)
+  bom         Bom     @relation(fields: [bomId], references: [id], onDelete: Cascade)
+  component   Product @relation(fields: [componentId], references: [id], onDelete: Restrict)
+
+  @@unique([bomId, componentId])
+  @@index([componentId])
+}
+
+model Receipt {
+  id            String        @id @default(cuid())
+  supplierId    String
+  invoiceNumber String
+  invoiceDate   DateTime
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  supplier      Supplier      @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  lines         ReceiptLine[]
+
+  @@index([supplierId])
+  @@index([invoiceDate])
+}
+
+model ReceiptLine {
+  id            String  @id @default(cuid())
+  receiptId     String
+  productId     String
+  quantity      Decimal @db.Decimal(14, 3)
+  purchasePrice Decimal @db.Decimal(14, 2)
+  receipt       Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  product       Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([receiptId])
+  @@index([productId])
+}
+
+model WriteOff {
+  id        String         @id @default(cuid())
+  reason    WriteOffReason
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  lines     WriteOffLine[]
+}
+
+model WriteOffLine {
+  id         String   @id @default(cuid())
+  writeOffId String
+  productId  String
+  quantity   Decimal  @db.Decimal(14, 3)
+  writeOff   WriteOff @relation(fields: [writeOffId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([writeOffId])
+  @@index([productId])
+}
+
+model InventoryTransaction {
+  id             String          @id @default(cuid())
+  productId      String
+  type           TransactionType
+  quantity       Decimal         @db.Decimal(14, 3)
+  unitCost       Decimal?        @db.Decimal(14, 2)
+  sourceDocument String?
+  createdAt      DateTime        @default(now())
+  product        Product         @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([productId, createdAt])
+  @@index([type])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, createdAt])
+}
+
+model ProductionOrder {
+  id                String                @id @default(cuid())
+  finishedProductId String
+  quantity          Decimal               @db.Decimal(14, 3)
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+  finishedProduct   Product               @relation("ProductionFinishedProduct", fields: [finishedProductId], references: [id], onDelete: Restrict)
+  items             ProductionOrderItem[]
+  costSnapshot      CostSnapshot?
+
+  @@index([finishedProductId, createdAt])
+}
+
+model ProductionOrderItem {
+  id                String           @id @default(cuid())
+  productionOrderId String
+  componentId       String
+  quantity          Decimal          @db.Decimal(14, 3)
+  createdAt         DateTime         @default(now())
+  productionOrder   ProductionOrder  @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  component         Product          @relation("ProductionComponent", fields: [componentId], references: [id], onDelete: Restrict)
+
+  @@index([productionOrderId])
+  @@index([componentId])
+}
+
+model CostSnapshot {
+  id                String          @id @default(cuid())
+  productionOrderId String          @unique
+  finishedProductId String
+  totalCost         Decimal         @db.Decimal(14, 2)
+  unitCost          Decimal         @db.Decimal(14, 4)
+  calculationData   Json
+  createdAt         DateTime        @default(now())
+  productionOrder   ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  finishedProduct   Product         @relation(fields: [finishedProductId], references: [id], onDelete: Restrict)
+
+  @@index([finishedProductId, createdAt])
+}
