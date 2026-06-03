@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { OPERATOR_ROLES, requireRole } from "@/lib/authorization";
 import { parseJsonObjectBody } from "@/lib/http";
 import { calculateProductionCost, CostingValidationError } from "@/lib/costing";
-import { assertSufficientStock, InventoryValidationError } from "@/lib/inventory";
+import { getProductStock, InventoryValidationError } from "@/lib/inventory";
 import { prisma } from "@/lib/prisma";
 import {
   ProductionOrderValidationError,
@@ -98,8 +98,49 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        const stockByComponentId = new Map<string, Prisma.Decimal>();
         for (const line of consumptionLines) {
-          await assertSufficientStock(tx, line.componentId, line.quantity);
+          stockByComponentId.set(line.componentId, await getProductStock(tx, line.componentId));
+        }
+
+        const shortages = consumptionLines.flatMap((line) => {
+          const available = stockByComponentId.get(line.componentId) ?? new Prisma.Decimal(0);
+          const missing = line.quantity.sub(available);
+
+          if (!missing.isPositive()) {
+            return [];
+          }
+
+          const component = components.find((item) => item.id === line.componentId);
+          const quantityPerUnit = line.quantity.div(outputQuantity);
+
+          return [{
+            available,
+            componentName: component ? `${component.sku} - ${component.name}` : line.componentId,
+            missing,
+            quantityPerUnit,
+            required: line.quantity,
+          }];
+        });
+
+        if (shortages.length > 0) {
+          const possibleOutput = consumptionLines.reduce((minimum, line) => {
+            const available = stockByComponentId.get(line.componentId) ?? new Prisma.Decimal(0);
+            const quantityPerUnit = line.quantity.div(outputQuantity);
+            const possibleByComponent = available.div(quantityPerUnit).floor();
+
+            return minimum === null || possibleByComponent.lessThan(minimum) ? possibleByComponent : minimum;
+          }, null as Prisma.Decimal | null) ?? new Prisma.Decimal(0);
+
+          const shortageDetails = shortages.map((shortage) =>
+            `${shortage.componentName}: need ${shortage.required.toString()} total, ` +
+            `available ${shortage.available.toString()}, buy ${shortage.missing.toString()} more`,
+          );
+
+          throw new InventoryValidationError(
+            `Insufficient components. You can produce ${possibleOutput.toString()} units now. ` +
+            `Missing components to produce ${outputQuantity.toString()} units: ${shortageDetails.join("; ")}.`,
+          );
         }
 
         const costResult = await calculateProductionCost(tx, consumptionLines);

@@ -56,7 +56,7 @@ test("POST /api/production-orders creates output and component deductions", asyn
 
           return null;
         },
-        findMany: async () => [{ id: "c-1", type: "COMPONENT" }],
+        findMany: async () => [{ id: "c-1", sku: "C-1", name: "Steel Plate", type: "COMPONENT" }],
       },
       bom: {
         findUnique: async () => ({
@@ -170,7 +170,7 @@ test("POST /api/production-orders returns 400 when component stock is insufficie
     const tx = {
       product: {
         findUnique: async () => ({ id: "f-1", type: "FINISHED" }),
-        findMany: async () => [{ id: "c-1", type: "COMPONENT" }],
+        findMany: async () => [{ id: "c-1", sku: "C-1", name: "Steel Plate", type: "COMPONENT" }],
       },
       bom: {
         findUnique: async () => ({
@@ -194,6 +194,9 @@ test("POST /api/production-orders returns 400 when component stock is insufficie
 
     const response = await createProductionOrder(request);
     assert.equal(response.status, 400);
+    const payload = (await response.json()) as { message: string };
+    assert.match(payload.message, /You can produce 0 units now/);
+    assert.match(payload.message, /C-1 - Steel Plate: need 2 total, available 1, buy 1 more/);
   } finally {
     prisma.$transaction = originalTransaction;
   }

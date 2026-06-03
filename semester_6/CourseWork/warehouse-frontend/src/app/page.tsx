@@ -75,7 +75,9 @@ export default function Home() {
   }
 
   const productsInStock = stockItems.filter((item) => Number(item.quantity) > 0).length;
-  const lowStockItems = stockItems.filter((item) => Number(item.quantity) > 0 && Number(item.quantity) <= 5);
+  const lowStockItems = stockItems
+    .filter((item) => Number(item.quantity) <= 5)
+    .sort((a, b) => Number(a.quantity) - Number(b.quantity));
   const topValuation = Math.max(...stockItems.map((item) => Number(item.valuation)), 1);
   const topProducts = [...stockItems]
     .sort((a, b) => Number(b.valuation) - Number(a.valuation))
@@ -146,7 +148,7 @@ export default function Home() {
             {lowStockItems.slice(0, 5).map((item) => (
               <div className="activity-row" key={item.productId}>
                 <strong>{item.sku}</strong>
-                <span>{item.quantity} {item.unit} available</span>
+                <span>{Number(item.quantity) === 0 ? "Out of stock" : `${item.quantity} ${item.unit} available`}</span>
               </div>
             ))}
             {lowStockItems.length === 0 ? <p className="muted-text">No low-stock risks in current demo data.</p> : null}
