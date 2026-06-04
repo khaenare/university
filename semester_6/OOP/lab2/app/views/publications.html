@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Каталог</p>
+    <h1>Періодичні видання</h1>
+    <p class="muted">Оберіть журнал або керуйте каталогом як адміністратор.</p>
+  </div>
+  {% if user.is_admin %}<a class="btn btn-primary" href="/publications/new">+ Додати видання</a>{% endif %}
+</section>
+
+<section class="publication-grid">
+  {% for p in publications %}
+  <article class="card publication-card">
+    <div class="magazine-cover">{{ p.title[:1] }}</div>
+    <div class="publication-body">
+      <span class="badge">{{ p.publisher }}</span>
+      <h2>{{ p.title }}</h2>
+      <p class="muted">Періодичність: {{ p.period_months }} міс.</p>
+      <p class="price">{{ p.price }} ₴ <span>/ міс.</span></p>
+      {% if user.is_admin %}
+      <form method="post" action="/publications/update" class="compact-form">
+        <input type="hidden" name="id" value="{{ p.id }}">
+        <input name="title" value="{{ p.title }}" aria-label="Назва" required>
+        <input name="publisher" value="{{ p.publisher }}" aria-label="Видавець" required>
+        <input name="period_months" value="{{ p.period_months }}" aria-label="Період" required>
+        <input name="price" value="{{ p.price }}" aria-label="Ціна" required>
+        <button class="btn btn-secondary">Оновити</button>
+      </form>
+      <form method="post" action="/publications/delete" class="inline">
+        <input type="hidden" name="id" value="{{ p.id }}">
+        <button class="btn btn-danger">Видалити</button>
+      </form>
+      {% else %}
+      <form method="post" action="/subscriptions/create" class="subscribe-form">
+        <input type="hidden" name="publication_id" value="{{ p.id }}">
+        <label>Місяців <input name="months" type="number" min="1" value="1"></label>
+        <button class="btn btn-primary">Передплатити</button>
+      </form>
+      {% endif %}
+    </div>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

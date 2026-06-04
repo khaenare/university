@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="narrow">
+<form class="card form-card" method="post" action="/publications/create">
+  <p class="eyebrow">Адміністрування</p>
+  <h1>Нове видання</h1>
+  <label>Назва <input name="title" placeholder="Наприклад: Технології майбутнього" required></label>
+  <label>Видавець <input name="publisher" placeholder="Наприклад: Digital Press" required></label>
+  <label>Період, міс. <input name="period_months" type="number" min="1" value="1" required></label>
+  <label>Ціна/міс. <input name="price" type="number" step="0.01" min="0" placeholder="149.00" required></label>
+  <button class="btn btn-primary" type="submit">Створити видання</button>
+</form>
+</section>
+{% endblock %}
