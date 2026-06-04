@@ -84,6 +84,22 @@ def test_admin_creates_publication(client):
     assert response.json()["title"] == "Новини"
 
 
+def test_admin_updates_and_deletes_publication(client):
+    access_token = token(client, "admin")
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    update_response = client.put(
+        "/api/publications/1",
+        headers=headers,
+        json={"title": "Оновлена назва", "publisher": "Press", "period_months": 1, "price": "125.00"},
+    )
+    assert update_response.status_code == 200
+    assert update_response.json()["title"] == "Оновлена назва"
+
+    delete_response = client.delete("/api/publications/1", headers=headers)
+    assert delete_response.status_code == 204
+
+
 def test_reader_creates_subscription_and_payment(client):
     access_token = token(client, "reader")
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -96,6 +112,25 @@ def test_reader_creates_subscription_and_payment(client):
     payment_response = client.post(f"/api/subscriptions/{subscription['id']}/payments", headers=headers, json={"amount": "240.00"})
     assert payment_response.status_code == 201
     assert payment_response.json()["status"] == "registered"
+
+
+def test_reader_updates_subscription_and_payment_status_then_deletes_payment(client):
+    access_token = token(client, "reader")
+    headers = {"Authorization": f"Bearer {access_token}"}
+    subscription = client.post("/api/subscriptions", headers=headers, json={"publication_id": 1, "months": 2}).json()
+    payment = client.post(f"/api/subscriptions/{subscription['id']}/payments", headers=headers, json={"amount": "240.00"}).json()
+
+    subscription_response = client.put(f"/api/subscriptions/{subscription['id']}", headers=headers, json={"months": 3})
+    assert subscription_response.status_code == 200
+    assert subscription_response.json()["months"] == 3
+    assert subscription_response.json()["total_amount"] == "360.00"
+
+    payment_response = client.put(f"/api/payments/{payment['id']}", headers=headers, json={"status": "paid"})
+    assert payment_response.status_code == 200
+    assert payment_response.json()["status"] == "paid"
+
+    delete_response = client.delete(f"/api/payments/{payment['id']}", headers=headers)
+    assert delete_response.status_code == 204
 
 
 def test_missing_subscription_returns_404(client):
