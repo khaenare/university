@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 
-import { GET as getReceiptById } from "@/app/api/receipts/[id]/route";
+import { DELETE as deleteReceipt, GET as getReceiptById } from "@/app/api/receipts/[id]/route";
 import { POST as createReceipt } from "@/app/api/receipts/route";
 import { createAccessToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -110,5 +111,97 @@ test("GET /api/receipts/[id] returns 404 when receipt is missing", async () => {
     assert.equal(response.status, 404);
   } finally {
     prisma.receipt.findUnique = originalFindUnique;
+  }
+});
+
+test("DELETE /api/receipts/[id] removes receipt and receipt inventory movements", async () => {
+  const originalTransaction = prisma.$transaction;
+  let isolationLevel: Prisma.TransactionIsolationLevel | undefined;
+
+  prisma.$transaction = async (callback, options) => {
+    isolationLevel = options?.isolationLevel;
+    const calls = { sourceDocument: "", receiptId: "" };
+    const tx = {
+      receipt: {
+        findUnique: async () => ({ id: "r-1", lines: [{ productId: "p-1", quantity: new Prisma.Decimal("2") }] }),
+        delete: async ({ where }: { where: { id: string } }) => {
+          calls.receiptId = where.id;
+          return { id: where.id };
+        },
+      },
+      inventoryTransaction: {
+        findMany: async () => [{ quantity: new Prisma.Decimal("5") }],
+        deleteMany: async ({ where }: { where: { sourceDocument: string } }) => {
+          calls.sourceDocument = where.sourceDocument;
+          return { count: 1 };
+        },
+      },
+    } as never;
+
+    const result = await callback(tx);
+    assert.equal(calls.sourceDocument, "receipt:r-1");
+    assert.equal(calls.receiptId, "r-1");
+    return result;
+  };
+
+  try {
+    const response = await deleteReceipt(new NextRequest("http://localhost/api/receipts/r-1", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${managerToken}` },
+    }), { params: Promise.resolve({ id: "r-1" }) });
+
+    assert.equal(response.status, 204);
+    assert.equal(isolationLevel, Prisma.TransactionIsolationLevel.Serializable);
+  } finally {
+    prisma.$transaction = originalTransaction;
+  }
+});
+
+test("DELETE /api/receipts/[id] maps serialization conflict to 409", async () => {
+  const originalTransaction = prisma.$transaction;
+  const error = Object.create(Prisma.PrismaClientKnownRequestError.prototype) as Prisma.PrismaClientKnownRequestError;
+  Object.assign(error, { code: "P2034" });
+
+  prisma.$transaction = async () => {
+    throw error;
+  };
+
+  try {
+    const response = await deleteReceipt(new NextRequest("http://localhost/api/receipts/r-1", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${managerToken}` },
+    }), { params: Promise.resolve({ id: "r-1" }) });
+
+    assert.equal(response.status, 409);
+  } finally {
+    prisma.$transaction = originalTransaction;
+  }
+});
+
+test("DELETE /api/receipts/[id] blocks deletion when stock was consumed", async () => {
+  const originalTransaction = prisma.$transaction;
+
+  prisma.$transaction = async (callback) => {
+    const tx = {
+      receipt: {
+        findUnique: async () => ({ id: "r-1", lines: [{ productId: "p-1", quantity: new Prisma.Decimal("2") }] }),
+      },
+      inventoryTransaction: {
+        findMany: async () => [{ quantity: new Prisma.Decimal("1") }],
+      },
+    } as never;
+
+    return callback(tx);
+  };
+
+  try {
+    const response = await deleteReceipt(new NextRequest("http://localhost/api/receipts/r-1", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${managerToken}` },
+    }), { params: Promise.resolve({ id: "r-1" }) });
+
+    assert.equal(response.status, 400);
+  } finally {
+    prisma.$transaction = originalTransaction;
   }
 });

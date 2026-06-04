@@ -102,20 +102,35 @@ export function buildWriteOffPayload(formData: FormData): CreateWriteOffPayload 
     throw new Error("Write-off reason must be SALE.");
   }
   const reason = reasonRaw;
-  const productId = String(formData.get("productId") ?? "");
-  const quantity = Number(formData.get("quantity") ?? 0);
+  const productIds = formData.getAll("productId").map((value) => String(value));
+  const quantities = formData.getAll("quantity").map((value) => Number(value));
 
-  if (!productId) {
-    throw new Error("Please select a product.");
+  if (productIds.length === 0) {
+    throw new Error("At least one write-off line is required.");
   }
 
-  if (!Number.isFinite(quantity) || quantity <= 0) {
-    throw new Error("Quantity must be greater than zero.");
+  const lines = productIds.map((productId, index) => {
+    const quantity = quantities[index] ?? 0;
+
+    if (!productId) {
+      throw new Error(`Please select product for line ${index + 1}.`);
+    }
+
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      throw new Error(`Quantity in line ${index + 1} must be greater than zero.`);
+    }
+
+    return { productId, quantity };
+  });
+
+  const uniqueProductIds = new Set(lines.map((line) => line.productId));
+  if (uniqueProductIds.size !== lines.length) {
+    throw new Error("Write-off lines must have unique products.");
   }
 
   return {
     reason,
-    lines: [{ productId, quantity }],
+    lines,
   };
 }
 

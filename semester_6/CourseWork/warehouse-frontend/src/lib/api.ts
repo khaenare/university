@@ -338,6 +338,10 @@ export function createReceipt(payload: CreateReceiptPayload): Promise<unknown> {
   return requestWithBody<unknown, CreateReceiptPayload>("/api/receipts", "POST", payload);
 }
 
+export function deleteReceipt(id: string): Promise<void> {
+  return requestWithBody<void, Record<string, never>>(`/api/receipts/${id}`, "DELETE", {});
+}
+
 export async function getWriteOffs(): Promise<{ items: WriteOffItem[] }> {
   const data = await request<WriteOffItem[]>("/api/writeoffs");
   return { items: data };
@@ -345,6 +349,10 @@ export async function getWriteOffs(): Promise<{ items: WriteOffItem[] }> {
 
 export function createWriteOff(payload: CreateWriteOffPayload): Promise<unknown> {
   return requestWithBody<unknown, CreateWriteOffPayload>("/api/writeoffs", "POST", payload);
+}
+
+export function deleteWriteOff(id: string): Promise<void> {
+  return requestWithBody<void, Record<string, never>>(`/api/writeoffs/${id}`, "DELETE", {});
 }
 
 export async function getProductionOrders(): Promise<{ items: ProductionOrderItem[] }> {

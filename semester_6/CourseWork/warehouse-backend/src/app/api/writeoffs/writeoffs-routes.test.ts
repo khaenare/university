@@ -4,12 +4,18 @@ import test from "node:test";
 import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 
-import { GET as getWriteOffById } from "@/app/api/writeoffs/[id]/route";
+import { DELETE as deleteWriteOff, GET as getWriteOffById } from "@/app/api/writeoffs/[id]/route";
 import { POST as createWriteOff } from "@/app/api/writeoffs/route";
 import { createAccessToken } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const managerToken = createAccessToken({ sub: "manager-1", email: "manager@localhost", role: "MANAGER" });
+
+function prismaKnownError(code: string): Prisma.PrismaClientKnownRequestError {
+  const error = Object.create(Prisma.PrismaClientKnownRequestError.prototype) as Prisma.PrismaClientKnownRequestError;
+  Object.assign(error, { code });
+  return error;
+}
 
 function jsonRequest(url: string, method: string, body?: unknown): NextRequest {
   return new NextRequest(url, {
@@ -128,5 +134,62 @@ test("GET /api/writeoffs/[id] returns 404 for missing write-off", async () => {
     assert.equal(response.status, 404);
   } finally {
     prisma.writeOff.findUnique = originalFindUnique;
+  }
+});
+
+test("DELETE /api/writeoffs/[id] removes write-off and write-off inventory movements", async () => {
+  const originalTransaction = prisma.$transaction;
+
+  prisma.$transaction = async (callback) => {
+    const calls = { sourceDocument: "", writeOffId: "" };
+    const tx = {
+      inventoryTransaction: {
+        deleteMany: async ({ where }: { where: { sourceDocument: string } }) => {
+          calls.sourceDocument = where.sourceDocument;
+          return { count: 1 };
+        },
+      },
+      writeOff: {
+        delete: async ({ where }: { where: { id: string } }) => {
+          calls.writeOffId = where.id;
+          return { id: where.id };
+        },
+      },
+    } as never;
+
+    const result = await callback(tx);
+    assert.equal(calls.sourceDocument, "writeoff:w-1");
+    assert.equal(calls.writeOffId, "w-1");
+    return result;
+  };
+
+  try {
+    const response = await deleteWriteOff(new NextRequest("http://localhost/api/writeoffs/w-1", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${managerToken}` },
+    }), { params: Promise.resolve({ id: "w-1" }) });
+
+    assert.equal(response.status, 204);
+  } finally {
+    prisma.$transaction = originalTransaction;
+  }
+});
+
+test("DELETE /api/writeoffs/[id] maps missing write-off to 404", async () => {
+  const originalTransaction = prisma.$transaction;
+
+  prisma.$transaction = async () => {
+    throw prismaKnownError("P2025");
+  };
+
+  try {
+    const response = await deleteWriteOff(new NextRequest("http://localhost/api/writeoffs/w-404", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${managerToken}` },
+    }), { params: Promise.resolve({ id: "w-404" }) });
+
+    assert.equal(response.status, 404);
+  } finally {
+    prisma.$transaction = originalTransaction;
   }
 });

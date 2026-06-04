@@ -419,12 +419,25 @@ button:disabled {
   align-items: start;
 }
 
+.receipt-stack-layout {
+  display: grid;
+  gap: 16px;
+}
+
 .receipt-resource-layout {
   grid-template-columns: minmax(520px, 0.95fr) minmax(0, 1.05fr);
 }
 
 .recipe-resource-layout {
   grid-template-columns: minmax(500px, 0.9fr) minmax(0, 1.1fr);
+}
+
+.operation-resource-layout {
+  grid-template-columns: minmax(460px, 0.85fr) minmax(0, 1.15fr);
+}
+
+.history-panel {
+  overflow-x: auto;
 }
 
 .badge {
@@ -487,6 +500,17 @@ button:disabled {
 .receipt-form-line button,
 .receipt-form-line .badge {
   width: fit-content;
+}
+
+.writeoff-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(120px, 0.65fr) auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fbfdff;
 }
 
 .recipe-component-line {
@@ -608,6 +632,10 @@ button:disabled {
   }
 
   .recipe-component-line {
+    grid-template-columns: 1fr;
+  }
+
+  .writeoff-line {
     grid-template-columns: 1fr;
   }
 

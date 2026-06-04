@@ -68,7 +68,7 @@ export default function ProductionOrdersPage() {
         <span className="badge">{items.length} orders</span>
       </section>
 
-      <section className="resource-layout">
+      <section className="resource-layout operation-resource-layout">
         <article className="panel">
           <div className="panel-header"><h2 className="section-title">New production order</h2></div>
           <form onSubmit={onSubmit} className="form-grid">
@@ -85,7 +85,7 @@ export default function ProductionOrdersPage() {
           {successMessage && <p className="success-text">{successMessage}</p>}
         </article>
 
-        <article className="panel">
+        <article className="panel history-panel">
           <div className="panel-header"><h2 className="section-title">Production history</h2></div>
           <table className="table">
             <thead><tr><th>Finished Product</th><th>Quantity</th><th>Created At</th></tr></thead>

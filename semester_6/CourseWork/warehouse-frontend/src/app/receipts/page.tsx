@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 
-import { createReceipt, getProducts, getReceipts, getSuppliers, ProductOption, ReceiptItem, SupplierOption } from "@/lib/api";
+import { createReceipt, deleteReceipt, getProducts, getReceipts, getSuppliers, ProductOption, ReceiptItem, SupplierOption } from "@/lib/api";
 import { buildReceiptPayload } from "@/lib/form-payloads";
 
 export default function ReceiptsPage() {
@@ -60,6 +60,22 @@ export default function ReceiptsPage() {
     }
   }
 
+  async function onDelete(receipt: ReceiptItem) {
+    if (!confirm(`Delete receipt ${receipt.invoiceNumber}?`)) {
+      return;
+    }
+
+    try {
+      setError(null);
+      setSuccessMessage(null);
+      await deleteReceipt(receipt.id);
+      await load();
+      setSuccessMessage("Receipt deleted successfully.");
+    } catch (deleteError) {
+      setError(deleteError instanceof Error ? deleteError.message : "Failed to delete receipt.");
+    }
+  }
+
   return (
     <main className="page-container">
       <section className="hero-card">
@@ -71,7 +87,7 @@ export default function ReceiptsPage() {
         <span className="badge">{items.length} receipts</span>
       </section>
 
-      <section className="resource-layout receipt-resource-layout">
+      <section className="receipt-stack-layout">
         <article className="panel">
           <div className="panel-header">
             <h2 className="section-title">New receipt</h2>
@@ -123,23 +139,28 @@ export default function ReceiptsPage() {
           </div>
           <table className="table">
             <thead>
-              <tr><th>Supplier</th><th>Invoice</th><th>Date</th><th>Lines</th></tr>
+              <tr><th>Supplier</th><th>Invoice</th><th>Date</th><th>Lines</th><th>Actions</th></tr>
             </thead>
             <tbody>
               {items.length === 0 ? (
-                <tr><td colSpan={4} className="empty-cell">No receipts yet.</td></tr>
+                <tr><td colSpan={5} className="empty-cell">No receipts yet.</td></tr>
               ) : (
                 items.map((item) => (
                   <tr key={item.id}>
                     <td>{item.supplier?.name ?? item.supplierId}</td>
                     <td><strong>{item.invoiceNumber}</strong></td>
                     <td>{new Date(item.invoiceDate).toLocaleDateString()}</td>
-                    <td className="line-list">
-                      {item.lines?.map((line) => (
-                        <div key={`${item.id}-${line.product?.id ?? line.product?.sku ?? line.quantity}`}>
-                          {line.product ? `${line.product.sku} - ${line.product.name}` : "Product"}: {line.quantity} × {line.purchasePrice}
-                        </div>
-                      )) ?? "-"}
+                    <td>
+                      <div className="line-list">
+                        {item.lines?.map((line) => (
+                          <div key={`${item.id}-${line.product?.id ?? line.product?.sku ?? line.quantity}`}>
+                            {line.product ? `${line.product.sku} - ${line.product.name}` : "Product"}: {line.quantity} × {line.purchasePrice}
+                          </div>
+                        )) ?? "-"}
+                      </div>
+                    </td>
+                    <td className="table-actions">
+                      <button className="danger-button" type="button" onClick={() => void onDelete(item)}>Delete</button>
                     </td>
                   </tr>
                 ))

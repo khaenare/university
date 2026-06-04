@@ -99,6 +99,36 @@ test("buildWriteOffPayload validates quantity", () => {
   assert.equal(payload.lines[0].quantity, 3);
 });
 
+test("buildWriteOffPayload supports multiple unique lines", () => {
+  const payload = buildWriteOffPayload(
+    createFormData([
+      ["reason", "SALE"],
+      ["productId", "p-1"],
+      ["quantity", "3"],
+      ["productId", "p-2"],
+      ["quantity", "4"],
+    ]),
+  );
+
+  assert.equal(payload.lines.length, 2);
+  assert.equal(payload.lines[1].productId, "p-2");
+  assert.equal(payload.lines[1].quantity, 4);
+});
+
+test("buildWriteOffPayload rejects duplicate products", () => {
+  assert.throws(() =>
+    buildWriteOffPayload(
+      createFormData([
+        ["reason", "SALE"],
+        ["productId", "p-1"],
+        ["quantity", "3"],
+        ["productId", "p-1"],
+        ["quantity", "4"],
+      ]),
+    ),
+  );
+});
+
 test("buildWriteOffPayload rejects invalid reason", () => {
   assert.throws(() =>
     buildWriteOffPayload(
