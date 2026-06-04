@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Мої передплати</h2>
+<form method="post" action="/subscriptions/create">
+  <select name="publication_id">
+    {% for p in publications %}<option value="{{ p.id }}">{{ p.title }} — {{ p.price }}/міс.</option>{% endfor %}
+  </select>
+  <input name="months" type="number" min="1" value="1">
+  <button>Оформити</button>
+</form>
+<table>
+  <tr><th>ID</th><th>Видання</th><th>Місяці</th><th>Сума</th><th>Статус</th><th>Дії</th></tr>
+  {% for s in subscriptions %}
+  <tr>
+    <td>{{ s.id }}</td><td>{{ s.publication_id }}</td><td>{{ s.months }}</td><td>{{ s.total_amount }}</td><td>{{ s.status }}</td>
+    <td>
+      <form method="post" action="/subscriptions/update" class="inline">
+        <input type="hidden" name="subscription_id" value="{{ s.id }}">
+        <input name="months" type="number" min="1" value="{{ s.months }}">
+        <button>Оновити</button>
+      </form>
+      <form method="post" action="/subscriptions/delete" class="inline">
+        <input type="hidden" name="subscription_id" value="{{ s.id }}">
+        <button>Видалити</button>
+      </form>
+      <a href="/payment?subscription_id={{ s.id }}">Платежі</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

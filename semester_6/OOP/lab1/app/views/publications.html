@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Каталог</h2>
+{% if user.is_admin %}<p><a href="/publications/new">Додати видання</a></p>{% endif %}
+<table>
+  <tr><th>Назва</th><th>Видавець</th><th>Період</th><th>Ціна/міс.</th><th>Дії</th></tr>
+  {% for p in publications %}
+  <tr>
+    <td>{{ p.title }}</td><td>{{ p.publisher }}</td><td>{{ p.period_months }}</td><td>{{ p.price }}</td>
+    <td>
+      {% if user.is_admin %}
+      <form method="post" action="/publications/delete" class="inline">
+        <input type="hidden" name="id" value="{{ p.id }}">
+        <button>Видалити</button>
+      </form>
+      <form method="post" action="/publications/update" class="inline">
+        <input type="hidden" name="id" value="{{ p.id }}">
+        <input name="title" value="{{ p.title }}" required>
+        <input name="publisher" value="{{ p.publisher }}" required>
+        <input name="period_months" value="{{ p.period_months }}" required>
+        <input name="price" value="{{ p.price }}" required>
+        <button>Оновити</button>
+      </form>
+      {% else %}
+      <form method="post" action="/subscriptions/create">
+        <input type="hidden" name="publication_id" value="{{ p.id }}">
+        <input name="months" type="number" min="1" value="1">
+        <button>Передплатити</button>
+      </form>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

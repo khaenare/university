@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <title>Періодичні видання</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>Система періодичних видань</h1>
+    {% if user %}
+      <nav>
+        <a href="/publications">Каталог</a>
+        <a href="/subscriptions">Передплати</a>
+        <a href="/payment">Платіж</a>
+        <a href="/logout">Вийти ({{ user.username }})</a>
+      </nav>
+    {% endif %}
+  </header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

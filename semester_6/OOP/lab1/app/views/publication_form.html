@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Нове видання</h2>
+<form method="post" action="/publications/create">
+  <label>Назва <input name="title" required></label>
+  <label>Видавець <input name="publisher" required></label>
+  <label>Період, міс. <input name="period_months" type="number" min="1" value="1" required></label>
+  <label>Ціна/міс. <input name="price" type="number" step="0.01" min="0" required></label>
+  <button type="submit">Створити</button>
+</form>
+{% endblock %}
