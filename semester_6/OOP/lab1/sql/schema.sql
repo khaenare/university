@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     publication_id INTEGER NOT NULL REFERENCES publications(id) ON DELETE CASCADE,
     months INTEGER NOT NULL CHECK (months > 0),
     total_amount NUMERIC(10, 2) NOT NULL CHECK (total_amount >= 0),
-    status VARCHAR(30) NOT NULL DEFAULT 'created',
+    status VARCHAR(30) NOT NULL DEFAULT 'created' CHECK (status IN ('created', 'active', 'cancelled')),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -27,6 +27,6 @@ CREATE TABLE IF NOT EXISTS payments (
     id SERIAL PRIMARY KEY,
     subscription_id INTEGER NOT NULL REFERENCES subscriptions(id) ON DELETE CASCADE,
     amount NUMERIC(10, 2) NOT NULL CHECK (amount >= 0),
-    status VARCHAR(30) NOT NULL DEFAULT 'registered',
+    status VARCHAR(30) NOT NULL DEFAULT 'registered' CHECK (status IN ('registered', 'paid', 'cancelled')),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,31 +1,46 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Мої передплати</h2>
-<form method="post" action="/subscriptions/create">
-  <select name="publication_id">
-    {% for p in publications %}<option value="{{ p.id }}">{{ p.title }} — {{ p.price }}/міс.</option>{% endfor %}
-  </select>
-  <input name="months" type="number" min="1" value="1">
-  <button>Оформити</button>
+<section class="page-head">
+  <div>
+    <p class="eyebrow">Передплати</p>
+    <h1>Мої передплати</h1>
+    <p class="muted">Оформлюйте, змінюйте термін і переходьте до платежів.</p>
+  </div>
+</section>
+
+<section class="dashboard-grid">
+<form class="card form-card" method="post" action="/subscriptions/create">
+  <h2>Нова передплата</h2>
+  <label>Видання
+    <select name="publication_id">
+      {% for p in publications %}<option value="{{ p.id }}">{{ p.title }} — {{ p.price }} ₴/міс.</option>{% endfor %}
+    </select>
+  </label>
+  <label>Кількість місяців <input name="months" type="number" min="1" value="1"></label>
+  <button class="btn btn-primary">Оформити</button>
 </form>
+
+<div class="card table-card">
 <table>
   <tr><th>ID</th><th>Видання</th><th>Місяці</th><th>Сума</th><th>Статус</th><th>Дії</th></tr>
   {% for s in subscriptions %}
   <tr>
-    <td>{{ s.id }}</td><td>{{ s.publication_id }}</td><td>{{ s.months }}</td><td>{{ s.total_amount }}</td><td>{{ s.status }}</td>
+    <td>#{{ s.id }}</td><td>{{ s.publication_title }}</td><td>{{ s.months }}</td><td>{{ s.total_amount }} ₴</td><td><span class="status">{{ s.status }}</span></td>
     <td>
       <form method="post" action="/subscriptions/update" class="inline">
         <input type="hidden" name="subscription_id" value="{{ s.id }}">
         <input name="months" type="number" min="1" value="{{ s.months }}">
-        <button>Оновити</button>
+        <button class="btn btn-secondary">Оновити</button>
       </form>
       <form method="post" action="/subscriptions/delete" class="inline">
         <input type="hidden" name="subscription_id" value="{{ s.id }}">
-        <button>Видалити</button>
+        <button class="btn btn-danger">Видалити</button>
       </form>
-      <a href="/payment?subscription_id={{ s.id }}">Платежі</a>
+      <a class="btn btn-ghost" href="/payment?subscription_id={{ s.id }}">Платежі</a>
     </td>
   </tr>
   {% endfor %}
 </table>
+</div>
+</section>
 {% endblock %}

@@ -2,21 +2,31 @@
 <html lang="uk">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Періодичні видання</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <header>
-    <h1>Система періодичних видань</h1>
-    {% if user %}
-      <nav>
+  <header class="topbar">
+    <a class="brand" href="/publications">
+      <span class="brand-mark">Ж</span>
+      <span>
+        <strong>Periodicals Hub</strong>
+        <small>каталог періодичних видань</small>
+      </span>
+    </a>
+    <nav class="nav">
+      {% if user %}
         <a href="/publications">Каталог</a>
         <a href="/subscriptions">Передплати</a>
-        <a href="/payment">Платіж</a>
-        <a href="/logout">Вийти ({{ user.username }})</a>
-      </nav>
-    {% endif %}
+        <a href="/payment">Платежі</a>
+        <span class="user-pill">{{ user.username }} · {{ user.role }}</span>
+        <a class="btn btn-ghost" href="/logout">Вийти</a>
+      {% else %}
+        <span class="user-pill">Гість</span>
+      {% endif %}
+    </nav>
   </header>
-  <main>{% block content %}{% endblock %}</main>
+  <main class="container">{% block content %}{% endblock %}</main>
 </body>
 </html>

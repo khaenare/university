@@ -4,6 +4,7 @@ from decimal import Decimal
 from app.models.publication import Publication
 from app.models.payment import Payment
 from app.models.subscription import Subscription
+from app.models.subscription_summary import SubscriptionSummary
 from app.models.user import User
 from app.services.subscription_service import SubscriptionService
 
@@ -24,7 +25,7 @@ class FakeSubscriptionDao:
         return 7
 
     def list_for_user(self, user_id):
-        return []
+        return [SubscriptionSummary(7, user_id, 10, "Журнал", 2, Decimal("51.00"), "created")]
 
     def find_by_id(self, subscription_id):
         return Subscription(subscription_id, 5, 10, 2, Decimal("51.00"), "created")
@@ -113,6 +114,13 @@ class SubscriptionServiceTest(unittest.TestCase):
         service.update_payment_status(3, "paid", User(5, "reader", "", "reader"))
 
         self.assertEqual((3, "paid"), payment_dao.updated)
+
+    def test_list_for_user_returns_publication_titles(self):
+        service = SubscriptionService(FakePublicationDao(), FakeSubscriptionDao(), FakePaymentDao())
+
+        subscriptions = service.list_for_user(5)
+
+        self.assertEqual("Журнал", subscriptions[0].publication_title)
 
     def test_rejects_invalid_months(self):
         service = SubscriptionService(FakePublicationDao(), FakeSubscriptionDao(), FakePaymentDao())

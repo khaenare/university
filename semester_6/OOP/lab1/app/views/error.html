@@ -1,5 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Помилка</h2>
-<p class="error">{{ message }}</p>
+<section class="narrow">
+  <div class="card error-card">
+    <p class="eyebrow">Помилка</p>
+    <h1>Не вдалося виконати дію</h1>
+    <p class="alert error">{{ message }}</p>
+    <a class="btn btn-primary" href="/publications">Повернутися до каталогу</a>
+  </div>
+</section>
 {% endblock %}

@@ -1,10 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Вхід</h2>
-{% if error %}<p class="error">Неправильний логін або пароль</p>{% endif %}
-<form method="post" action="/login">
-  <label>Логін <input name="username" required></label>
-  <label>Пароль <input name="password" type="password" required></label>
-  <button type="submit">Увійти</button>
-</form>
+<section class="auth-page">
+  <div class="hero-card">
+    <p class="eyebrow">Лабораторна робота 1</p>
+    <h1>Керуйте виданнями, передплатами та платежами в одному місці</h1>
+    <p>Адміністратор підтримує каталог, а читач швидко оформлює передплату й реєструє оплату.</p>
+    <div class="feature-row">
+      <span>Custom Routing</span>
+      <span>MVC</span>
+      <span>DAO + SQL</span>
+    </div>
+  </div>
+  <form class="card auth-card" method="post" action="/login">
+    <h2>Вхід до системи</h2>
+    <p class="muted">Тестові акаунти: <strong>admin/password</strong>, <strong>reader/password</strong></p>
+    {% if error %}<p class="alert error">Неправильний логін або пароль</p>{% endif %}
+    <label>Логін <input name="username" placeholder="admin" required></label>
+    <label>Пароль <input name="password" type="password" placeholder="password" required></label>
+    <button class="btn btn-primary" type="submit">Увійти</button>
+  </form>
+</section>
 {% endblock %}
