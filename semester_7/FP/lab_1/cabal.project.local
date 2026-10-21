@@ -1,0 +1,8 @@
+-- Local settings for macOS on Apple Silicon with Homebrew.
+-- mysql_config references zstd and OpenSSL without their Homebrew paths.
+-- On an Intel Mac replace /opt/homebrew with /usr/local; on Linux with the
+-- distribution's libmysqlclient-dev package this file is not needed.
+package mysql
+  extra-lib-dirs: /opt/homebrew/opt/zstd/lib
+                  /opt/homebrew/opt/openssl@3/lib
+  extra-include-dirs: /opt/homebrew/opt/openssl@3/include

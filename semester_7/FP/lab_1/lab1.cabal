@@ -1,0 +1,39 @@
+cabal-version:      3.0
+name:               lab1
+version:            0.1.0.0
+synopsis:           Information system "Individual work of the department with students"
+description:        Lab 1, variant 6: console application in Haskell built on
+                    type classes and instances, with MySQL as the database.
+build-type:         Simple
+extra-doc-files:    README.md
+
+common shared
+    default-language:   GHC2021
+    default-extensions: OverloadedStrings
+                        -- Class methods such as 'tableName' are selected with
+                        -- type applications (tableName @Student).
+                        AllowAmbiguousTypes
+    ghc-options:        -Wall
+    build-depends:      base >=4 && <5,
+                        bytestring,
+                        mysql,
+                        mysql-simple,
+                        text,
+                        time
+
+library
+    import:           shared
+    hs-source-dirs:   src
+    exposed-modules:  Lab1.Config
+                      Lab1.Console
+                      Lab1.Entity
+                      Lab1.Form
+                      Lab1.Menu
+                      Lab1.Model
+                      Lab1.Reports
+
+executable lab1
+    import:           shared
+    hs-source-dirs:   app
+    main-is:          Main.hs
+    build-depends:    lab1

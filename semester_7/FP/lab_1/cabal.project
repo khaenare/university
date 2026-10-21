@@ -1,0 +1,16 @@
+packages: .
+
+-- pcre-light and mysql use custom Setup.hs scripts that are incompatible
+-- with Cabal >= 3.14, so build their setup scripts with an older Cabal.
+constraints: pcre-light:setup.Cabal < 3.14,
+             mysql:setup.Cabal < 3.14
+
+allow-newer: pcre-light:base, mysql:base, mysql-simple:base,
+             Cabal:base, Cabal-syntax:base
+
+-- Locate Homebrew C libraries (pcre, mysqlclient) through pkg-config.
+package pcre-light
+  flags: +use-pkg-config
+
+-- Machine-specific library paths (for example Homebrew ones) belong in
+-- cabal.project.local, see README.md.
