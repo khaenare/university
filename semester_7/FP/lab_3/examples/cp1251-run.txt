@@ -1,0 +1,6 @@
+$ lab3 examples/cp1251.txt
+Error: examples/cp1251.txt: the file is not valid UTF-8; if it is in Windows-1251, use --encoding cp1251
+$ lab3 --encoding cp1251 examples/cp1251.txt
+    мистецтво
+    Програмування
+    це

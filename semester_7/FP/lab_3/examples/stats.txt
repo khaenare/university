@@ -1,0 +1,8 @@
+Paragraphs:          8
+Sentences:           29
+Words:               288
+Distinct words:      226
+Numbers:             5
+Punctuation marks:   96
+Other symbols:       9
+First letters:       45

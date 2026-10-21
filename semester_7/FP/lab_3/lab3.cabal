@@ -1,0 +1,41 @@
+cabal-version:      3.0
+name:               lab3
+version:            0.1.0.0
+synopsis:           Words of a textbook in alphabetical order (lab 3, variant 6)
+build-type:         Simple
+extra-doc-files:    README.md
+
+common shared
+    default-language:   GHC2021
+    default-extensions: OverloadedStrings
+    ghc-options:        -Wall
+    build-depends:      array,
+                        base >=4 && <5,
+                        bytestring,
+                        containers,
+                        text,
+                        unicode-transforms
+
+library
+    import:           shared
+    hs-source-dirs:   src
+    exposed-modules:  Lab3.Encoding
+                      Lab3.Types
+                      Lab3.Parse
+                      Lab3.Alphabet
+                      Lab3.Task
+
+executable lab3
+    import:           shared
+    hs-source-dirs:   app
+    main-is:          Main.hs
+    build-depends:    lab3,
+                      optparse-applicative
+
+test-suite lab3-test
+    import:           shared
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    build-depends:    lab3,
+                      QuickCheck

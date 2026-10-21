@@ -1,0 +1,23 @@
+Usage: lab3 [FILE] [-e|--encoding utf8|cp1251] [-o|--output FILE] 
+            [--text | --sentences | --stats] [-w|--width N] [-i|--indent N] 
+            [-a|--all]
+
+  Print the words of a text in alphabetical order, every new letter from a red
+  line
+
+Available options:
+  FILE                     Text file, or - for standard input
+                           (default: "data/textbook.txt")
+  -e,--encoding utf8|cp1251
+                           Encoding of the input file (default: utf8)
+  -o,--output FILE         Write the result to a file
+  --text                   Print the text with tabs and repeated spaces replaced
+                           by one space
+  --sentences              Print every sentence on its own line
+  --stats                  Print counts of paragraphs, sentences, words and
+                           marks
+  -w,--width N             Maximum line length (default: 80)
+  -i,--indent N            Indent of the red line (first line of every letter)
+                           (default: 4)
+  -a,--all                 List every occurrence of a word, not each word once
+  -h,--help                Show this help text
