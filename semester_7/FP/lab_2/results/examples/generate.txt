@@ -1,0 +1,6 @@
+$ lab2 generate -b 48 -s 1
+Random problem, seed 1
+p = 247917550857443, g = 2, h = 244776264429272
+Order of g: n = 247917550857442 (about 2^47.8)
+Answer: x = 242008509036172
+Solve it with: lab2 solve -p 247917550857443 -g 2 -y 244776264429272

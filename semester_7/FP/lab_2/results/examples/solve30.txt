@@ -1,0 +1,17 @@
+$ lab2 solve -b 30 -s 7
+Random problem
+Seed: 7
+p = 624841703, g = 5, h = 144791543
+Order of g: n = 624841702 (about 2^29.2)
+Worker threads: 12; runtime capabilities (+RTS -N): 12; CPU cores: 12
+
+| Algorithm            | Version    | Threads | x         | Time, s |
+|----------------------|------------|---------|-----------|---------|
+| Brute force          | sequential | 1       | 504345213 | 1.693   |
+| Brute force          | parallel   | 12      | 504345213 | 0.200   |
+| Baby-step giant-step | sequential | 1       | 504345213 | 0.002   |
+| Baby-step giant-step | parallel   | 12      | 504345213 | 0.002   |
+| Pollard's rho        | sequential | 1       | 504345213 | 0.001   |
+| Pollard's rho        | parallel   | 12      | 504345213 | 0.002   |
+
+Check passed: 5^504345213 mod 624841703 = 144791543

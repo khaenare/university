@@ -1,0 +1,45 @@
+cabal-version:      3.0
+name:               lab2
+version:            0.1.0.0
+synopsis:           Parallel discrete logarithm solvers (lab 2, variant 5)
+build-type:         Simple
+
+common shared
+    default-language: GHC2021
+    ghc-options:      -Wall -O2
+    build-depends:    base >=4 && <5,
+                      containers,
+                      random,
+                      vector,
+                      vector-algorithms
+
+library
+    import:           shared
+    hs-source-dirs:   src
+    exposed-modules:  Lab2.Arith
+                      Lab2.BabyGiant
+                      Lab2.Bench
+                      Lab2.BruteForce
+                      Lab2.Parallel
+                      Lab2.PollardRho
+                      Lab2.Prime
+                      Lab2.Problem
+                      Lab2.Solver
+                      Lab2.Table
+
+executable lab2
+    import:           shared
+    hs-source-dirs:   app
+    main-is:          Main.hs
+    build-depends:    lab2,
+                      optparse-applicative
+    ghc-options:      -threaded -rtsopts "-with-rtsopts=-N"
+
+test-suite lab2-test
+    import:           shared
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    build-depends:    lab2,
+                      QuickCheck
+    ghc-options:      -threaded -rtsopts "-with-rtsopts=-N"

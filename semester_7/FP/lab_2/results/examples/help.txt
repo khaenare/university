@@ -1,0 +1,13 @@
+$ lab2 --help
+Usage: lab2 COMMAND
+
+  Parallel discrete logarithm: find x with g^x = h (mod p)
+
+Available options:
+  -h,--help                Show this help text
+
+Available commands:
+  solve                    Solve a problem with the sequential and parallel
+                           algorithms
+  generate                 Print a random problem with a known answer
+  bench                    Measure the speedup for different numbers of threads

@@ -1,0 +1,16 @@
+$ lab2 solve -p 1000000007 -g 4 -y 5 -s 1
+Seed: 1
+p = 1000000007, g = 4, h = 5
+Order of g: n = 500000003 (about 2^28.9)
+Worker threads: 12; runtime capabilities (+RTS -N): 12; CPU cores: 12
+
+| Algorithm            | Version    | Threads | x           | Time, s |
+|----------------------|------------|---------|-------------|---------|
+| Brute force          | sequential | 1       | no solution | 1.676   |
+| Brute force          | parallel   | 12      | no solution | 0.187   |
+| Baby-step giant-step | sequential | 1       | no solution | 0.002   |
+| Baby-step giant-step | parallel   | 12      | no solution | 0.002   |
+| Pollard's rho        | sequential | 1       | no solution | 0.000   |
+| Pollard's rho        | parallel   | 12      | no solution | 0.000   |
+
+No solution: h is not a power of g modulo p.

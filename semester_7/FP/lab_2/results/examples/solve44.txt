@@ -1,0 +1,16 @@
+$ lab2 solve -b 44 -s 11
+Random problem
+Seed: 11
+p = 12279257097683, g = 2, h = 7008032553592
+Order of g: n = 12279257097682 (about 2^43.5)
+Worker threads: 12; runtime capabilities (+RTS -N): 12; CPU cores: 12
+
+| Algorithm            | Version    | Threads | x                         | Time, s |
+|----------------------|------------|---------|---------------------------|---------|
+| Brute force          | -          | -       | skipped: order above 2^34 | -       |
+| Baby-step giant-step | sequential | 1       | 7421042323227             | 0.579   |
+| Baby-step giant-step | parallel   | 12      | 7421042323227             | 0.085   |
+| Pollard's rho        | sequential | 1       | 7421042323227             | 0.370   |
+| Pollard's rho        | parallel   | 12      | 7421042323227             | 0.005   |
+
+Check passed: 2^7421042323227 mod 12279257097683 = 7008032553592

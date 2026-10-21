@@ -1,0 +1,13 @@
+$ lab2 solve -b 56 -s 3 -a rho
+Random problem
+Seed: 3
+p = 64883411856556859, g = 2, h = 11335154938492929
+Order of g: n = 64883411856556858 (about 2^55.8)
+Worker threads: 12; runtime capabilities (+RTS -N): 12; CPU cores: 12
+
+| Algorithm     | Version    | Threads | x                 | Time, s |
+|---------------|------------|---------|-------------------|---------|
+| Pollard's rho | sequential | 1       | 26268092814296615 | 28.820  |
+| Pollard's rho | parallel   | 12      | 26268092814296615 | 0.490   |
+
+Check passed: 2^26268092814296615 mod 64883411856556859 = 11335154938492929
