@@ -1,0 +1,24 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Сам Prometheus
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Метрики PostgreSQL (з'єднання, транзакції, рядки, розмір БД, ...)
+  - job_name: postgres
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  # Метрики генератора навантаження (кількість і тривалість операцій з БД)
+  - job_name: generator
+    static_configs:
+      - targets: ["generator:8000"]
+
+  # Метрики сервера авторизації (спроби входу, сесії)
+  - job_name: auth
+    static_configs:
+      - targets: ["auth:5000"]

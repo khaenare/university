@@ -1,0 +1,29 @@
+# Мінімальна конфігурація Tempo: приймає трейси по OTLP, зберігає локально
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+        grpc:
+          endpoint: 0.0.0.0:4317
+
+ingester:
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 168h   # 7 днів, як у Prometheus і Loki
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /var/tempo/wal      # том tempo-data
+    local:
+      path: /var/tempo/blocks

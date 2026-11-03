@@ -1,0 +1,50 @@
+// Grafana Alloy: збирає stdout/stderr усіх контейнерів проєкту і відправляє в Loki.
+
+discovery.docker "containers" {
+  // Docker API через проксі лише на читання (див. docker-compose.yml)
+  host             = "tcp://docker-proxy:2375"
+  refresh_interval = "5s"
+
+  // лише контейнери цього docker compose проєкту
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=db-monitoring"]
+  }
+
+  // лише запущені контейнери: якщо Alloy виявить контейнер, який ще стартує,
+  // він більше не пробує читати його логи. Запущений контейнер з'явиться
+  // як нова ціль при наступному оновленні (кожні 5 с).
+  filter {
+    name   = "status"
+    values = ["running"]
+  }
+}
+
+// Мітки, за якими логи шукаються в Grafana: service="generator", container="..."
+discovery.relabel "containers" {
+  targets = []
+
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host          = "tcp://docker-proxy:2375"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = discovery.relabel.containers.rules
+  forward_to    = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

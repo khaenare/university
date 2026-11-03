@@ -1,0 +1,209 @@
+# Інформаційна система моніторингу роботи СУБД PostgreSQL.
+# Ззовні доступний лише шлюз (nginx) на порту 8080 — усі інші сервіси
+# працюють тільки у внутрішній мережі Docker.
+name: db-monitoring
+
+services:
+  # 0. СУБД
+  postgres:
+    image: postgres:16.15-alpine3.24
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: shop
+      # Паролі застосовуються лише при першому створенні тому pg-data
+      POSTGRES_USER: ${POSTGRES_USER:?задайте POSTGRES_USER у .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD у .env}
+      EXPORTER_PASSWORD: ${EXPORTER_PASSWORD:?задайте EXPORTER_PASSWORD у .env}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD:?задайте APP_DB_PASSWORD у .env}
+    # Логувати запити, що виконуються довше 300 мс (потрапляють у Loki)
+    command: ["postgres", "-c", "log_min_duration_statement=300"]
+    volumes:
+      # Скрипти першого запуску: схема БД (01) і ролі з мінімальними правами (02)
+      - ./postgres:/docker-entrypoint-initdb.d:ro
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d shop"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Метрики самої СУБД для Prometheus
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:v0.16.0
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_URI: postgres:5432/shop?sslmode=disable
+      DATA_SOURCE_USER: exporter
+      DATA_SOURCE_PASS: ${EXPORTER_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # 1. Генерація та актуалізація даних у БД
+  generator:
+    build: ./generator
+    restart: unless-stopped
+    init: true
+    environment:
+      DB_HOST: postgres
+      DB_NAME: shop
+      # Окрема роль лише з правами на дані магазину (не суперкористувач)
+      DB_USER: shop_app
+      DB_PASSWORD: ${APP_DB_PASSWORD}
+      OTLP_ENDPOINT: http://tempo:4318/v1/traces
+    depends_on:
+      postgres:
+        condition: service_healthy
+      tempo:
+        condition: service_started
+
+  # 7. Сервер авторизації (Python + SQLite)
+  auth:
+    build: ./auth
+    restart: unless-stopped
+    environment:
+      ADMIN_USERNAME: ${ADMIN_USERNAME:?задайте ADMIN_USERNAME у .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?задайте ADMIN_PASSWORD у .env}
+    volumes:
+      - auth-data:/data
+
+  # Шлюз: пропускає до Grafana/Prometheus лише авторизованих користувачів
+  gateway:
+    image: nginx:1.27.5-alpine3.21
+    restart: unless-stopped
+    ports:
+      # Лише з цього комп'ютера: система працює по HTTP без шифрування
+      - "127.0.0.1:8080:80"
+    networks:
+      default:
+        # Фіксована адреса поза діапазоном динамічних адрес (див. networks):
+        # лише з неї Grafana приймає заголовок X-WEBAUTH-USER
+        ipv4_address: 172.29.42.10
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - auth
+      - grafana
+      - prometheus
+
+  # 2-3. Збір метрик і зберігання у вбудованій TSDB
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+      - --web.external-url=http://localhost:8080/prometheus/
+      - --web.route-prefix=/
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+
+  # 5. Зберігання логів
+  loki:
+    image: grafana/loki:3.3.2
+    restart: unless-stopped
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data:/loki
+
+  # Збирає логи всіх контейнерів проєкту і відправляє в Loki
+  alloy:
+    image: grafana/alloy:v1.5.1
+    restart: unless-stopped
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+    networks:
+      - default
+      - docker-api
+    depends_on:
+      - loki
+      - docker-proxy
+
+  # Доступ до Docker API лише на читання списку контейнерів і їхніх логів.
+  # Сам docker.sock (навіть з :ro) дає повний контроль над Docker, тому
+  # Alloy отримує його лише через цей проксі.
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.2
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1   # GET /containers/... (список, логи)
+      NETWORKS: 1     # GET /networks (потрібно для виявлення контейнерів)
+      POST: 0         # жодних змін: створення, запуску, видалення
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - docker-api
+
+  # 6. Зберігання трейсів
+  tempo:
+    image: grafana/tempo:2.6.1
+    restart: unless-stopped
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo-data:/var/tempo
+
+  # 4. Відображення даних
+  grafana:
+    image: grafana/grafana:11.4.0
+    restart: unless-stopped
+    environment:
+      GF_SERVER_ROOT_URL: http://localhost:8080/
+      # Grafana довіряє заголовку, який виставляє шлюз після перевірки сесії
+      GF_AUTH_PROXY_ENABLED: "true"
+      GF_AUTH_PROXY_HEADER_NAME: X-WEBAUTH-USER
+      GF_AUTH_PROXY_HEADER_PROPERTY: username
+      GF_AUTH_PROXY_HEADERS: Role:X-WEBAUTH-ROLE
+      GF_AUTH_PROXY_AUTO_SIGN_UP: "true"
+      # Заголовок приймається лише від шлюзу; інші контейнери мережі
+      # не можуть звернутися до Grafana від імені будь-якого користувача
+      GF_AUTH_PROXY_WHITELIST: 172.29.42.10
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_SIGNOUT_REDIRECT_URL: http://localhost:8080/auth/logout
+      # Вимикаємо інші способи входу: інакше будь-хто після входу через шлюз
+      # міг би надіслати "Authorization: Basic admin:admin" і стати адміністратором
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?задайте GRAFANA_ADMIN_PASSWORD у .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/db-monitoring.json
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+
+networks:
+  default:
+    ipam:
+      config:
+        # Якщо підмережа конфліктує з іншою мережею (VPN тощо), змініть її
+        # разом з адресою шлюзу вище та GF_AUTH_PROXY_WHITELIST
+        - subnet: 172.29.42.0/24
+          # Динамічні адреси лише з .128–.255, тож фіксовану адресу шлюзу (.10)
+          # не може зайняти інший контейнер
+          ip_range: 172.29.42.128/25
+  # Внутрішня мережа лише для Alloy і проксі Docker API
+  docker-api:
+    internal: true
+
+volumes:
+  pg-data:
+  prometheus-data:
+  loki-data:
+  grafana-data:
+  auth-data:
+  tempo-data:
