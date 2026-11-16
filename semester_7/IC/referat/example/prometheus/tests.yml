@@ -1,0 +1,28 @@
+# Модульні тести правил: docker run --rm -v ./prometheus:/p:ro --entrypoint promtool prom/prometheus:v3.1.0 test rules /p/tests.yml
+rule_files:
+  - rules.yml
+
+evaluation_interval: 5s
+
+tests:
+  - interval: 5s
+    # СУБД падає на 10-й секунді
+    input_series:
+      - series: 'pg_up{instance="postgres-exporter:9187", job="postgres"}'
+        values: "1 1 0 0 0 0 0 0 0 0"
+    alert_rule_test:
+      # 20 с: умова виконується лише 10 с, алерт ще в стані pending
+      - eval_time: 20s
+        alertname: PostgresDown
+        exp_alerts: []
+      # 45 с: умова виконується 35 с > for: 30s — алерт спрацював
+      - eval_time: 45s
+        alertname: PostgresDown
+        exp_alerts:
+          - exp_labels:
+              severity: critical
+              instance: postgres-exporter:9187
+              job: postgres
+            exp_annotations:
+              summary: "PostgreSQL недоступна (postgres-exporter:9187)"
+              description: "postgres-exporter не може підключитися до СУБД понад 30 секунд."

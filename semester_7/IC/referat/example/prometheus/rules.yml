@@ -1,0 +1,65 @@
+groups:
+  - name: postgres
+    rules:
+      # СУБД недоступна: exporter працює, але не може підключитися до PostgreSQL
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL недоступна ({{ $labels.instance }})"
+          description: "postgres-exporter не може підключитися до СУБД понад 30 секунд."
+
+      # Немає самих метрик: Prometheus не може опитати exporter
+      - alert: PostgresExporterDown
+        expr: up{job="postgres"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Немає метрик PostgreSQL ({{ $labels.instance }})"
+          description: "Prometheus не може опитати postgres-exporter понад 30 секунд."
+
+      # Один алерт з двома порогами: warning (50 %) і critical (80 %)
+      - alert: PostgresTooManyConnections
+        expr: >
+          sum by (instance) (pg_stat_activity_count)
+          > 0.5 * max by (instance) (pg_settings_max_connections)
+        for: 15s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Підключень до PostgreSQL понад 50 % ліміту"
+          description: "Зараз {{ $value }} підключень."
+
+      - alert: PostgresTooManyConnections
+        expr: >
+          sum by (instance) (pg_stat_activity_count)
+          > 0.8 * max by (instance) (pg_settings_max_connections)
+        for: 15s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Підключень до PostgreSQL понад 80 % ліміту"
+          description: "Зараз {{ $value }} підключень; нові клієнти скоро отримають відмову."
+
+      # Взаємні блокування транзакцій
+      - alert: PostgresDeadlocks
+        expr: increase(pg_stat_database_deadlocks{datname="demo"}[5m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "Взаємні блокування в БД {{ $labels.datname }}"
+          description: "За 5 хвилин виявлено {{ $value | humanize }} deadlock(ів)."
+
+  - name: meta
+    rules:
+      # Контрольний алерт, що спрацьовує завжди: якщо сповіщення від нього
+      # перестали надходити, зламаний сам ланцюжок Prometheus → Alertmanager → отримувач
+      - alert: Watchdog
+        expr: vector(1)
+        labels:
+          severity: none
+        annotations:
+          summary: "Контрольний алерт: ланцюжок сповіщень працює"

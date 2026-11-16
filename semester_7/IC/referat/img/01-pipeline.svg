@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="700" fill="#fff"/>
+
+  <!-- Джерела метрик -->
+  <rect x="10" y="10" width="980" height="120" rx="10" fill="#f4f5f7" stroke="#9aa1aa" stroke-width="1.5"/>
+  <text x="26" y="38" font-size="20" font-weight="bold" fill="#222">Джерела метрик</text>
+  <g font-size="20" fill="#222" text-anchor="middle">
+    <rect x="26" y="52" width="300" height="60" rx="8" fill="#fff" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="176" y="89">postgres-exporter</text>
+    <rect x="350" y="52" width="300" height="60" rx="8" fill="#fff" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="500" y="89">node-exporter</text>
+    <rect x="674" y="52" width="300" height="60" rx="8" fill="#fff" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="824" y="89">застосунки (/metrics)</text>
+  </g>
+
+  <line x1="500" y1="130" x2="500" y2="180" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="514" y="162" font-size="18" fill="#444">опитування метрик (scrape)</text>
+
+  <!-- Prometheus -->
+  <rect x="10" y="182" width="980" height="150" rx="10" fill="#eef3fa" stroke="#4a76b0" stroke-width="2"/>
+  <text x="26" y="214" font-size="24" font-weight="bold" fill="#1d3f6e">Prometheus</text>
+  <g font-size="20" fill="#222">
+    <text x="26" y="250">• зберігає часові ряди у вбудованій TSDB</text>
+    <text x="26" y="282">• кожні evaluation_interval обчислює правила алертів: expr, for, labels, annotations</text>
+    <text x="26" y="314">• стан кожного алерту: inactive → pending → firing</text>
+  </g>
+
+  <line x1="500" y1="332" x2="500" y2="392" stroke="#555" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="514" y="356" font-size="18" fill="#444">POST /api/v2/alerts</text>
+  <text x="514" y="380" font-size="18" fill="#444">повтор щохвилини, поки алерт активний</text>
+
+  <!-- Alertmanager -->
+  <rect x="10" y="394" width="980" height="166" rx="10" fill="#fdf5ea" stroke="#c07a1f" stroke-width="2"/>
+  <text x="26" y="426" font-size="24" font-weight="bold" fill="#7a4a0c">Alertmanager</text>
+  <g text-anchor="middle" fill="#222">
+    <rect x="25" y="444" width="180" height="96" rx="8" fill="#fff" stroke="#c07a1f" stroke-width="1.5"/>
+    <text x="115" y="484" font-size="19" font-weight="bold">Дедуплікація</text>
+    <text x="115" y="512" font-size="17" fill="#555">повтори → один</text>
+    <rect x="215" y="444" width="180" height="96" rx="8" fill="#fff" stroke="#c07a1f" stroke-width="1.5"/>
+    <text x="305" y="484" font-size="19" font-weight="bold">Групування</text>
+    <text x="305" y="512" font-size="17" fill="#555">group_by</text>
+    <rect x="405" y="444" width="180" height="96" rx="8" fill="#fff" stroke="#c07a1f" stroke-width="1.5"/>
+    <text x="495" y="484" font-size="19" font-weight="bold">Придушення</text>
+    <text x="495" y="512" font-size="17" fill="#555">inhibit_rules</text>
+    <rect x="595" y="444" width="180" height="96" rx="8" fill="#fff" stroke="#c07a1f" stroke-width="1.5"/>
+    <text x="685" y="484" font-size="19" font-weight="bold">Тиша</text>
+    <text x="685" y="512" font-size="17" fill="#555">silences</text>
+    <rect x="785" y="444" width="180" height="96" rx="8" fill="#fff" stroke="#c07a1f" stroke-width="1.5"/>
+    <text x="875" y="484" font-size="19" font-weight="bold">Маршрутизація</text>
+    <text x="875" y="512" font-size="17" fill="#555">route → receiver</text>
+  </g>
+  <g stroke="#555" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="205" y1="492" x2="214" y2="492"/>
+    <line x1="395" y1="492" x2="404" y2="492"/>
+    <line x1="585" y1="492" x2="594" y2="492"/>
+    <line x1="775" y1="492" x2="784" y2="492"/>
+  </g>
+
+  <!-- Отримувачі -->
+  <path d="M875 560 V588 H125 V610 M375 588 V610 M625 588 V610 M875 588 V610" fill="none" stroke="#555" stroke-width="2"/>
+  <g stroke="#555" stroke-width="2" marker-end="url(#arrow)">
+    <line x1="125" y1="600" x2="125" y2="612"/>
+    <line x1="375" y1="600" x2="375" y2="612"/>
+    <line x1="625" y1="600" x2="625" y2="612"/>
+    <line x1="875" y1="600" x2="875" y2="612"/>
+  </g>
+  <g font-size="20" fill="#222" text-anchor="middle">
+    <rect x="10" y="614" width="230" height="70" rx="8" fill="#f4f5f7" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="125" y="656">Webhook (HTTP)</text>
+    <rect x="260" y="614" width="230" height="70" rx="8" fill="#f4f5f7" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="375" y="656">Telegram</text>
+    <rect x="510" y="614" width="230" height="70" rx="8" fill="#f4f5f7" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="625" y="656">E-mail</text>
+    <rect x="760" y="614" width="230" height="70" rx="8" fill="#f4f5f7" stroke="#9aa1aa" stroke-width="1.5"/>
+    <text x="875" y="656">Slack / MS Teams</text>
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="280" viewBox="0 0 1000 280" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#555"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="280" fill="#fff"/>
+
+  <g font-size="24" font-weight="bold" text-anchor="middle">
+    <rect x="20" y="70" width="260" height="76" rx="10" fill="#eef7ee" stroke="#3f8a45" stroke-width="2"/>
+    <text x="150" y="116" fill="#24592a">inactive</text>
+    <rect x="370" y="70" width="260" height="76" rx="10" fill="#fdf5e6" stroke="#c48a1d" stroke-width="2"/>
+    <text x="500" y="116" fill="#7a540f">pending</text>
+    <rect x="720" y="70" width="260" height="76" rx="10" fill="#fbecec" stroke="#b8403a" stroke-width="2"/>
+    <text x="850" y="116" fill="#8a2a25">firing</text>
+  </g>
+
+  <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <line x1="280" y1="108" x2="368" y2="108"/>
+    <line x1="630" y1="108" x2="718" y2="108"/>
+    <path d="M500 146 V186 H230 V148"/>
+    <path d="M850 146 V236 H90 V148"/>
+  </g>
+
+  <g font-size="18" fill="#333" text-anchor="middle">
+    <text x="325" y="36">expr повертає</text>
+    <text x="325" y="58">результат</text>
+    <text x="675" y="36">умова виконується</text>
+    <text x="675" y="58">довше, ніж for</text>
+    <text x="400" y="214">умова зникла раніше, ніж минув for</text>
+    <text x="470" y="264">умова перестала виконуватися → сповіщення resolved</text>
+  </g>
+</svg>

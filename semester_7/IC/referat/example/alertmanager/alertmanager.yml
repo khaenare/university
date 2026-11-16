@@ -1,0 +1,40 @@
+# Дерево маршрутизації: куди і як часто надсилати сповіщення
+route:
+  receiver: team-default          # отримувач за замовчуванням
+  group_by: [alertname, instance] # алерти з однаковими мітками — в одне сповіщення
+  group_wait: 10s                 # скільки чекати інші алерти нової групи
+  group_interval: 30s             # як часто надсилати зміни в групі
+  repeat_interval: 1h             # нагадування, якщо алерт ще активний
+  routes:
+    - matchers: [alertname="Watchdog"]
+      receiver: heartbeat
+      repeat_interval: 1m
+    - matchers: [severity="critical"]
+      receiver: team-oncall
+      repeat_interval: 10m
+
+# Поки активний critical-алерт, warning з тією ж назвою і джерелом не надсилається
+inhibit_rules:
+  - source_matchers: [severity="critical"]
+    target_matchers: [severity="warning"]
+    equal: [alertname, instance]
+
+receivers:
+  - name: team-default
+    webhook_configs:
+      - url: http://webhook:8080/default
+        send_resolved: true
+
+  - name: team-oncall
+    webhook_configs:
+      - url: http://webhook:8080/oncall
+        send_resolved: true
+    # Сповіщення в Telegram (потрібні токен бота і id чату):
+    # telegram_configs:
+    #   - bot_token: "<токен від @BotFather>"
+    #     chat_id: <id чату>
+    #     parse_mode: HTML
+
+  - name: heartbeat
+    webhook_configs:
+      - url: http://webhook:8080/heartbeat
